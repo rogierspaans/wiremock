@@ -37,7 +37,7 @@ public class GetStubFilesTask implements AdminTask {
     public ResponseDefinition execute(final Admin admin, final Request request, final PathParams pathParams) {
         try {
             final FileSource fileSource = admin.getOptions().filesRoot().child(FILES_ROOT);
-            final TextFile textFile = fileSource.getTextFileNamed(pathParams.get("filename"));
+            final TextFile textFile = fileSource.getTextFileNamed(pathParams.get("0"));
             return ResponseDefinition.okForJson(textFile.readContentsAsString());
         } catch (final Exception e) {
             return ResponseDefinition.badRequest(Errors.single(60, "Could not find specified file."));
