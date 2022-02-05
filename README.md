@@ -60,6 +60,8 @@ will create following structure in gui:
 
 ![alt folder-image](./images/folder.png)
 
+In general functions when editing a mapping you can add the metadata structure via "add Folder".
+
 ### drag-and-drop
 drag-and-drop into folders is currently <b>not</b> supported. It is a more complex topic, as it is currently not possible to sort mappings. 
 
