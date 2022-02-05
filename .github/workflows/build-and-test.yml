@@ -34,7 +34,7 @@ jobs:
     - name: Set up node using nvm
       uses: dcodeIO/setup-node-nvm@v4
       with:
-        node-version: 8.12.0
+        node-version: 16.13.2
     - name: Pre-generate API docs
       run: ./gradlew classes testClasses -x generateApiDocs
 
