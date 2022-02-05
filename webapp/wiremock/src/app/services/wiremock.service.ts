@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders, HttpRequest} from '@angular/common/http';
 import {RecordSpec} from '../model/wiremock/record-spec';
 import {Observable} from 'rxjs/internal/Observable';
 import {finalize, map, mergeMap, retryWhen} from 'rxjs/operators';
@@ -15,7 +15,7 @@ import {GetServeEventsResult} from '../model/wiremock/get-serve-events-result';
 import {SnapshotRecordResult} from '../model/wiremock/snapshot-record-result';
 import {ProxyConfig} from '../model/wiremock/proxy-config';
 import {RecordingStatus} from '../model/wiremock/recording-status';
-import {ScenarioResult} from "../model/wiremock/scenario-result";
+import {ScenarioResult} from '../model/wiremock/scenario-result';
 
 @Injectable()
 export class WiremockService {
@@ -124,9 +124,21 @@ export class WiremockService {
     return this.defaultPipe(this.http.delete<any>(WiremockService.getUrl('proxy/' + uuid)));
   }
 
-  getFileBody(fileName: string): Observable<string>{
+  getFileBody(fileName: string): Observable<string> {
     return this.defaultPipe(this.http.get<string>(WiremockService.getUrl('files/' + fileName)));
   }
+
+  test(path: string, method: string, body: unknown | null, headers: {[header: string]: string | string[]}): Observable<HttpEvent<any>> {
+    path = path.charAt(0) === '/' ? path.substring(1) : path;
+    const url = environment.wiremockUrl + path;
+    const request = new HttpRequest(method, url, body, {
+      headers: new HttpHeaders(headers),
+      responseType: 'text',
+      reportProgress: true
+    });
+    return this.http.request(request);
+  }
+
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -150,7 +162,7 @@ export class WiremockService {
     return observable.pipe(retryWhen(this.genericRetryStrategy({
       scalingDuration: 1000,
       maxRetryAttempts: 3,
-      excludedStatusCodes: [400, 422]
+      excludedStatusCodes: [ 400, 422 ]
     })));
   }
 

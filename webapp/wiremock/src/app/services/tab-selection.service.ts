@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subject} from "rxjs/internal/Subject";
+import {Subject} from 'rxjs/internal/Subject';
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +18,5 @@ export class TabSelectionService {
 }
 
 export enum Tab {
-  RAW, SEPARATED
+  RAW, SEPARATED, TEST
 }

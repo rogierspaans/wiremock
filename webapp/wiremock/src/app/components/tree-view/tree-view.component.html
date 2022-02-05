@@ -1,0 +1,53 @@
+<div #childrenContainer *ngIf="rootNode?.children.length > 0" class="wmHolyGrailScroll wmListView">
+  <div class="wmListScrollWrapper">
+    <ul class="list-group wmListGroup">
+
+      <ng-container *ngFor="let node of treeItems">
+
+        <li #listChildren
+            [id]="node.value.getId()"
+            class="list-group-item wmListItem"
+            [class.active]="node.value === activeItem"
+            [class.folder]="!node.isLeaf()"
+            [ngClass]="['depth-' + node.depth]"
+            (click)="selectActiveItem(node)"
+            *ngIf="node !== rootNode && !node.isHidden()">
+          <div [ngClass]="['line','line-' + (i)]" *ngFor="let d of [].constructor(node.depth); let i = index"></div>
+          <div *ngIf="!node.isLeaf()" class="chevron">
+            <fa-icon icon="chevron-right" *ngIf="node.collapsed"></fa-icon>
+            <fa-icon icon="chevron-down" *ngIf="!node.collapsed"></fa-icon>
+          </div>
+          <div *ngIf="!node.isLeaf()" class="wmFolder">
+            <fa-icon icon="folder"></fa-icon>
+          </div>
+          <div class="wmListItemTextContainer">
+            <div class="wmListItemTitle">{{node.value.getTitle()}}</div>
+            <div class="wmListItemSubtitle">{{node.value.getSubtitle()}}</div>
+          </div>
+          <div *ngIf="node.value.isProxy()">
+            <div class="btn-group btn-group-toggle wmProxyButtons" ngbRadioGroup name="proxyToggle"
+                 [ngModel]="node.value.isProxyEnabled()">
+              <label ngbButtonLabel class="wmProxyEnable" [class.btn-info]="node.value.isProxyEnabled()"
+                     [class.btn-secondary]="!node.value.isProxyEnabled()"
+                     ngbPopover="Restore proxying and forward requests to specified url"
+                     triggers="mouseenter:mouseleave"
+                     container="body"
+                     popoverTitle="Proxying">
+                <input ngbButton type="radio" [value]="true" [disabled]="node.value.isProxyEnabled()"
+                       (click)="enableProxy(node.value)"> I
+              </label>
+              <label ngbButtonLabel class="wmProxyDisable" [class.btn-info]="!node.value.isProxyEnabled()"
+                     [class.btn-secondary]="node.value.isProxyEnabled()"
+                     ngbPopover="Disable proxying and use mapping response" triggers="mouseenter:mouseleave"
+                     container="body"
+                     popoverTitle="Proxying">
+                <input ngbButton type="radio" [value]="false" [disabled]="!node.value.isProxyEnabled()"
+                       (click)="disableProxy(node.value)"> 0
+              </label>
+            </div>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</div>

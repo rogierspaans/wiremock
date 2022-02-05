@@ -1,0 +1,95 @@
+@import "../../../variables";
+
+.wmListItem {
+  border-radius: 0;
+  border-left: 0;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.wmListItemTextContainer {
+  flex: 1 auto;
+}
+
+.wmListItem:not(.active):hover {
+  cursor: pointer;
+}
+
+.wmListItem:not(.active,.folder):hover {
+  background-color: rgba(255, 135, 0, 0.21);
+}
+
+.folder {
+  height: 30px;
+  background-color: lighten(#17a2b8, 50%);
+}
+
+.folder:hover {
+  background-color: #17a2b8;
+}
+
+.wmListItemTitle {
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.wmListItemSubtitle {
+  word-break: break-word;
+}
+
+.wmProxyButtons ::ng-deep label.active {
+  opacity: 1;
+}
+
+.wmListGroup {
+  margin-top: -1px;
+}
+
+.wmListGroup > .wmListItem:first-child {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+ngb-pagination {
+  border-bottom: 1px solid $gray-300;
+}
+
+@for $i from 1 through 10 {
+  .depth-#{$i} {
+    padding-left: 10px * (($i * 2) + 1) !important;
+  }
+}
+
+.wmFolder {
+  margin-right: 10px;
+}
+
+.line {
+  height: 100%;
+  width: 1px;
+  //border-left: 1px solid rgba(0, 0, 0, 0.125);
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+  margin-top: -1px;
+  margin-bottom: -1px;
+  position: absolute;
+}
+
+@for $i from 0 through 10 {
+  .line-#{$i} {
+    margin-left: -10px * ($i * 2) - 15px;
+  }
+}
+
+.chevron {
+  margin-right: 10px;
+  width: 10px;
+}
+
+.wmListItem {
+  padding: 10px;
+}
+
+.wmProxyDisable:hover {
+  z-index: 0;
+}

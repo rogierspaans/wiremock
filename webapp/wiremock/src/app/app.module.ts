@@ -3,11 +3,20 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {HomeComponent} from './components/home/home.component';
 import {MappingsComponent} from './components/mappings/mappings.component';
-import {NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {library} from '@fortawesome/fontawesome-svg-core';
+import {
+  NgbAlertModule,
+  NgbButtonsModule,
+  NgbCollapseModule, NgbDropdownMenu, NgbDropdownModule,
+  NgbModal,
+  NgbModalModule,
+  NgbModule,
+  NgbNav,
+  NgbNavbar,
+  NgbNavModule, NgbPaginationModule, NgbPopoverModule, NgbTooltipModule
+} from '@ng-bootstrap/ng-bootstrap';
+import {FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';
 import {
   faAlignJustify,
   faAngleDoubleUp,
@@ -25,11 +34,16 @@ import {
   faPowerOff,
   faSave,
   faSearch,
+  faPlay,
   faStop,
   faSyncAlt,
   faTimes,
   faTrash,
-  faFolder
+  faFolder,
+  faCheck,
+  faChevronRight,
+  faChevronDown,
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 import {ListViewComponent} from './components/list-view/list-view.component';
 import {MatchedComponent} from './components/matched/matched.component';
@@ -60,30 +74,9 @@ import {StateComponent} from './components/state/state.component';
 import {StateMachineComponent} from './components/state-machine/state-machine.component';
 import {StateMappingInfoComponent} from './components/state-mapping-info/state-mapping-info.component';
 import {CurlPreviewComponent} from './components/curl-preview/curl-preview.component';
-
-
-// add icons. Only remove if not used anymore otherwise app will crash!
-library.add(faBars);
-library.add(faSearch);
-library.add(faPlus);
-library.add(faPencilAlt);
-library.add(faTrash);
-library.add(faSave);
-library.add(faTimes);
-library.add(faSyncAlt);
-library.add(faClock);
-library.add(faAngleDoubleUp);
-library.add(faAlignJustify);
-library.add(faFileAlt);
-library.add(faLink);
-library.add(faExchangeAlt);
-library.add(faCopy);
-library.add(faCog);
-library.add(faPowerOff);
-library.add(faDotCircle);
-library.add(faStop);
-library.add(faCamera);
-library.add(faFolder);
+import { MappingTestComponent } from './components/mapping-test/mapping-test.component';
+import {TestDirective} from './components/raw-separated/test.directive';
+import { TreeViewComponent } from './components/tree-view/tree-view.component';
 
 @NgModule({
   declarations: [
@@ -99,6 +92,7 @@ library.add(faFolder);
     RawSeparatedComponent,
     RawDirective,
     SeparatedDirective,
+    TestDirective,
     SeparatedComponent,
     KeysPipe,
     CapitalizeFirstPipe,
@@ -112,20 +106,61 @@ library.add(faFolder);
     StateComponent,
     StateMachineComponent,
     StateMappingInfoComponent,
-    CurlPreviewComponent
+    CurlPreviewComponent,
+    MappingTestComponent,
+    TreeViewComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule.forRoot(),
     FontAwesomeModule,
     HttpClientModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    // ng-bootstrap
+    NgbNavModule,
+    NgbCollapseModule,
+    NgbModalModule,
+    NgbButtonsModule,
+    NgbDropdownModule,
+    NgbAlertModule,
+    NgbTooltipModule,
+    NgbPopoverModule,
+    NgbPaginationModule,
   ],
-  providers: [WiremockService, WebSocketService, MessageService, SearchService, NgbModal],
-  bootstrap: [AppComponent],
-  entryComponents: [DialogRecordingComponent, StateMappingInfoComponent, CurlPreviewComponent]
+  providers: [ WiremockService, WebSocketService, MessageService, SearchService, NgbModal ],
+  bootstrap: [ AppComponent ],
+  entryComponents: [ DialogRecordingComponent, StateMappingInfoComponent, CurlPreviewComponent, MappingTestComponent ]
 })
 export class AppModule {
+
+  constructor(library: FaIconLibrary) {
+    // add icons. Only remove if not used anymore otherwise app will crash!
+    library.addIcons(faBars);
+    library.addIcons(faSearch);
+    library.addIcons(faPlus);
+    library.addIcons(faPencilAlt);
+    library.addIcons(faTrash);
+    library.addIcons(faSave);
+    library.addIcons(faTimes);
+    library.addIcons(faSyncAlt);
+    library.addIcons(faClock);
+    library.addIcons(faAngleDoubleUp);
+    library.addIcons(faAlignJustify);
+    library.addIcons(faFileAlt);
+    library.addIcons(faLink);
+    library.addIcons(faExchangeAlt);
+    library.addIcons(faCopy);
+    library.addIcons(faCog);
+    library.addIcons(faPowerOff);
+    library.addIcons(faDotCircle);
+    library.addIcons(faPlay);
+    library.addIcons(faStop);
+    library.addIcons(faCamera);
+    library.addIcons(faFolder);
+    library.addIcons(faCheck);
+    library.addIcons(faChevronRight);
+    library.addIcons(faChevronDown);
+    library.addIcons(faList);
+  }
 }

@@ -34,6 +34,14 @@ export class ServeEvent extends Proxy implements Item {
     return UtilService.itemModelStringify(this);
   }
 
+  hasFolderDefinition(): boolean {
+    return false;
+  }
+
+  getFolderName(): string | undefined {
+    return undefined;
+  }
+
   deserialize(unchecked: ServeEvent): ServeEvent {
     this.id = unchecked.id;
     this.request = new LoggedRequest().deserialize(unchecked.request);

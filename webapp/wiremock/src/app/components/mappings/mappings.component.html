@@ -1,4 +1,5 @@
-<wm-layout [items]="result?.mappings" [activeItemId]="activeItemId" (activeItemChange)="onActiveItemChange()">
+<wm-layout [items]="result?.mappings" [activeItemId]="activeItemId" (activeItemChange)="onActiveItemChange()"
+           [supportsTreeView]="true">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
       <ng-container *ngIf="editMode === State.NEW">
@@ -19,6 +20,10 @@
             General functions
           </button>
           <div ngbDropdownMenu class="dropdown-menu">
+            <button type="button" class="dropdown-item" (click)="helpersAddFolder()">
+              <fa-icon icon="folder"></fa-icon>
+              Add Folder
+            </button>
             <button type="button" class="dropdown-item" (click)="helpersAddDelay()">
               <fa-icon icon="clock"></fa-icon>
               Add Delay
@@ -65,7 +70,8 @@
           </div>
         </div>
         <div ngbDropdown class="btn-group" role="group">
-          <button id="wmResponseTemplatingDrop" type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle>
+          <button id="wmResponseTemplatingDrop" type="button" class="btn btn-secondary dropdown-toggle"
+                  ngbDropdownToggle>
             Response Templating
           </button>
           <div ngbDropdownMenu class="dropdown-menu">
@@ -142,6 +148,10 @@
             </button>
           </div>
         </div>
+        <!--        <button type="button" class="btn btn-secondary" (click)="test(activeItem)" [disabled]="!activeItem">-->
+        <!--          <fa-icon icon="play"></fa-icon>-->
+        <!--          Test-->
+        <!--        </button>-->
       </ng-container>
     </div>
 
@@ -150,11 +160,11 @@
 
 
   <ng-template #content let-activeItem>
-    <wm-raw-separated [separatedDisabled]="!activeItem">
+    <wm-raw-separated [separatedDisabled]="!activeItem" [testHidden]="false">
       <wm-raw-separated-raw>
         <wm-code-editor #editor
                         [code]="editMode === State.NORMAL ? activeItem?.getCode() : editMode === State.NEW ? newMappingText : editMappingText"
-                        [language]="'json'" [options]="editMode === State.NORMAL ? codeReadonOnlyOptions : codeOptions"
+                        [language]="'json'" [options]="editMode === State.NORMAL ? codeReadOnlyOptions : codeOptions"
                         (valueChange)="editorValueChange($event)"
                         (window:keydown.control.s)="saveViaKeyboard($event, activeItem)"
                         (window:keydown.control.e)="editViaKeyboard($event, activeItem)"
@@ -163,6 +173,9 @@
       <wm-raw-separated-separated>
         <wm-separated *ngIf="activeItem" [activeItem]="activeItem"></wm-separated>
       </wm-raw-separated-separated>
+      <wm-raw-separated-test>
+        <wm-mapping-test *ngIf="activeItem" [mapping]="activeItem"></wm-mapping-test>
+      </wm-raw-separated-test>
     </wm-raw-separated>
   </ng-template>
 

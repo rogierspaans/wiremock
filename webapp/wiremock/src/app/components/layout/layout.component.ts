@@ -24,7 +24,7 @@ import {Subject} from 'rxjs/internal/Subject';
 @Component({
   selector: 'wm-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  styleUrls: [ './layout.component.scss' ]
 })
 export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -43,10 +43,15 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   activeItem: Item;
 
   @Input()
+  supportsTreeView = false;
+
+  @Input()
   activeItemId: string;
 
   @Output()
   activeItemChange: EventEmitter<Item> = new EventEmitter();
+
+  activeTab = 0;
 
   search = new FormControl();
 
@@ -98,14 +103,14 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
       const newPath = this.router.url.split('?')[0];
 
       if (currentUrl.indexOf(newPath) === -1 || (currentUrl.indexOf(newPath) > -1 && currentUrl.indexOf(this.activeItemId) === -1)) {
-        this.router.navigate([this.router.url.split('?')[0]], {queryParams: {active: this.activeItemId}});
+        this.router.navigate([ this.router.url.split('?')[0] ], {queryParams: {active: this.activeItemId}});
       }
     } else {
       this.activeItemId = null;
       const currentUrl = this.router.url;
       const newUrl = this.router.url.split('?')[0];
       if (currentUrl !== newUrl) {
-        this.router.navigate([newUrl]);
+        this.router.navigate([ newUrl ]);
       }
     }
   }
@@ -114,7 +119,8 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
     if (UtilService.isUndefined(changes)) {
       return;
     }
-    if (UtilService.isDefined(changes.items) && (UtilService.isDefined(changes.items.currentValue) || UtilService.isDefined(changes.items.previousValue))) {
+    if (UtilService.isDefined(changes.items) && (UtilService.isDefined(changes.items.currentValue)
+      || UtilService.isDefined(changes.items.previousValue))) {
       // We only update filteredItems when actual items changed. activeItemId can be set but it is only a suggestion. This component
       // is responsible for selecting items
       this.onSearchChanged(new SearchEvent(this.lastSearch, this.caseSensitiveSearchEnabled));
@@ -161,7 +167,7 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 }

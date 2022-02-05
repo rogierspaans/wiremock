@@ -6,22 +6,22 @@ import {
   ViewChild
 } from '@angular/core';
 
-import {debounceTime, filter, takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
-import {WiremockService} from "../../services/wiremock.service";
-import {WebSocketService} from "../../services/web-socket.service";
-import {Message, MessageService, MessageType} from "../message/message.service";
-import {TabSelectionService} from "../../services/tab-selection.service";
-import {AutoRefreshService} from "../../services/auto-refresh.service";
-import {UtilService} from "../../services/util.service";
-import {Scenario} from "../../model/wiremock/scenario";
-import {ScenarioResult} from "../../model/wiremock/scenario-result";
-import {ProxyConfig} from "../../model/wiremock/proxy-config";
+import {debounceTime, filter, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {WiremockService} from '../../services/wiremock.service';
+import {WebSocketService} from '../../services/web-socket.service';
+import {Message, MessageService, MessageType} from '../message/message.service';
+import {TabSelectionService} from '../../services/tab-selection.service';
+import {AutoRefreshService} from '../../services/auto-refresh.service';
+import {UtilService} from '../../services/util.service';
+import {Scenario} from '../../model/wiremock/scenario';
+import {ScenarioResult} from '../../model/wiremock/scenario-result';
+import {ProxyConfig} from '../../model/wiremock/proxy-config';
 
 @Component({
   selector: 'wm-state',
   templateUrl: './state.component.html',
-  styleUrls: ['./state.component.scss']
+  styleUrls: [ './state.component.scss' ]
 })
 export class StateComponent implements OnInit, OnDestroy {
 
@@ -79,7 +79,7 @@ export class StateComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 

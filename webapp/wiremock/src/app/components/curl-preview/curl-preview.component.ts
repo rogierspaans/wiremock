@@ -6,16 +6,16 @@ import {
   OnInit,
   SimpleChanges, ViewChild
 } from '@angular/core';
-import {Curl, CurlExtractor} from "../../services/curl-extractor";
-import {CodeEditorComponent} from "../code-editor/code-editor.component";
-import {UtilService} from "../../services/util.service";
-import {Message, MessageService, MessageType} from "../message/message.service";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {Curl, CurlExtractor} from '../../services/curl-extractor';
+import {CodeEditorComponent} from '../code-editor/code-editor.component';
+import {UtilService} from '../../services/util.service';
+import {Message, MessageService, MessageType} from '../message/message.service';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'wm-curl-preview',
   templateUrl: './curl-preview.component.html',
-  styleUrls: ['./curl-preview.component.scss']
+  styleUrls: [ './curl-preview.component.scss' ]
 })
 export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, AfterContentChecked {
 
@@ -36,7 +36,7 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
     }
   }
 
-  constructor(private elementRef: ElementRef, private messageService:MessageService, public activeModal: NgbActiveModal) {
+  constructor(private elementRef: ElementRef, private messageService: MessageService, public activeModal: NgbActiveModal) {
   }
 
   ngOnInit() {
@@ -55,18 +55,14 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
   }
 
   ngAfterViewInit(): void {
-  }
-
-  ngAfterContentChecked(): void {
-    // this may look very strange but we need to resize ace when actual view size is known. This way we know when
-    // ng-bootstrap created modal, because it is initially created in body and then moved to separate div. I could
-    // not find a suitable hook there.
-
     const offsetParent = this.elementRef.nativeElement.offsetParent;
 
     if (!this.visible && UtilService.isDefined(offsetParent) && offsetParent.offsetParent !== document.body) {
       this.visible = true;
       this.codeEditor.resize();
     }
+  }
+
+  ngAfterContentChecked(): void {
   }
 }

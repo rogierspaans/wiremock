@@ -17,7 +17,7 @@ import {AutoRefreshService} from '../../services/auto-refresh.service';
 @Component({
   selector: 'wm-mappings',
   templateUrl: './mappings.component.html',
-  styleUrls: ['./mappings.component.scss']
+  styleUrls: [ './mappings.component.scss' ]
 })
 export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
@@ -25,7 +25,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   private static ACTION_GENERAL_FAILURE = 'Was not able to execute the selected action';
   private static ACTION_FAILURE_PREFIX = 'Action not possible: ';
 
-  @HostBinding('class') classes = 'wmHolyGrailBody';
+  @HostBinding('class') classes = 'wmHolyGrailBody column';
 
   @ViewChild('editor') editor;
 
@@ -68,7 +68,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     enableMultiselect: true
   };
 
-  codeReadonOnlyOptions = {
+  codeReadOnlyOptions = {
     selectionStyle: 'text',
     highlightActiveLine: true, // readOnly
     highlightSelectedWord: true,
@@ -216,6 +216,14 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     });
   }
 
+  // test(item: StubMapping): void {
+  //   const modalRef = this.modalService.open(MappingTestComponent, {
+  //     size: 'lg',
+  //     windowClass: 'modal-h70'
+  //   });
+  //   modalRef.componentInstance.mapping = item;
+  // }
+
   onMessage(): void {
     this.loadMappings();
   }
@@ -256,6 +264,10 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     } catch (err) {
       this.showHelperErrorMessage(err);
     }
+  }
+
+  helpersAddFolder(): void {
+    this.setMappingForHelper(MappingHelperService.helperAddFolder(this.getMappingForHelper()));
   }
 
   helpersAddDelay(): void {
@@ -303,7 +315,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   }
 
   ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 
@@ -333,7 +345,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   editViaKeyboard($event, activeItem) {
     if (activeItem != null && (!activeItem.isProxy() || activeItem.isProxyEnabled())) {
-      if(this.editMode === State.NORMAL) {
+      if (this.editMode === State.NORMAL) {
         this.editMapping(activeItem);
       }
     }
@@ -343,7 +355,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   }
 
   abortViaKeyboard($event) {
-    if(this.editMode === State.EDIT || this.editMode === State.NEW){
+    if (this.editMode === State.EDIT || this.editMode === State.NEW) {
       this.editMode = State.NORMAL;
     }
 
@@ -353,9 +365,9 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   saveViaKeyboard($event, activeItem) {
     if (activeItem != null) {
-      if(this.editMode === State.NEW){
+      if (this.editMode === State.NEW) {
         this.saveNewMapping();
-      }  else if(this.editMode === State.EDIT){
+      } else if (this.editMode === State.EDIT) {
         this.saveEditMapping(activeItem);
       }
     }
