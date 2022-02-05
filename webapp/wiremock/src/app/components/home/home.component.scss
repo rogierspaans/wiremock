@@ -13,3 +13,8 @@ nav {
   padding: 0 1rem !important;
   border-bottom: 1px solid $gray-300;
 }
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
