@@ -57,6 +57,7 @@ metadata structure:
 }
 ```
 will create following structure in gui:
+
 ![alt folder-image](./images/folder.png)
 
 ### drag-and-drop
@@ -70,9 +71,11 @@ Since 2.32.0.2
 Allows testing of mappings via an HTTP request. This feature tries to extract url and content-type from mapping information. The prefilled data highly depends on how the request in the mapping is defined.
 
 When executing the request the response is shown and also a badge which indicates if the selected mapping answered the request. If this is the case the following is shown:
+
 ![alt test-match](./images/test-matches.png)
 
 If another mapping answered the request no match is shown and a link to the mapping which answered the request:
+
 ![alt test-no-match](./images/test-no-match.png)
 
 Keep in mind this feature will never be as powerful as tools like Postman, Insomnia, etc. So the overall idea is to provide a quick way to test if your mapping is properly setup.
