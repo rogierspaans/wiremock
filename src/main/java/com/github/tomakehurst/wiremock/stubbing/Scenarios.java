@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Thomas Akehurst
+ * Copyright (C) 2017-2022 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.github.tomakehurst.wiremock.stubbing;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
+import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.jetty9.websockets.Message;
 import com.github.tomakehurst.wiremock.jetty9.websockets.WebSocketEndpoint;
 import com.google.common.base.Function;
@@ -54,7 +55,7 @@ public class Scenarios {
           scenarioMap.get(oldMapping.getScenarioName()).withoutStubMapping(oldMapping);
 
       if (scenarioForOldMapping.getMappings().isEmpty()) {
-        scenarioMap.remove(scenarioForOldMapping.getName());
+        scenarioMap.remove(scenarioForOldMapping.getId());
       } else {
         scenarioMap.put(oldMapping.getScenarioName(), scenarioForOldMapping);
       }
@@ -106,6 +107,24 @@ public class Scenarios {
                 return input.reset();
               }
             }));
+  }
+
+  public void resetSingle(String name) {
+    setSingleScenarioState(name, Scenario::reset);
+  }
+
+  public void setSingle(String name, String state) {
+    setSingleScenarioState(name, scenario -> scenario.setState(state));
+  }
+
+  private void setSingleScenarioState(
+      String name, java.util.function.Function<Scenario, Scenario> fn) {
+    Scenario scenario = scenarioMap.get(name);
+    if (scenario == null) {
+      throw new NotFoundException("Scenario " + name + " does not exist");
+    }
+
+    scenarioMap.replace(name, fn.apply(scenario));
   }
 
   public void clear() {

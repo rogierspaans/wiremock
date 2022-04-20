@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Thomas Akehurst
+ * Copyright (C) 2016-2022 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,11 @@ import com.github.tomakehurst.wiremock.http.multipart.PartParser;
 import com.github.tomakehurst.wiremock.jetty9.JettyUtils;
 import com.google.common.base.*;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 public class WireMockHttpServletRequestAdapter implements Request {
@@ -174,37 +173,28 @@ public class WireMockHttpServletRequestAdapter implements Request {
   @SuppressWarnings("unchecked")
   @Override
   public String getHeader(String key) {
-    List<String> headerNames = list(request.getHeaderNames());
-    for (String currentKey : headerNames) {
-      if (currentKey.equalsIgnoreCase(key)) {
-        return request.getHeader(currentKey);
-      }
-    }
-
-    return null;
+    return request.getHeader(key); // case-insensitive per javadoc
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public HttpHeader header(String key) {
-    List<String> headerNames = list(request.getHeaderNames());
-    for (String currentKey : headerNames) {
-      if (currentKey.equalsIgnoreCase(key)) {
-        List<String> valueList = list(request.getHeaders(currentKey));
-        if (valueList.isEmpty()) {
-          return HttpHeader.empty(key);
-        }
-
-        return new HttpHeader(key, valueList);
+    if (request.getHeader(key) == null) {
+      return HttpHeader.absent(key);
+    } else {
+      List<String> valueList = list(request.getHeaders(key));
+      if (valueList.isEmpty()) {
+        return HttpHeader.empty(key);
       }
-    }
 
-    return HttpHeader.absent(key);
+      return new HttpHeader(key, valueList);
+    }
   }
 
   @Override
   public ContentTypeHeader contentTypeHeader() {
-    return getHeaders().getContentTypeHeader();
+    String firstValue = getHeader(ContentTypeHeader.KEY);
+    return firstValue == null ? ContentTypeHeader.absent() : new ContentTypeHeader(firstValue);
   }
 
   @Override
@@ -214,6 +204,23 @@ public class WireMockHttpServletRequestAdapter implements Request {
 
   @Override
   public HttpHeaders getHeaders() {
+    if (request instanceof org.eclipse.jetty.server.Request) {
+      return getHeadersLinear((org.eclipse.jetty.server.Request) request);
+    } else {
+      return getHeadersQuadratic();
+    }
+  }
+
+  private static HttpHeaders getHeadersLinear(org.eclipse.jetty.server.Request request) {
+    org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request) request;
+    List<HttpHeader> headers =
+        jettyRequest.getHttpFields().stream()
+            .map(field -> HttpHeader.httpHeader(field.getName(), field.getValue()))
+            .collect(Collectors.toList());
+    return new HttpHeaders(headers);
+  }
+
+  private HttpHeaders getHeadersQuadratic() {
     List<HttpHeader> headerList = newArrayList();
     for (String key : getAllHeaderKeys()) {
       headerList.add(header(key));

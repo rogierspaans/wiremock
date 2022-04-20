@@ -15,7 +15,7 @@ plugins {
   id 'idea'
   id 'eclipse'
   id 'project-report'
-  id 'com.diffplug.spotless' version '6.1.2'
+  id 'com.diffplug.spotless' version '6.4.2'
   id 'com.github.johnrengelman.shadow' version '7.1.2'
   id "org.sonarqube" version "3.3"
   id 'jacoco'
@@ -26,10 +26,11 @@ group = 'com.github.tomakehurst'
 project.ext {
   versions = [
     handlebars     : '4.3.0',
-    jetty          : '9.4.44.v20210927',
-    guava          : '31.0.1-jre',
-    jackson        : '2.13.1',
-    xmlUnit        : '2.8.4',
+    jetty          : '9.4.46.v20220331',
+    guava          : '31.1-jre',
+    jackson        : '2.13.2.20220328',
+    xmlUnit        : '2.9.0',
+    jsonUnit       : '2.33.0',
     junitJupiter   : '5.8.2'
   ]
 }
@@ -60,18 +61,18 @@ dependencies {
   api "com.fasterxml.jackson.core:jackson-core",
       "com.fasterxml.jackson.core:jackson-annotations",
       "com.fasterxml.jackson.core:jackson-databind"
-  api "org.apache.httpcomponents.client5:httpclient5:5.1"
+  api "org.apache.httpcomponents.client5:httpclient5:5.1.3"
   api "org.xmlunit:xmlunit-core:$versions.xmlUnit"
   api "org.xmlunit:xmlunit-legacy:$versions.xmlUnit", {
     exclude group: 'junit', module: 'junit'
   }
   api "org.xmlunit:xmlunit-placeholders:$versions.xmlUnit"
-  api 'net.javacrumbs.json-unit:json-unit-core:2.28.0'
-  api "com.jayway.jsonpath:json-path:2.6.0", {
+  api "net.javacrumbs.json-unit:json-unit-core:$versions.jsonUnit"
+  api "com.jayway.jsonpath:json-path:2.7.0", {
     exclude group: 'org.ow2.asm', module: 'asm'
   }
-  api "org.ow2.asm:asm:9.2"
-  api "org.slf4j:slf4j-api:1.7.32"
+  api "org.ow2.asm:asm:9.3"
+  api "org.slf4j:slf4j-api:1.7.36"
   api "net.sf.jopt-simple:jopt-simple:5.0.4"
 
   compileOnly("junit:junit:4.13.2") {
@@ -98,25 +99,25 @@ dependencies {
   testImplementation("org.junit.platform:junit-platform-testkit")
   testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
   testImplementation("org.junit.platform:junit-platform-launcher")
-  testImplementation 'org.mockito:mockito-junit-jupiter:4.1.0'
+  testImplementation 'org.mockito:mockito-junit-jupiter:4.4.0'
 
   testImplementation "org.hamcrest:hamcrest-core:2.2"
   testImplementation "org.hamcrest:hamcrest-library:2.2"
-  testImplementation 'org.mockito:mockito-core:4.2.0'
-  testImplementation 'org.mockito:mockito-junit-jupiter:4.2.0'
-  testImplementation 'net.javacrumbs.json-unit:json-unit:2.28.0'
+  testImplementation 'org.mockito:mockito-core:4.4.0'
+  testImplementation 'org.mockito:mockito-junit-jupiter:4.4.0'
+  testImplementation "net.javacrumbs.json-unit:json-unit:$versions.jsonUnit"
   testImplementation "org.skyscreamer:jsonassert:1.2.3"
   testImplementation 'com.toomuchcoding.jsonassert:jsonassert:0.6.1'
-  testImplementation 'org.awaitility:awaitility:4.1.1'
+  testImplementation 'org.awaitility:awaitility:4.2.0'
   testImplementation "com.googlecode.jarjar:jarjar:1.3"
   testImplementation "commons-io:commons-io:2.10.0"
-  testImplementation 'org.scala-lang:scala-library:2.13.7'
-  testImplementation 'com.tngtech.archunit:archunit-junit5:0.22.0'
+  testImplementation 'org.scala-lang:scala-library:2.13.8'
+  testImplementation 'com.tngtech.archunit:archunit-junit5:0.23.1'
 
   testImplementation "org.eclipse.jetty:jetty-client"
   testImplementation "org.eclipse.jetty.http2:http2-http-client-transport"
 
-  testRuntimeOnly platform("org.apache.logging.log4j:log4j-bom:2.17.1")
+  testRuntimeOnly platform("org.apache.logging.log4j:log4j-bom:2.17.2")
   testRuntimeOnly "org.apache.logging.log4j:log4j-slf4j-impl"
   testRuntimeOnly files('src/test/resources/classpath file source/classpathfiles.zip', 'src/test/resources/classpath-filesource.jar')
 
@@ -126,10 +127,10 @@ dependencies {
     exclude group: 'org.slf4j', module: 'slf4j-api'
     exclude group: 'io.netty', module: 'netty-all'
   }
-  testImplementation "io.netty:netty-all:4.1.72.Final"
+  testImplementation "io.netty:netty-all:4.1.75.Final"
 
   constraints {
-    implementation "net.minidev:json-smart:2.4.7", {
+    implementation "net.minidev:json-smart:2.4.8", {
       because 'Pinning this above the transitive version from json-path to get CVE fix'
     }
   }
@@ -145,6 +146,7 @@ allprojects {
       ratchetFrom 'origin/master'
       trimTrailingWhitespace()
       endWithNewline()
+      targetExclude '**/Tmp*.java'
     }
     groovyGradle {
       target '**/*.gradle'
@@ -155,7 +157,7 @@ allprojects {
     }
     json {
       target 'src/**/*.json'
-      targetExclude 'src/test/resources/sample.json'
+      targetExclude '**/tmp*.json', 'src/test/resources/sample.json', 'src/main/resources/swagger/*.json'
       simple().indentWithSpaces(2)
     }
   }
@@ -168,7 +170,6 @@ allprojects {
 
     pomInfo = {
       name 'WireMock'
-      description 'A web service test double for all occasions'
       url 'http://wiremock.org'
       scm {
         connection 'https://github.com/wiremock/wiremock.git'
@@ -195,7 +196,7 @@ allprojects {
     mavenCentral()
   }
 
-  version = '2.32.0.2'
+  version = '2.33.1'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -254,24 +255,6 @@ task testJar(type: Jar, dependsOn: testClasses) {
 }
 
 final DOCS_DIR = project(':').rootDir.getAbsolutePath() + '/docs-v2'
-task npmInstall(type: Exec) {
-  workingDir DOCS_DIR
-  if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-    commandLine 'cmd', '/c', 'npm', 'i'
-  } else {
-    commandLine 'npm', 'i'
-  }
-}
-
-task generateApiDocs(type: Exec) {
-  dependsOn npmInstall
-  workingDir DOCS_DIR
-  if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-    commandLine 'cmd', '/c', 'npm', 'run', 'apidocs'
-  } else {
-    commandLine 'npm', 'run', 'apidocs'
-  }
-}
 
 jar {
   archiveBaseName.set('wiremock-jre8')
@@ -357,6 +340,7 @@ publishing {
       artifact testJar
 
       pom.withXml {
+        asNode().appendNode('description', 'A web service test double for all occasions')
         asNode().children().last() + pomInfo
       }
     }
@@ -438,12 +422,14 @@ task release {
   dependsOn clean, assemble, publishAllPublicationsToMavenRepository, addGitTag
 }
 
+task localRelease {
+  dependsOn clean, assemble, publishToMavenLocal
+}
+
 task 'bump-patch-version' {
   doLast {
     def filesWithVersion = [
       'build.gradle'                                      : { "version = '${it}" },
-      'docs-v2/_config.yml'                               : { "wiremock_version: ${it}" },
-      'docs-v2/package.json'                              : { "version\": \"${it}\"" },
       'src/main/resources/swagger/wiremock-admin-api.yaml': {
         "version: ${it}" }
     ]
@@ -469,8 +455,6 @@ task 'bump-minor-version' {
   doLast {
     def filesWithVersion = [
       'build.gradle'                                      : { "version = '${it}" },
-      'docs-v2/_config.yml'                               : { "wiremock_version: ${it}" },
-      'docs-v2/package.json'                              : { "version\": \"${it}\"" },
       'src/main/resources/swagger/wiremock-admin-api.yaml': {
         "version: ${it}" }
     ]

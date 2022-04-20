@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Thomas Akehurst
+ * Copyright (C) 2012-2022 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -180,7 +180,8 @@ public class WireMockApp implements StubServer, Admin {
                 options.proxyHostHeader(),
                 globalSettingsHolder,
                 browserProxySettings.trustAllProxyTargets(),
-                browserProxySettings.trustedProxyTargets()),
+                browserProxySettings.trustedProxyTargets(),
+                options.getStubCorsEnabled()),
             ImmutableList.copyOf(options.extensionsOfType(ResponseTransformer.class).values())),
         this,
         postServeActions,
@@ -430,6 +431,16 @@ public class WireMockApp implements StubServer, Admin {
   @Override
   public GetScenariosResult getAllScenarios() {
     return new GetScenariosResult(this.stubMappings.getAllScenarios());
+  }
+
+  @Override
+  public void resetScenario(String name) {
+    scenarios.resetSingle(name);
+  }
+
+  @Override
+  public void setScenarioState(String name, String state) {
+    scenarios.setSingle(name, state);
   }
 
   @Override

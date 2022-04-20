@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Thomas Akehurst
+ * Copyright (C) 2016-2022 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,6 +82,7 @@ public class AdminRoutes {
 
     router.add(GET, "/scenarios", GetAllScenariosTask.class);
     router.add(POST, "/scenarios/reset", ResetScenariosTask.class);
+    router.add(PUT, "/scenarios/{name}/state", SetScenarioStateTask.class);
 
     router.add(GET, "/requests", GetAllRequestsTask.class);
     router.add(DELETE, "/requests", ResetRequestsTask.class);

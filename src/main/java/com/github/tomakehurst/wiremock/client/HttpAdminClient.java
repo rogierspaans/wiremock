@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Thomas Akehurst
+ * Copyright (C) 2011-2022 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -283,6 +283,23 @@ public class HttpAdminClient implements Admin {
     return this.executeRequest(
                 this.adminRoutes.requestSpecForTask(GetAllScenariosTask.class),
                 GetScenariosResult.class);
+  }
+
+  @Override
+  public void resetScenario(String name) {
+    executeRequest(
+        adminRoutes.requestSpecForTask(SetScenarioStateTask.class),
+        PathParams.single("name", name),
+        Void.class);
+  }
+
+  @Override
+  public void setScenarioState(String name, String state) {
+    executeRequest(
+        adminRoutes.requestSpecForTask(SetScenarioStateTask.class),
+        PathParams.single("name", name),
+        new ScenarioState(state),
+        Void.class);
   }
 
   @Override

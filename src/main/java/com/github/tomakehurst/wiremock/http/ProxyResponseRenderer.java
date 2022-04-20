@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Thomas Akehurst
+ * Copyright (C) 2011-2022 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 package com.github.tomakehurst.wiremock.http;
 
 import static com.github.tomakehurst.wiremock.common.HttpClientUtils.getEntityAsByteArrayAndCloseStream;
-import static com.github.tomakehurst.wiremock.http.RequestMethod.PATCH;
-import static com.github.tomakehurst.wiremock.http.RequestMethod.POST;
-import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT;
 import static com.github.tomakehurst.wiremock.http.Response.response;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
@@ -62,6 +59,7 @@ public class ProxyResponseRenderer implements ResponseRenderer {
   private final boolean preserveHostHeader;
   private final String hostHeaderValue;
   private final GlobalSettingsHolder globalSettingsHolder;
+  private final boolean stubCorsEnabled;
 
   public ProxyResponseRenderer(
       ProxySettings proxySettings,
@@ -70,7 +68,8 @@ public class ProxyResponseRenderer implements ResponseRenderer {
       String hostHeaderValue,
       GlobalSettingsHolder globalSettingsHolder,
       boolean trustAllProxyTargets,
-      List<String> trustedProxyTargets) {
+      List<String> trustedProxyTargets,
+      boolean stubCorsEnabled) {
     this.globalSettingsHolder = globalSettingsHolder;
     reverseProxyClient =
         HttpClientFactory.createClient(
@@ -93,6 +92,7 @@ public class ProxyResponseRenderer implements ResponseRenderer {
 
     this.preserveHostHeader = preserveHostHeader;
     this.hostHeaderValue = hostHeaderValue;
+    this.stubCorsEnabled = stubCorsEnabled;
   }
 
   @Override
@@ -101,7 +101,7 @@ public class ProxyResponseRenderer implements ResponseRenderer {
     HttpUriRequest httpRequest = getHttpRequestFor(responseDefinition);
     addRequestHeaders(httpRequest, responseDefinition);
 
-    addBodyIfPostPutOrPatch(httpRequest, responseDefinition);
+    httpRequest.setEntity(buildEntityFrom(responseDefinition.getOriginalRequest()));
     CloseableHttpClient client = buildClient(serveEvent.getRequest().isBrowserProxyRequest());
     try (CloseableHttpResponse httpResponse = client.execute(httpRequest)) {
       return response()
@@ -204,18 +204,10 @@ public class ProxyResponseRenderer implements ResponseRenderer {
     return !FORBIDDEN_REQUEST_HEADERS.contains(key.toLowerCase());
   }
 
-  private static boolean responseHeaderShouldBeTransferred(String key) {
+  private boolean responseHeaderShouldBeTransferred(String key) {
     final String lowerCaseKey = key.toLowerCase();
     return !FORBIDDEN_RESPONSE_HEADERS.contains(lowerCaseKey)
-        && !lowerCaseKey.startsWith("access-control");
-  }
-
-  private static void addBodyIfPostPutOrPatch(
-      ClassicHttpRequest httpRequest, ResponseDefinition response) {
-    Request originalRequest = response.getOriginalRequest();
-    if (originalRequest.getMethod().isOneOf(PUT, POST, PATCH)) {
-      httpRequest.setEntity(buildEntityFrom(originalRequest));
-    }
+        && (!stubCorsEnabled || !lowerCaseKey.startsWith("access-control"));
   }
 
   private static HttpEntity buildEntityFrom(Request originalRequest) {
