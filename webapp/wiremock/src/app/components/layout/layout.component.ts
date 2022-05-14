@@ -143,7 +143,7 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
 
       if (foundIndex > -1) {
         // We need to set it although it is found because the actual object may be replaced
-        this.activeItem = this.filteredItems[foundIndex];
+        this.onActiveItemChange(this.filteredItems[foundIndex]);
       } else {
         this.onActiveItemChange(this.filteredItems[0]);
       }

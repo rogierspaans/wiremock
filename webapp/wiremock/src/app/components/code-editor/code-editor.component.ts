@@ -67,8 +67,12 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   @Input()
   set code(value: string) {
     if (this._code !== value) {
-      // prettify with cast to string. Due to javascript type in-safety
-      this._code = UtilService.prettify(value) + '';
+      if (value === null || typeof value === 'undefined') {
+        this._code = '';
+      } else {
+        // prettify with cast to string. Due to javascript type in-safety
+        this._code = UtilService.prettify(value) + '';
+      }
       this.setEditorValue();
     }
   }
@@ -87,7 +91,7 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
 
   ngOnInit() {
     // debounce fast changes which occur in copy / paste scenarios and make ace crash if value is changed during paste scenario.
-    this.editorChanges.pipe(takeUntil(this.ngUnsubscribe), debounce(() => timer(500)))
+    this.editorChanges.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(value => {
         this._code = value;
         this.valueChange.emit(this._code);
@@ -112,7 +116,7 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   }
 
   private setEditorValue() {
-    if (UtilService.isDefined(this.editor)) {
+    if (UtilService.isDefined(this.editor) && typeof this._code !== 'undefined') {
       this.zone.runOutsideAngular(() => {
         this.editor.setValue(this._code);
         this.editor.selection.clearSelection();

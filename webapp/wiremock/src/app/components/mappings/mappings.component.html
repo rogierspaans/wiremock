@@ -1,4 +1,4 @@
-<wm-layout [items]="result?.mappings" [activeItemId]="activeItemId" (activeItemChange)="onActiveItemChange()"
+<wm-layout [items]="result?.mappings" [activeItemId]="activeItemId" (activeItemChange)="onActiveItemChange($event)"
            [supportsTreeView]="true">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
@@ -96,7 +96,7 @@
         </div>
 
 
-        <button type="button" class="btn btn-secondary" (click)="editMode = State.NORMAL">
+        <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
           <fa-icon icon="times"></fa-icon>
           Cancel
         </button>
@@ -163,7 +163,7 @@
     <wm-raw-separated [separatedDisabled]="!activeItem" [testHidden]="false">
       <wm-raw-separated-raw>
         <wm-code-editor #editor
-                        [code]="editMode === State.NORMAL ? activeItem?.getCode() : editMode === State.NEW ? newMappingText : editMappingText"
+                        [code]="editorText"
                         [language]="'json'" [options]="editMode === State.NORMAL ? codeReadOnlyOptions : codeOptions"
                         (valueChange)="editorValueChange($event)"
                         (window:keydown.control.s)="saveViaKeyboard($event, activeItem)"

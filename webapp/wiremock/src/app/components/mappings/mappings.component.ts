@@ -1,4 +1,4 @@
-import {Component, HostBinding, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostBinding, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {WiremockService} from '../../services/wiremock.service';
 import {ListStubMappingsResult} from '../../model/wiremock/list-stub-mappings-result';
 import {UtilService} from '../../services/util.service';
@@ -19,7 +19,7 @@ import {AutoRefreshService} from '../../services/auto-refresh.service';
   templateUrl: './mappings.component.html',
   styleUrls: [ './mappings.component.scss' ]
 })
-export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
+export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocketListener {
 
   private static COPY_FAILURE = 'Was not able to copy. Details in log';
   private static ACTION_GENERAL_FAILURE = 'Was not able to execute the selected action';
@@ -35,8 +35,8 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   activeItemId: string;
 
-  editMappingText: string;
-  newMappingText: string;
+  editorText: string;
+  currentMappingText: string;
 
   editMode: State;
   State = State;
@@ -113,6 +113,10 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     this.loadMappings();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+  }
+
 
   private loadMappings() {
     this.wiremockService.getProxyConfig().subscribe(proxyData => {
@@ -133,21 +137,20 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   }
 
   editorValueChange(value: string) {
-    if (this.editMode === State.NEW) {
-      this.newMappingText = value;
-    } else if (this.editMode === State.EDIT) {
-      this.editMappingText = value;
-    }
+    this.editorText = value;
   }
 
   newMapping() {
-    this.newMappingText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
+    this.currentMappingText = this.editorText;
+    this.editorText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
+    // this.newMappingText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
+    this.currentMappingText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
     this.editMode = State.NEW;
     this.tabSelectionService.selectTab(Tab.RAW);
   }
 
   saveNewMapping() {
-    this.wiremockService.saveNewMapping(this.editor.getCode()).subscribe(data => {
+    this.wiremockService.saveNewMapping(this.editorText).subscribe(data => {
       this.activeItemId = data.getId();
       this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
     }, err => {
@@ -157,13 +160,14 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   }
 
   editMapping(item: Item) {
-    this.editMappingText = UtilService.prettify(item.getCode());
+    this.currentMappingText = this.editorText;
+    this.editorText = UtilService.prettify(item.getCode());
     this.editMode = State.EDIT;
     this.tabSelectionService.selectTab(Tab.RAW);
   }
 
   saveEditMapping(item: Item) {
-    this.wiremockService.saveMapping(item.getId(), this.editor.getCode()).subscribe(data => {
+    this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe(data => {
       this.activeItemId = data.getId();
       this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
     }, err => {
@@ -172,7 +176,12 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     this.editMode = State.NORMAL;
   }
 
-  onActiveItemChange() {
+  onActiveItemChange(item: Item) {
+    if (item) {
+      this.editorText = item.getCode();
+    } else {
+      this.editorText = '';
+    }
     this.editMode = State.NORMAL;
   }
 
@@ -216,14 +225,6 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     });
   }
 
-  // test(item: StubMapping): void {
-  //   const modalRef = this.modalService.open(MappingTestComponent, {
-  //     size: 'lg',
-  //     windowClass: 'modal-h70'
-  //   });
-  //   modalRef.componentInstance.mapping = item;
-  // }
-
   onMessage(): void {
     this.loadMappings();
   }
@@ -237,12 +238,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   getMappingForHelper(): StubMapping {
     try {
-      switch (this.editMode) {
-        case State.NEW:
-          return JSON.parse(this.newMappingText);
-        case State.EDIT:
-          return JSON.parse(this.editMappingText);
-      }
+      return JSON.parse(this.editorText);
     } catch (err) {
       this.showHelperErrorMessage(err);
     }
@@ -253,14 +249,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       return;
     }
     try {
-      switch (this.editMode) {
-        case State.NEW:
-          this.newMappingText = UtilService.prettify(UtilService.itemModelStringify(mapping));
-          break;
-        case State.EDIT:
-          this.editMappingText = UtilService.prettify(UtilService.itemModelStringify(mapping));
-          break;
-      }
+      this.editorText = UtilService.prettify(UtilService.itemModelStringify(mapping));
     } catch (err) {
       this.showHelperErrorMessage(err);
     }
@@ -374,6 +363,11 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
     $event.stopPropagation();
     return false;
+  }
+
+  cancelEditing() {
+    this.editMode = State.NORMAL;
+    this.editorText = this.currentMappingText;
   }
 }
 
