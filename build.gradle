@@ -196,7 +196,7 @@ allprojects {
     mavenCentral()
   }
 
-  version = '2.33.1'
+  version = '2.33.2'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -375,6 +375,7 @@ task checkReleasePreconditions {
     def REQUIRED_GIT_BRANCH = 'master'
     def currentGitBranch = 'git rev-parse --abbrev-ref HEAD'.execute().text.trim()
     assert currentGitBranch == REQUIRED_GIT_BRANCH, "Must be on the $REQUIRED_GIT_BRANCH branch in order to release to Sonatype"
+    assert JavaVersion.current().isJava8(), 'Must use Java 8 when releasing'
   }
 }
 publish.dependsOn checkReleasePreconditions
@@ -430,6 +431,9 @@ task 'bump-patch-version' {
   doLast {
     def filesWithVersion = [
       'build.gradle'                                      : { "version = '${it}" },
+      'ui/package.json'                                   : { "version: ${it}" },
+      'ui/package-lock.json'                              : { "version: ${it}" },
+      'src/main/resources/swagger/wiremock-admin-api.json': { "version: ${it}" },
       'src/main/resources/swagger/wiremock-admin-api.yaml': {
         "version: ${it}" }
     ]
@@ -455,6 +459,9 @@ task 'bump-minor-version' {
   doLast {
     def filesWithVersion = [
       'build.gradle'                                      : { "version = '${it}" },
+      'ui/package.json'                                   : { "version: ${it}" },
+      'ui/package-lock.json'                              : { "version: ${it}" },
+      'src/main/resources/swagger/wiremock-admin-api.json': { "version: ${it}" },
       'src/main/resources/swagger/wiremock-admin-api.yaml': {
         "version: ${it}" }
     ]
