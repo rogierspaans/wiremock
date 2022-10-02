@@ -18,5 +18,7 @@ export class TabSelectionService {
 }
 
 export enum Tab {
-  RAW, SEPARATED, TEST
+  RAW = 'tab-raw',
+  SEPARATED = 'tab-separated',
+  TEST = 'tab-test'
 }

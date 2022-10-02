@@ -128,6 +128,12 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
     return this._code;
   }
 
+  refresh(): void {
+    if (UtilService.isDefined(this.editor)) {
+      this.setEditorValue();
+    }
+  }
+
   resize(): void {
     if (UtilService.isDefined(this.editor)) {
       this.editor.resize();

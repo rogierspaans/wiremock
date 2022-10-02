@@ -160,7 +160,7 @@
 
 
   <ng-template #content let-activeItem>
-    <wm-raw-separated [separatedDisabled]="!activeItem" [testHidden]="false">
+    <wm-raw-separated [separatedDisabled]="!activeItem" [testHidden]="false" (activeIdChanged)="RAW ? editor.refresh() : ''">
       <wm-raw-separated-raw>
         <wm-code-editor #editor
                         [code]="editorText"

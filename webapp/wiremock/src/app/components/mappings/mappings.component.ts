@@ -95,6 +95,8 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     enableMultiselect: true
   };
 
+  RAW = Tab.RAW;
+
   constructor(private wiremockService: WiremockService, private webSocketService: WebSocketService,
               private messageService: MessageService, private tabSelectionService: TabSelectionService,
               private autoRefreshService: AutoRefreshService) {

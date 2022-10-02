@@ -1,10 +1,10 @@
 import {
   AfterViewInit,
-  Component, ContentChild, ElementRef,
+  Component, ContentChild, ElementRef, EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
-  OnInit,
+  OnInit, Output,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
@@ -12,7 +12,6 @@ import {takeUntil} from 'rxjs/operators';
 import {UtilService} from '../../services/util.service';
 import {Tab, TabSelectionService} from '../../services/tab-selection.service';
 import {Subject} from 'rxjs/internal/Subject';
-import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'wm-raw-separated',
@@ -35,10 +34,17 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   testHidden = true;
 
+  @Output()
+  activeIdChanged = new EventEmitter<Tab>();
+
   @ContentChild('wm-raw-separated-test')
   test: ElementRef;
 
-  activeId = 'tab-raw';
+  activeId = Tab.RAW;
+
+  RAW = Tab.RAW;
+  SEPARATED = Tab.SEPARATED;
+  TEST = Tab.TEST;
 
   constructor(private tabSelectionService: TabSelectionService) {
   }
@@ -46,19 +52,8 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.tabSelectionService.tab$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tabToSelect => {
       if (UtilService.isDefined(tabToSelect)) {
-        switch (tabToSelect) {
-          case Tab.RAW:
-            this.activeId = 'tab-raw';
-            break;
-          case Tab.SEPARATED:
-            this.activeId = 'tab-separated';
-            break;
-          case Tab.TEST:
-            if (!this.testHidden) {
-              this.activeId = 'tab-test';
-              break;
-            }
-        }
+        this.activeId = tabToSelect;
+        this.activeIdChanged.emit(tabToSelect);
       }
     });
   }
@@ -72,4 +67,7 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
   }
 
+  onActiveIdChange($event: Tab) {
+    this.tabSelectionService.selectTab($event);
+  }
 }
