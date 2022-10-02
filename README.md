@@ -93,11 +93,15 @@ Custom Handlebars helpers
 |               | payload       | a json string which contains the content of the jwt. Must not be null in case no claims are defined |
 |               | header        | a json string which contains the header to use |
 
-## Configuration
+## ~~Configuration (deprecated)~~
 Wiremock parameters can be passed via the environment variable WIREMOCK_OPTIONS. The values need to be of the following form:
 ```
 --<param>,--<param>
 ```
+Deprecated use new Configuration options
+## Configuration
+Wiremock parameters can be passed via environment variables. They need to start with ```WIREMOCK_``` and then the wanted wiremock option. E.g. ```WIREMOCK_PORT```.
+
 
 ## Docker Compose
 A short example of a compose file
@@ -112,7 +116,11 @@ services:
       - "8088:8089"
       - "8084:8088"
     environment:
-      WIREMOCK_OPTIONS: "--port=8089,--https-port=8088,--max-request-journal=1000,--local-response-templating,--root-dir=/home/wiremock/storage"
+      WIREMOCK_PORT: 8089
+      WIREMOCK_HTTPS_PORT: 8088
+      WIREMOCK_MAX_REQUEST_JOURNAL: 1000
+      WIREMOCK_LOCAL_RESPONSE_TEMPLATING: 
+      WIREMOCK_ROOT_DIR: /home/wiremock/storage
 ```
 
 ## Images
