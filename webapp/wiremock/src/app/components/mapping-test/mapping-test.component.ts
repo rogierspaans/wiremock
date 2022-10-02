@@ -83,6 +83,7 @@ export class MappingTestComponent implements OnInit, OnChanges {
 
   headerCode: string;
 
+  method = 'GET';
   url = new FormControl();
   language = 'json';
 
@@ -94,6 +95,7 @@ export class MappingTestComponent implements OnInit, OnChanges {
 
   $headerValueChanges = new BehaviorSubject('');
 
+  supportedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'COPY', 'HEAD', 'OPTIONS', 'LINK', 'UNLINK', 'PURGE', 'LOCK', 'UNLOCK', 'PROPFIND', 'VIEW'];
 
   private static contentTypeToLanguage(cT: string) {
     // text/plain;charset=UTF-8
@@ -121,6 +123,8 @@ export class MappingTestComponent implements OnInit, OnChanges {
     if (this.mapping == null) {
       return;
     }
+
+    this.method = this.mapping.request.method;
 
     this.url.setValue(this.getUrl());
 
@@ -186,7 +190,7 @@ export class MappingTestComponent implements OnInit, OnChanges {
 
     const headers: { [header: string]: string | string[] } = {} = this.getHeaders();
 
-    this.wiremockService.test(this.url.value, this.mapping.request.method.toUpperCase(), body, headers).subscribe(resp => {
+    this.wiremockService.test(this.url.value, this.method, body, headers).subscribe(resp => {
       this.handleResponse(resp);
     }, (error: Error) => {
       this.handleErrorResponse(error);
@@ -289,5 +293,9 @@ export class MappingTestComponent implements OnInit, OnChanges {
     } catch (error) {
       // Do nothing
     }
+  }
+
+  setMethod($event: MouseEvent) {
+    this.method = ($event.target as any).innerHTML;
   }
 }
