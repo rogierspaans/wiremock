@@ -30,6 +30,11 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.github.tomakehurst.wiremock.stubbing.StubMappings;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class WireMockServerRunner {
 
@@ -46,14 +51,36 @@ public class WireMockServerRunner {
   private WireMockServer wireMockServer;
 
 	public void run(String... args) {
+      String[] rawOptions = args;
+      final String wiremock_options = System.getenv("WIREMOCK_OPTIONS");
+      out.println("WIREMOCK_OPTIONS is deprecated use WIREMOCK_<wiremock-option-in-capital-letters> instead");
+      if (wiremock_options != null) {
+          rawOptions = wiremock_options.split(",");
+      }
 
-		String[] rawOptions = args;
-		final String wiremock_options = System.getenv("WIREMOCK_OPTIONS");
-		if (wiremock_options != null) {
-			rawOptions = wiremock_options.split(",");
-		}
+      final Map<String, String> environmentVariables = System.getenv();
 
-		CommandLineOptions options = new CommandLineOptions(rawOptions);
+      final List<String> newOptions = new ArrayList<>();
+      environmentVariables.forEach((key, value) -> {
+        if (key.startsWith("WIREMOCK_")) {
+          final String command = key.substring(9).toLowerCase().replaceAll("_","-");
+
+          if (!command.equals("options")) {
+            if (StringUtils.isBlank(value)) {
+              newOptions.add("--" + command);
+            } else {
+              newOptions.add("--" + command + "=" + value);
+            }
+          }
+        }
+      });
+
+      if (newOptions.size() > 0) {
+        out.println("Found new WIREMOCK environment variables. Using those instead.");
+        rawOptions = newOptions.toArray(new String[0]);
+      }
+
+      CommandLineOptions options = new CommandLineOptions(rawOptions);
     if (options.help()) {
       out.println(options.helpText());
       return;
