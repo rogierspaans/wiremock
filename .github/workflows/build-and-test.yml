@@ -21,20 +21,20 @@ jobs:
       JDK_VERSION:  ${{ matrix.jdk }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Set up JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         java-version: ${{ matrix.jdk }}
         distribution: 'temurin'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Set up node using nvm
-      uses: dcodeIO/setup-node-nvm@v4
+      uses: dcodeIO/setup-node-nvm@v5
       with:
-        node-version: 16.13.2
+        node-version: 16.16.0
 
 #    - name: Cache SonarCloud packages
 #      uses: actions/cache@v1
@@ -43,7 +43,7 @@ jobs:
 #        key: ${{ runner.os }}-sonar
 #        restore-keys: ${{ runner.os }}-sonar
     - name: Cache Gradle packages
-      uses: actions/cache@v1
+      uses: actions/cache@v3
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
