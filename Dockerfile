@@ -1,9 +1,9 @@
 FROM eclipse-temurin:17-jre-jammy
 
-RUN apk update && apk upgrade
-RUN apk add curl
+RUN apt-get update && apt-get upgrade
+RUN apt-get install -y curl
 
-RUN adduser -u 1000 -G users -h /home/wiremock -D wiremock
+RUN adduser --uid 1000 --ingroup users --home /home/wiremock wiremock
 
 ARG WIREMOCK_VERSION
 
