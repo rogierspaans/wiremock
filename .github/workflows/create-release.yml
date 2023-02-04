@@ -113,12 +113,12 @@ jobs:
       - name: Test Wiremock Docker image
         run: |
           # latest
-          docker container run -d --name test -p 8080:8080 ${{ matrix.versions.IMAGE }}
+          docker container run -d --name test -p 8080:8080 ${{ matrix.versions.IMAGES[0] }}
           timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/; do sleep 1; done'
           docker container rm -f test
 
           # version
-          docker container run -d --name test -p 8080:8080 ${{ matrix.versions.IMAGE }}:${{ needs.build.outputs.version }}
+          docker container run -d --name test -p 8080:8080 ${{ matrix.versions.IMAGES[1] }}
           timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/; do sleep 1; done'
           docker container rm -f test
 
