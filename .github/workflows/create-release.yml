@@ -82,7 +82,15 @@ jobs:
     strategy:
       matrix:
         versions:
-          - IMAGE: holomekc/wiremock-gui
+          - IMAGES:
+              - holomekc/wiremock-gui:latest-alpine
+              - holomekc/wiremock-gui:${{ needs.build.outputs.version }}-alpine
+            CONTEXT: alpine
+            PLATFORMS: linux/amd64
+          - IMAGES:
+              - holomekc/wiremock-gui:latest
+              - holomekc/wiremock-gui:${{ needs.build.outputs.version }}
+            CONTEXT: .
             PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
     steps:
       - name: Set up Docker Buildx
@@ -100,7 +108,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Wiremock Docker image
-        run: docker buildx build . -t ${{ matrix.versions.IMAGE }} -t ${{ matrix.versions.IMAGE }}:${{ needs.build.outputs.version }} --build-arg WIREMOCK_VERSION=${{ needs.build.outputs.version }} --load
+        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ needs.build.outputs.version }} --load
 
       - name: Test Wiremock Docker image
         run: |
@@ -115,4 +123,4 @@ jobs:
           docker container rm -f test
 
       - name: Push wiremock-gui image to Docker HUB
-        run: docker buildx build . -t ${{ matrix.versions.IMAGE }} -t ${{ matrix.versions.IMAGE }}:${{ needs.build.outputs.version }} --build-arg WIREMOCK_VERSION=${{ needs.build.outputs.version }} --platform ${{ matrix.versions.PLATFORMS }} --push
+        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ needs.build.outputs.version }} --platform ${{ matrix.versions.PLATFORMS }} --push
