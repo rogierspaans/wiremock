@@ -123,6 +123,20 @@ services:
       WIREMOCK_ROOT_DIR: /home/wiremock/storage
 ```
 
+## Docker Images
+[Docker Hub](https://hub.docker.com/r/wiremock/wiremock)
+
+In the past only alpine images existed. New versioning concept is:
+
+holomekc/wiremock-gui:{version} or holomekc/wiremock-gui:latest 
+- linux/amd64
+- linux/arm/v7
+- linux/arm64
+
+holomekc/wiremock-gui:{version}-alpine or holomekc/wiremock-gui:latest-alpine
+- linux/amd64
+
+
 ## Images
 [Mappings](./images/mappings.png)
 
