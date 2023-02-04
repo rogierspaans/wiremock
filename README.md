@@ -124,7 +124,7 @@ services:
 ```
 
 ## Docker Images
-[Docker Hub](https://hub.docker.com/r/wiremock/wiremock)
+[Docker Hub](https://hub.docker.com/r/holomekc/wiremock-gui)
 
 In the past only alpine images existed. New versioning concept is:
 
