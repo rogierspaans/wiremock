@@ -273,6 +273,14 @@ public class WireMockApp implements StubServer, Admin {
     }
 
   @Override
+  public void removeStubMapping(UUID id) {
+    final Optional<StubMapping> maybeStub = stubMappings.get(id);
+    if (maybeStub.isPresent()) {
+      removeStubMapping(maybeStub.get());
+    }
+  }
+
+  @Override
   public void editStubMapping(final StubMapping stubMapping) {
         this.stubMappings.editMapping(stubMapping);
     if (stubMapping.shouldBePersisted()) {

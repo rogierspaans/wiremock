@@ -152,6 +152,14 @@ public class HttpAdminClient implements Admin {
   }
 
   @Override
+  public void removeStubMapping(UUID id) {
+    executeRequest(
+        adminRoutes.requestSpecForTask(RemoveStubMappingTask.class),
+        PathParams.single("id", id),
+        Void.class);
+  }
+
+  @Override
   public ListStubMappingsResult listAllStubMappings() {
     return this.executeRequest(
         this.adminRoutes.requestSpecForTask(GetAllStubMappingsTask.class), ListStubMappingsResult.class);
