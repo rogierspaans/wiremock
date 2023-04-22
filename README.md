@@ -6,7 +6,7 @@ Extends WireMock with a graphical user interface
 - Mappings
   - A paginated list or folder view of all mappings
   - Search for mappings
-  - Add / Edit / Remove new mappings 
+  - Add / Edit / Remove new mappings
   - Add templates directly into mapping (Response Templating, Proxying, etc.)
   - Save / Reset / Remove all mappings
   - Reset all scenarios
@@ -33,7 +33,7 @@ Extends WireMock with a graphical user interface
 - Auto refresh when mappings or requests changes
 
 ## Where do I find the GUI?
-The gui is part of the Wiremock admin interface. Therefore, just open the following URL: 
+The gui is part of the Wiremock admin interface. Therefore, just open the following URL:
 
 \<Wiremock baseUrl\>/__admin/webapp
 
@@ -63,7 +63,7 @@ will create following structure in gui:
 In general functions when editing a mapping you can add the metadata structure via "add Folder".
 
 ### drag-and-drop
-drag-and-drop into folders is currently <b>not</b> supported. It is a more complex topic, as it is currently not possible to sort mappings. 
+drag-and-drop into folders is currently <b>not</b> supported. It is a more complex topic, as it is currently not possible to sort mappings.
 
 There is a branch on which drag-and-drop is implemented. So if you are interested you can test it there. Due to the mentioned not supported sorting mappings might jump to a different location after reloading.
 
@@ -93,17 +93,12 @@ Custom Handlebars helpers
 |               | payload       | a json string which contains the content of the jwt. Must not be null in case no claims are defined |
 |               | header        | a json string which contains the header to use |
 
-## ~~Configuration (deprecated)~~
-Wiremock parameters can be passed via the environment variable WIREMOCK_OPTIONS. The values need to be of the following form:
-```
---<param>,--<param>
-```
-Deprecated use new Configuration options
-## Configuration
-Wiremock parameters can be passed via environment variables. They need to start with ```WIREMOCK_``` and then the wanted wiremock option. E.g. ```WIREMOCK_PORT```.
+## Docker
+### Breaking Change > 2.35.0.1
+The docker images are based on the official [wiremock](https://hub.docker.com/r/wiremock/wiremock) images now.
+Therefore, check the official guide regarding configuration etc. The docker compose example below is alread updated.
 
-
-## Docker Compose
+### Docker Compose
 A short example of a compose file
 ```
 version: "3"
@@ -115,20 +110,20 @@ services:
       # This is just an example of a port mapping
       - "8088:8089"
       - "8084:8088"
+    command:
+      "--port 8089 --https-port 8088 --max-request-journal 1000 --local-response-templating"
+    volumes:
+      - ./root-dir:/home/wiremock
     environment:
-      WIREMOCK_PORT: 8089
-      WIREMOCK_HTTPS_PORT: 8088
-      WIREMOCK_MAX_REQUEST_JOURNAL: 1000
-      WIREMOCK_LOCAL_RESPONSE_TEMPLATING: 
-      WIREMOCK_ROOT_DIR: /home/wiremock/storage
+      WIREMOCK_MY_VAR: "systemValue response templating feature"
 ```
 
-## Docker Images
+### Docker Images
 [Docker Hub](https://hub.docker.com/r/holomekc/wiremock-gui)
 
 In the past only alpine images existed. New versioning concept is:
 
-holomekc/wiremock-gui:{version} or holomekc/wiremock-gui:latest 
+holomekc/wiremock-gui:{version} or holomekc/wiremock-gui:latest
 - linux/amd64
 - linux/arm/v7
 - linux/arm64
@@ -137,7 +132,7 @@ holomekc/wiremock-gui:{version}-alpine or holomekc/wiremock-gui:latest-alpine
 - linux/amd64
 
 
-## Images
+#### Images
 [Mappings](./images/mappings.png)
 
 [Separated View](./images/mappings-separated.png)

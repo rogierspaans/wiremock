@@ -148,10 +148,6 @@
             </button>
           </div>
         </div>
-        <!--        <button type="button" class="btn btn-secondary" (click)="test(activeItem)" [disabled]="!activeItem">-->
-        <!--          <fa-icon icon="play"></fa-icon>-->
-        <!--          Test-->
-        <!--        </button>-->
       </ng-container>
     </div>
 
@@ -160,7 +156,9 @@
 
 
   <ng-template #content let-activeItem>
-    <wm-raw-separated [separatedDisabled]="!activeItem" [testHidden]="false" (activeIdChanged)="RAW ? editor.refresh() : ''">
+    <wm-raw-separated [separatedDisabled]="!activeItem || editMode != NORMAL"
+                      [testDisabled]="!activeItem || editMode != NORMAL"
+                      [testHidden]="editMode == NEW" (activeIdChanged)="RAW ? editor.refresh() : ''">
       <wm-raw-separated-raw>
         <wm-code-editor #editor
                         [code]="editorText"

@@ -32,6 +32,9 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   rawDisabled = false;
 
   @Input()
+  testDisabled = false;
+
+  @Input()
   testHidden = true;
 
   @Output()

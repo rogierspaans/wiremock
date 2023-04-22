@@ -97,6 +97,10 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
 
   RAW = Tab.RAW;
 
+  NEW = State.NEW;
+  NORMAL = State.NORMAL;
+  EDIT = State.EDIT;
+
   constructor(private wiremockService: WiremockService, private webSocketService: WebSocketService,
               private messageService: MessageService, private tabSelectionService: TabSelectionService,
               private autoRefreshService: AutoRefreshService) {
@@ -116,7 +120,6 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
   }
 
 
@@ -144,11 +147,9 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
 
   newMapping() {
     this.currentMappingText = this.editorText;
-    this.editorText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
-    // this.newMappingText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
-    this.currentMappingText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
     this.editMode = State.NEW;
     this.tabSelectionService.selectTab(Tab.RAW);
+    this.editorText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
   }
 
   saveNewMapping() {

@@ -39,48 +39,19 @@ import java.util.Map;
 public class WireMockServerRunner {
 
   private static final String BANNER =
-      " /$$      /$$ /$$                     /$$      /$$                     /$$      \n"
-          + "| $$  /$ | $$|__/                    | $$$    /$$$                    | $$      \n"
-          + "| $$ /$$$| $$ /$$  /$$$$$$   /$$$$$$ | $$$$  /$$$$  /$$$$$$   /$$$$$$$| $$   /$$\n"
-          + "| $$/$$ $$ $$| $$ /$$__  $$ /$$__  $$| $$ $$/$$ $$ /$$__  $$ /$$_____/| $$  /$$/\n"
-          + "| $$$$_  $$$$| $$| $$  \\__/| $$$$$$$$| $$  $$$| $$| $$  \\ $$| $$      | $$$$$$/ \n"
-          + "| $$$/ \\  $$$| $$| $$      | $$_____/| $$\\  $ | $$| $$  | $$| $$      | $$_  $$ \n"
-          + "| $$/   \\  $$| $$| $$      |  $$$$$$$| $$ \\/  | $$|  $$$$$$/|  $$$$$$$| $$ \\  $$\n"
-          + "|__/     \\__/|__/|__/       \\_______/|__/     |__/ \\______/  \\_______/|__/  \\__/";
+    " /$$      /$$ /$$                     /$$      /$$                     /$$      \n"
+      + "| $$  /$ | $$|__/                    | $$$    /$$$                    | $$      \n"
+      + "| $$ /$$$| $$ /$$  /$$$$$$   /$$$$$$ | $$$$  /$$$$  /$$$$$$   /$$$$$$$| $$   /$$\n"
+      + "| $$/$$ $$ $$| $$ /$$__  $$ /$$__  $$| $$ $$/$$ $$ /$$__  $$ /$$_____/| $$  /$$/\n"
+      + "| $$$$_  $$$$| $$| $$  \\__/| $$$$$$$$| $$  $$$| $$| $$  \\ $$| $$      | $$$$$$/ \n"
+      + "| $$$/ \\  $$$| $$| $$      | $$_____/| $$\\  $ | $$| $$  | $$| $$      | $$_  $$ \n"
+      + "| $$/   \\  $$| $$| $$      |  $$$$$$$| $$ \\/  | $$|  $$$$$$/|  $$$$$$$| $$ \\  $$\n"
+      + "|__/     \\__/|__/|__/       \\_______/|__/     |__/ \\______/  \\_______/|__/  \\__/";
 
   private WireMockServer wireMockServer;
 
-	public void run(String... args) {
-      String[] rawOptions = args;
-      final String wiremock_options = System.getenv("WIREMOCK_OPTIONS");
-      out.println("WIREMOCK_OPTIONS is deprecated use WIREMOCK_<wiremock-option-in-capital-letters> instead");
-      if (wiremock_options != null) {
-          rawOptions = wiremock_options.split(",");
-      }
-
-      final Map<String, String> environmentVariables = System.getenv();
-
-      final List<String> newOptions = new ArrayList<>();
-      environmentVariables.forEach((key, value) -> {
-        if (key.startsWith("WIREMOCK_")) {
-          final String command = key.substring(9).toLowerCase().replaceAll("_","-");
-
-          if (!command.equals("options")) {
-            if (StringUtils.isBlank(value)) {
-              newOptions.add("--" + command);
-            } else {
-              newOptions.add("--" + command + "=" + value);
-            }
-          }
-        }
-      });
-
-      if (newOptions.size() > 0) {
-        out.println("Found new WIREMOCK environment variables. Using those instead.");
-        rawOptions = newOptions.toArray(new String[0]);
-      }
-
-      CommandLineOptions options = new CommandLineOptions(rawOptions);
+  public void run(String... args) {
+    CommandLineOptions options = new CommandLineOptions(args);
     if (options.help()) {
       out.println(options.helpText());
       return;
@@ -131,18 +102,18 @@ public class WireMockServerRunner {
 
   private void addProxyMapping(final String baseUrl) {
     wireMockServer.loadMappingsUsing(
-        new MappingsLoader() {
-          @Override
-          public void loadMappingsInto(StubMappings stubMappings) {
-            RequestPattern requestPattern = newRequestPattern(ANY, anyUrl()).build();
-            ResponseDefinition responseDef = responseDefinition().proxiedFrom(baseUrl).build();
+      new MappingsLoader() {
+        @Override
+        public void loadMappingsInto(StubMappings stubMappings) {
+          RequestPattern requestPattern = newRequestPattern(ANY, anyUrl()).build();
+          ResponseDefinition responseDef = responseDefinition().proxiedFrom(baseUrl).build();
 
-            StubMapping proxyBasedMapping = new StubMapping(requestPattern, responseDef);
-            proxyBasedMapping.setPriority(
-                10); // Make it low priority so that existing stubs will take precedence
-            stubMappings.addMapping(proxyBasedMapping);
-          }
-        });
+          StubMapping proxyBasedMapping = new StubMapping(requestPattern, responseDef);
+          proxyBasedMapping.setPriority(
+            10); // Make it low priority so that existing stubs will take precedence
+          stubMappings.addMapping(proxyBasedMapping);
+        }
+      });
   }
 
   public void stop() {
