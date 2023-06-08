@@ -1,7 +1,8 @@
 FROM wiremock/wiremock:latest-alpine
 
 # Update again in case we need to update before wiremock image is updated
-RUN apt-get update && apt-get upgrade -y
+RUN apk update && apk upgrade
+RUN apk add curl
 
 ARG WIREMOCK_VERSION
 
