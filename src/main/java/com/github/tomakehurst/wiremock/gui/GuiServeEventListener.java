@@ -25,6 +25,6 @@ public class GuiServeEventListener implements ServeEventListener {
 
   @Override
   public String getName() {
-    return EXTENSION_NAME;
+    return "wiremock-gui";
   }
 }
