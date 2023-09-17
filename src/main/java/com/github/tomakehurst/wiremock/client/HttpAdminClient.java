@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Thomas Akehurst
+ * Copyright (C) 2011-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,15 @@ package com.github.tomakehurst.wiremock.client;
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 import static com.github.tomakehurst.wiremock.common.HttpClientUtils.getEntityAsStringAndCloseStream;
 import static com.github.tomakehurst.wiremock.security.NoClientAuthenticator.noClientAuthenticator;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 import static org.apache.hc.core5.http.HttpHeaders.HOST;
 
 import com.github.tomakehurst.wiremock.admin.*;
 import com.github.tomakehurst.wiremock.admin.model.*;
 import com.github.tomakehurst.wiremock.admin.tasks.*;
 import com.github.tomakehurst.wiremock.common.*;
+import com.github.tomakehurst.wiremock.common.url.PathParams;
+import com.github.tomakehurst.wiremock.common.url.QueryParams;
 import com.github.tomakehurst.wiremock.core.Admin;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -49,6 +51,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -114,7 +117,7 @@ public class HttpAdminClient implements Admin {
         this.hostHeader = hostHeader;
         this.authenticator = authenticator;
 
-    this.adminRoutes = AdminRoutes.defaults();
+    this.adminRoutes = AdminRoutes.forClient();
 
     this.httpClient = HttpClientFactory.createClient(this.createProxySettings(proxyHost, proxyPort));
   }
@@ -142,19 +145,22 @@ public class HttpAdminClient implements Admin {
   }
 
   @Override
-  public void editStubMapping(final StubMapping stubMapping) {
-        this.postJsonAssertOkAndReturnBody(this.urlFor(OldEditStubMappingTask.class), Json.write(stubMapping));
+  public void editStubMapping(StubMapping stubMapping) {
+    putJsonAssertOkAndReturnBody(
+        urlFor(EditStubMappingTask.class, PathParams.single("id", stubMapping.getId().toString())),
+        Json.write(stubMapping));
   }
 
   @Override
-  public void removeStubMapping(final StubMapping stubbMapping) {
-        this.postJsonAssertOkAndReturnBody(this.urlFor(OldRemoveStubMappingTask.class), Json.write(stubbMapping));
+  public void removeStubMapping(StubMapping stubbMapping) {
+        this.postJsonAssertOkAndReturnBody(
+        this.urlFor(RemoveMatchingStubMappingTask.class), Json.write(stubbMapping));
   }
 
   @Override
   public void removeStubMapping(UUID id) {
     executeRequest(
-        adminRoutes.requestSpecForTask(RemoveStubMappingTask.class),
+        adminRoutes.requestSpecForTask(RemoveStubMappingByIdTask.class),
         PathParams.single("id", id),
         Void.class);
   }
@@ -166,8 +172,7 @@ public class HttpAdminClient implements Admin {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  public SingleStubMappingResult getStubMapping(final UUID id) {
+  public SingleStubMappingResult getStubMapping(UUID id) {
         return this.executeRequest(
         this.adminRoutes.requestSpecForTask(GetStubMappingTask.class),
         PathParams.single("id", id),
@@ -456,6 +461,15 @@ public class HttpAdminClient implements Admin {
             post.setEntity(HttpAdminClient.jsonStringEntity(json));
     }
 
+    return safelyExecuteRequest(url, post);
+  }
+
+  private String putJsonAssertOkAndReturnBody(String url, String json) {
+    HttpPut post = new HttpPut(url);
+    if (json != null) {
+      post.setEntity(jsonStringEntity(json));
+    }
+
     return this.safelyExecuteRequest(url, post);
   }
 
@@ -546,9 +560,14 @@ public class HttpAdminClient implements Admin {
     }
   }
 
-  private String urlFor(final Class<? extends AdminTask> taskClass) {
-        final RequestSpec requestSpec = this.adminRoutes.requestSpecForTask(taskClass);
-    checkNotNull(requestSpec, "No admin task URL is registered for " + taskClass.getSimpleName());
-    return String.format(HttpAdminClient.ADMIN_URL_PREFIX + requestSpec.path(), this.scheme, this.host, this.port, this.urlPathPrefix);
+  private String urlFor(Class<? extends AdminTask> taskClass) {
+    return urlFor(taskClass, PathParams.empty());
+  }
+
+  private String urlFor(Class<? extends AdminTask> taskClass, PathParams pathParams) {
+    RequestSpec requestSpec = adminRoutes.requestSpecForTask(taskClass);
+    requireNonNull(requestSpec, "No admin task URL is registered for " + taskClass.getSimpleName());
+    return String.format(
+        ADMIN_URL_PREFIX + requestSpec.path(pathParams), scheme, host, port, urlPathPrefix);
   }
 }

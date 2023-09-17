@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Thomas Akehurst
+ * Copyright (C) 2011-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.github.tomakehurst.wiremock;
 
+import static com.github.tomakehurst.wiremock.common.ParameterUtils.checkState;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.google.common.base.Preconditions.checkState;
 
 import com.github.tomakehurst.wiremock.admin.model.*;
 import com.github.tomakehurst.wiremock.client.CountMatchingStrategy;
@@ -29,7 +29,6 @@ import com.github.tomakehurst.wiremock.core.Container;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockApp;
 import com.github.tomakehurst.wiremock.global.GlobalSettings;
-import com.github.tomakehurst.wiremock.global.GlobalSettingsHolder;
 import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.HttpServerFactory;
 import com.github.tomakehurst.wiremock.http.RequestListener;
@@ -43,6 +42,7 @@ import com.github.tomakehurst.wiremock.recording.RecordSpecBuilder;
 import com.github.tomakehurst.wiremock.recording.RecordingStatusResult;
 import com.github.tomakehurst.wiremock.recording.SnapshotRecordResult;
 import com.github.tomakehurst.wiremock.standalone.MappingsLoader;
+import com.github.tomakehurst.wiremock.store.files.FileSourceBlobStore;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.github.tomakehurst.wiremock.stubbing.StubImport;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -118,22 +118,23 @@ public class WireMockServer implements Container, Stubbing, Admin {
         this(wireMockConfig());
     }
 
-    public void loadMappingsUsing(final MappingsLoader mappingsLoader) {
+    public WireMockServer(String filenameTemplate) {
+    this(wireMockConfig().filenameTemplate(filenameTemplate));
+  }public void loadMappingsUsing(final MappingsLoader mappingsLoader) {
         this.wireMockApp.loadMappingsUsing(mappingsLoader);
     }
 
-  public GlobalSettingsHolder getGlobalSettingsHolder() {
-    return this.wireMockApp.getGlobalSettingsHolder();
+  public void addMockServiceRequestListener(RequestListener listener) {
+    stubRequestHandler.addRequestListener(listener);
   }
-
-  public void addMockServiceRequestListener(final RequestListener listener) {
-        this.stubRequestHandler.addRequestListener(listener);
-    }
 
     public void enableRecordMappings(final FileSource mappingsFileSource, final FileSource filesFileSource) {
         this.addMockServiceRequestListener(
         new StubMappingJsonRecorder(
-            mappingsFileSource, filesFileSource, this.wireMockApp, this.options.matchingHeaders()));
+            new FileSourceBlobStore(mappingsFileSource),
+            new FileSourceBlobStore(filesFileSource),
+            this.wireMockApp,
+            this.options.matchingHeaders()));
     this.notifier.info("Recording mappings to " + mappingsFileSource.getPath());
     }
 
@@ -158,20 +159,18 @@ public class WireMockServer implements Container, Stubbing, Admin {
   @Override
   public void shutdown() {
     final WireMockServer server = this;
-    final Thread shutdownThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                  // We have to sleep briefly to finish serving the shutdown request before stopping
-                  // the server, as
-                  // there's no support in Jetty for shutting down after the current request.
-                  // See http://stackoverflow.com/questions/4650713
-                  Thread.sleep(100);
-                } catch (final InterruptedException e) {
+    final Thread shutdownThread = new Thread(() -> {
+              try {
+                // We have to sleep briefly to finish serving the shutdown request before stopping
+                // the server, as
+                // there's no support in Jetty for shutting down after the current request.
+                // See http://stackoverflow.com/questions/4650713
+                Thread.sleep(100);
+              } catch (final InterruptedException e) {
                   throw new RuntimeException(e);
                 }
                 server.stop();
-              }
+
             });
     shutdownThread.start();
   }
