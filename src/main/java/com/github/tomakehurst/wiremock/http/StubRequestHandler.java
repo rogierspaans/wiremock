@@ -25,8 +25,6 @@ import com.github.tomakehurst.wiremock.core.StubServer;
 import com.github.tomakehurst.wiremock.extension.*;
 import com.github.tomakehurst.wiremock.extension.requestfilter.RequestFilter;
 import com.github.tomakehurst.wiremock.extension.requestfilter.RequestFilterV2;
-import com.github.tomakehurst.wiremock.jetty.websockets.Message;
-import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.github.tomakehurst.wiremock.stubbing.SubEvent;
 import com.github.tomakehurst.wiremock.verification.RequestJournal;
@@ -88,13 +86,6 @@ public class StubRequestHandler extends AbstractRequestHandler {
     }
 
     requestJournal.requestReceived(serveEvent);
-
-    if (serveEvent.getWasMatched()) {
-      WebSocketEndpoint.broadcast(Message.MATCHED);
-    } else {
-      WebSocketEndpoint.broadcast(Message.UNMATCHED);
-    }
-
     triggerListeners(BEFORE_RESPONSE_SENT, serveEvent);
   }
 
