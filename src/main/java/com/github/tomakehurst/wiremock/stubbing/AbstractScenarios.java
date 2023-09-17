@@ -19,6 +19,8 @@ import static com.github.tomakehurst.wiremock.common.ParameterUtils.getFirstNonN
 import static java.util.stream.Collectors.toList;
 
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
+import com.github.tomakehurst.wiremock.jetty.websockets.Message;
+import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.store.ScenariosStore;
 import java.util.List;
 
@@ -106,6 +108,7 @@ public abstract class AbstractScenarios implements Scenarios {
           && (mapping.getRequiredScenarioState() == null
               || scenario.getState().equals(mapping.getRequiredScenarioState()))) {
         Scenario newScenario = scenario.setState(mapping.getNewScenarioState());
+        WebSocketEndpoint.broadcast(Message.SCENARIO);
         store.put(scenarioName, newScenario);
       }
     }
