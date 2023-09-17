@@ -55,9 +55,9 @@ public class Webhooks extends PostServeAction {
   private final TemplateEngine templateEngine;
 
   private Webhooks(
-    ScheduledExecutorService scheduler,
-    CloseableHttpClient httpClient,
-    List<WebhookTransformer> transformers) {
+      ScheduledExecutorService scheduler,
+      CloseableHttpClient httpClient,
+      List<WebhookTransformer> transformers) {
     this.scheduler = scheduler;
     this.httpClient = httpClient;
     this.transformers = transformers;
@@ -84,23 +84,23 @@ public class Webhooks extends PostServeAction {
 
   private static CloseableHttpClient createHttpClient(NetworkAddressRules targetAddressRules) {
     return HttpClientBuilder.create()
-      .disableAuthCaching()
-      .disableAutomaticRetries()
-      .disableCookieManagement()
-      .disableRedirectHandling()
-      .disableContentCompression()
-      .setConnectionManager(
-        PoolingHttpClientConnectionManagerBuilder.create()
-          .setDnsResolver(new NetworkAddressRulesAdheringDnsResolver(targetAddressRules))
-          .setDefaultSocketConfig(
-            SocketConfig.custom().setSoTimeout(Timeout.ofMilliseconds(30000)).build())
-          .setMaxConnPerRoute(1000)
-          .setMaxConnTotal(1000)
-          .setValidateAfterInactivity(TimeValue.ofSeconds(5)) // TODO Verify duration
-          .build())
-      .setConnectionReuseStrategy((request, response, context) -> false)
-      .setKeepAliveStrategy((response, context) -> TimeValue.ZERO_MILLISECONDS)
-      .build();
+        .disableAuthCaching()
+        .disableAutomaticRetries()
+        .disableCookieManagement()
+        .disableRedirectHandling()
+        .disableContentCompression()
+        .setConnectionManager(
+            PoolingHttpClientConnectionManagerBuilder.create()
+                .setDnsResolver(new NetworkAddressRulesAdheringDnsResolver(targetAddressRules))
+                .setDefaultSocketConfig(
+                    SocketConfig.custom().setSoTimeout(Timeout.ofMilliseconds(30000)).build())
+                .setMaxConnPerRoute(1000)
+                .setMaxConnTotal(1000)
+                .setValidateAfterInactivity(TimeValue.ofSeconds(5)) // TODO Verify duration
+                .build())
+        .setConnectionReuseStrategy((request, response, context) -> false)
+        .setKeepAliveStrategy((response, context) -> TimeValue.ZERO_MILLISECONDS)
+        .build();
   }
 
   @Override
@@ -110,7 +110,7 @@ public class Webhooks extends PostServeAction {
 
   @Override
   public void doAction(
-    final ServeEvent serveEvent, final Admin admin, final Parameters parameters) {
+      final ServeEvent serveEvent, final Admin admin, final Parameters parameters) {
     final Notifier notifier = notifier();
 
     WebhookDefinition definition;
@@ -129,58 +129,58 @@ public class Webhooks extends PostServeAction {
 
     final WebhookDefinition finalDefinition = definition;
     scheduler.schedule(
-      () -> {
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-          notifier.info(
-            String.format(
-              "Webhook %s request to %s returned status %s\n\n%s",
-              finalDefinition.getMethod(),
-              finalDefinition.getUrl(),
-              response.getCode(),
-              EntityUtils.toString(response.getEntity())));
-        } catch (ProhibitedNetworkAddressException e) {
-          notifier.error("The target webhook address is denied in WireMock's configuration.");
-        } catch (Exception e) {
-          notifier.error(
-            String.format(
-              "Failed to fire webhook %s %s",
-              finalDefinition.getMethod(), finalDefinition.getUrl()),
-            e);
-        }
-      },
-      finalDefinition.getDelaySampleMillis(),
-      MILLISECONDS);
+        () -> {
+          try (CloseableHttpResponse response = httpClient.execute(request)) {
+            notifier.info(
+                String.format(
+                    "Webhook %s request to %s returned status %s\n\n%s",
+                    finalDefinition.getMethod(),
+                    finalDefinition.getUrl(),
+                    response.getCode(),
+                    EntityUtils.toString(response.getEntity())));
+          } catch (ProhibitedNetworkAddressException e) {
+            notifier.error("The target webhook address is denied in WireMock's configuration.");
+          } catch (Exception e) {
+            notifier.error(
+                String.format(
+                    "Failed to fire webhook %s %s",
+                    finalDefinition.getMethod(), finalDefinition.getUrl()),
+                e);
+          }
+        },
+        finalDefinition.getDelaySampleMillis(),
+        MILLISECONDS);
   }
 
   private WebhookDefinition applyTemplating(
-    WebhookDefinition webhookDefinition, ServeEvent serveEvent) {
+      WebhookDefinition webhookDefinition, ServeEvent serveEvent) {
 
     final Map<String, Object> model = new HashMap<>();
     model.put(
-      "parameters",
-      webhookDefinition.getExtraParameters() != null
-        ? webhookDefinition.getExtraParameters()
-        : Collections.<String, Object>emptyMap());
+        "parameters",
+        webhookDefinition.getExtraParameters() != null
+            ? webhookDefinition.getExtraParameters()
+            : Collections.<String, Object>emptyMap());
     model.put("originalRequest", RequestTemplateModel.from(serveEvent.getRequest()));
 
     WebhookDefinition renderedWebhookDefinition =
-      webhookDefinition
-        .withUrl(renderTemplate(model, webhookDefinition.getUrl()))
-        .withMethod(renderTemplate(model, webhookDefinition.getMethod()))
-        .withHeaders(
-          webhookDefinition.getHeaders().all().stream()
-            .map(
-              header ->
-                new HttpHeader(
-                  header.key(),
-                  header.values().stream()
-                    .map(value -> renderTemplate(model, value))
-                    .collect(toList())))
-            .collect(toList()));
+        webhookDefinition
+            .withUrl(renderTemplate(model, webhookDefinition.getUrl()))
+            .withMethod(renderTemplate(model, webhookDefinition.getMethod()))
+            .withHeaders(
+                webhookDefinition.getHeaders().all().stream()
+                    .map(
+                        header ->
+                            new HttpHeader(
+                                header.key(),
+                                header.values().stream()
+                                    .map(value -> renderTemplate(model, value))
+                                    .collect(toList())))
+                    .collect(toList()));
 
     if (webhookDefinition.getBody() != null) {
       renderedWebhookDefinition =
-        webhookDefinition.withBody(renderTemplate(model, webhookDefinition.getBody()));
+          webhookDefinition.withBody(renderTemplate(model, webhookDefinition.getBody()));
     }
 
     return renderedWebhookDefinition;
@@ -192,7 +192,7 @@ public class Webhooks extends PostServeAction {
 
   private static ClassicHttpRequest buildRequest(WebhookDefinition definition) {
     final ClassicRequestBuilder requestBuilder =
-      ClassicRequestBuilder.create(definition.getMethod()).setUri(definition.getUrl());
+        ClassicRequestBuilder.create(definition.getMethod()).setUri(definition.getUrl());
 
     for (HttpHeader header : definition.getHeaders().all()) {
       for (String value : header.values()) {
@@ -202,7 +202,7 @@ public class Webhooks extends PostServeAction {
 
     if (definition.getRequestMethod().hasEntity() && definition.hasBody()) {
       requestBuilder.setEntity(
-        new ByteArrayEntity(definition.getBinaryBody(), ContentType.DEFAULT_BINARY));
+          new ByteArrayEntity(definition.getBinaryBody(), ContentType.DEFAULT_BINARY));
     }
 
     return requestBuilder.build();
