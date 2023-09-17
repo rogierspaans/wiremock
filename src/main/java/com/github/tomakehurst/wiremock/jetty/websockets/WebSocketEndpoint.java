@@ -1,7 +1,7 @@
-package com.github.tomakehurst.wiremock.jetty9.websockets;
+package com.github.tomakehurst.wiremock.jetty.websockets;
 
-import javax.websocket.*;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.websocket.*;
+import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

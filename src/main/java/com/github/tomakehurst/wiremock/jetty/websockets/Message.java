@@ -1,4 +1,4 @@
-package com.github.tomakehurst.wiremock.jetty9.websockets;
+package com.github.tomakehurst.wiremock.jetty.websockets;
 
 /**
  * @author Christopher Holomek

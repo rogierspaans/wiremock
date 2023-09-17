@@ -2,8 +2,8 @@ package com.github.tomakehurst.wiremock.core;
 
 import com.github.tomakehurst.wiremock.admin.model.SingleStubMappingResult;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
-import com.github.tomakehurst.wiremock.jetty9.websockets.Message;
-import com.github.tomakehurst.wiremock.jetty9.websockets.WebSocketEndpoint;
+import com.github.tomakehurst.wiremock.jetty.websockets.Message;
+import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import java.util.HashMap;

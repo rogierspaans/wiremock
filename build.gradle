@@ -52,7 +52,7 @@ dependencies {
   api "org.eclipse.jetty:jetty-alpn-java-server"
   api "org.eclipse.jetty:jetty-alpn-java-client"
   api "org.eclipse.jetty:jetty-alpn-client"
-  api "org.eclipse.jetty.websocket:javax-websocket-server-impl"
+  api "org.eclipse.jetty.websocket:websocket-jakarta-server"
 
   api "io.jsonwebtoken:jjwt-api:0.10.6"
   api "io.jsonwebtoken:jjwt-impl:0.10.6"

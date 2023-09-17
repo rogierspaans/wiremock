@@ -23,11 +23,8 @@ import com.github.tomakehurst.wiremock.common.filemaker.FilenameMaker;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.github.tomakehurst.wiremock.stubbing.StubMappingCollection;
 import com.github.tomakehurst.wiremock.stubbing.StubMappings;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JsonFileMappingsSource implements MappingsSource {
@@ -63,7 +60,7 @@ public class JsonFileMappingsSource implements MappingsSource {
             // TODO: This allows async between folder definition and actual file. Not sure if good or bad yet.
             final String folderDefinition = getFolderDefinition(stubMapping);
             if (folderDefinition != null) {
-                fileMetadata = new StubMappingFileMetadata(folderDefinition.replaceFirst("/", "") + "/" + SafeNames.makeSafeFileName(stubMapping), false);
+                fileMetadata = new StubMappingFileMetadata(folderDefinition.replaceFirst("/", "") + "/" + filenameMaker.filenameFor(stubMapping), false);
             } else {
                 fileMetadata = new StubMappingFileMetadata(filenameMaker.filenameFor(stubMapping), false);
             }

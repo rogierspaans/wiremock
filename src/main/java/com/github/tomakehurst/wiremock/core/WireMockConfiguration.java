@@ -23,19 +23,7 @@ import static com.github.tomakehurst.wiremock.http.CaseInsensitiveKey.TO_CASE_IN
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-import com.github.tomakehurst.wiremock.common.AsynchronousResponseSettings;
-import com.github.tomakehurst.wiremock.common.BrowserProxySettings;
-import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
-import com.github.tomakehurst.wiremock.common.DataTruncationSettings;
-import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.common.HttpsSettings;
-import com.github.tomakehurst.wiremock.common.JettySettings;
-import com.github.tomakehurst.wiremock.common.Limit;
-import com.github.tomakehurst.wiremock.common.NetworkAddressRules;
-import com.github.tomakehurst.wiremock.common.Notifier;
-import com.github.tomakehurst.wiremock.common.ProxySettings;
-import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
-import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
+import com.github.tomakehurst.wiremock.common.*;
 import com.github.tomakehurst.wiremock.common.filemaker.FilenameMaker;
 import com.github.tomakehurst.wiremock.common.ssl.KeyStoreSettings;
 import com.github.tomakehurst.wiremock.common.ssl.KeyStoreSourceFactory;
@@ -373,7 +361,9 @@ public class WireMockConfiguration implements Options {
   }
 
   @Deprecated
-  /** @deprecated use {@link #maxRequestJournalEntries(int)} instead */
+  /**
+   * @deprecated use {@link #maxRequestJournalEntries(int)} instead
+   */
   public WireMockConfiguration maxRequestJournalEntries(
       Optional<Integer> maxRequestJournalEntries) {
     this.maxRequestJournalEntries = maxRequestJournalEntries;
@@ -517,22 +507,6 @@ public class WireMockConfiguration implements Options {
     return this;
   }
 
-  public WireMockConfiguration disableOptimizeXmlFactoriesLoading(
-      boolean disableOptimizeXmlFactoriesLoading) {
-    this.disableOptimizeXmlFactoriesLoading = disableOptimizeXmlFactoriesLoading;
-    return this;
-  }
-
-  public WireMockConfiguration maxLoggedResponseSize(int maxSize) {
-    this.responseBodySizeLimit = new Limit(maxSize);
-    return this;
-  }
-
-  public WireMockConfiguration limitProxyTargets(NetworkAddressRules proxyTargetRules) {
-    this.proxyTargetRules = proxyTargetRules;
-    return this;
-  }
-
   public WireMockConfiguration proxyTimeout(int proxyTimeout) {
     this.proxyTimeout = proxyTimeout;
     return this;
@@ -555,6 +529,11 @@ public class WireMockConfiguration implements Options {
 
   public WireMockConfiguration withTemplateEscapingDisabled(boolean templateEscapingDisabled) {
     this.templateEscapingDisabled = templateEscapingDisabled;
+    return this;
+  }
+
+  public WireMockConfiguration withMaxTemplateCacheEntries(Long maxTemplateCacheEntries) {
+    this.maxTemplateCacheEntries = maxTemplateCacheEntries;
     return this;
   }
 

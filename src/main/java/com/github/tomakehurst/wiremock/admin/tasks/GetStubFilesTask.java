@@ -24,17 +24,17 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.tomakehurst.wiremock.admin.AdminTask;
-import com.github.tomakehurst.wiremock.admin.model.PathParams;
+import com.github.tomakehurst.wiremock.common.url.PathParams;
 import com.github.tomakehurst.wiremock.common.Errors;
 import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.common.TextFile;
 import com.github.tomakehurst.wiremock.core.Admin;
-import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 
 public class GetStubFilesTask implements AdminTask {
     @Override
-    public ResponseDefinition execute(final Admin admin, final Request request, final PathParams pathParams) {
+    public ResponseDefinition execute(final Admin admin, final ServeEvent serveEvent, final PathParams pathParams) {
         try {
             final FileSource fileSource = admin.getOptions().filesRoot().child(FILES_ROOT);
             final TextFile textFile = fileSource.getTextFileNamed(pathParams.get("0"));

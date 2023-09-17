@@ -27,7 +27,7 @@ import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.RequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.http.trafficlistener.WiremockNetworkTrafficListener;
-import com.github.tomakehurst.wiremock.jetty9.websockets.WebSocketEndpoint;
+import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.servlet.*;
 import com.google.common.io.Resources;
 import jakarta.servlet.DispatcherType;
@@ -59,7 +59,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
 
 public abstract class JettyHttpServer implements HttpServer {
@@ -364,25 +364,25 @@ public abstract class JettyHttpServer implements HttpServer {
     ServletHolder webapp = adminContext.addServlet(DefaultServlet.class, "/webapp/*");
     webapp.setAsyncSupported(false);
 
-        WebSocketServerContainerInitializer.configure(adminContext, (servletContext, serverContainer) -> {
-            serverContainer.addEndpoint(WebSocketEndpoint.class);
-        });
+    JakartaWebSocketServletContainerInitializer.configure(adminContext,(servletContext, serverContainer) -> {
+      serverContainer.addEndpoint(WebSocketEndpoint.class);
+    });
 
-        final RewriteHandler rewrite = new RewriteHandler();
-        rewrite.setRewriteRequestURI(true);
-        rewrite.setRewritePathInfo(true);
+    final RewriteHandler rewrite = new RewriteHandler();
+    rewrite.setRewriteRequestURI(true);
+    rewrite.setRewritePathInfo(true);
 
-        RewriteRegexRule rewriteRule = new RewriteRegexRule();
-        rewriteRule.setRegex("/webapp/(mappings|matched|unmatched|state).*");
-        rewriteRule.setReplacement("/index.html");
-        rewrite.addRule(rewriteRule);
+    RewriteRegexRule rewriteRule = new RewriteRegexRule();
+    rewriteRule.setRegex("/webapp/(mappings|matched|unmatched|state).*");
+    rewriteRule.setReplacement("/index.html");
+    rewrite.addRule(rewriteRule);
 
-        adminContext.insertHandler(rewrite);
+    adminContext.insertHandler(rewrite);
 
-        ServletHolder servletHolder = adminContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
-        servletHolder.setInitParameter(RequestHandler.HANDLER_CLASS_KEY, AdminRequestHandler.class.getName());
-        adminContext.setAttribute(AdminRequestHandler.class.getName(), adminRequestHandler);
-        adminContext.setAttribute(Notifier.KEY, notifier);
+    ServletHolder servletHolder = adminContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
+    servletHolder.setInitParameter(RequestHandler.HANDLER_CLASS_KEY, AdminRequestHandler.class.getName());
+    adminContext.setAttribute(AdminRequestHandler.class.getName(), adminRequestHandler);
+    adminContext.setAttribute(Notifier.KEY, notifier);
 
     adminContext.setAttribute(MultipartRequestConfigurer.KEY, buildMultipartRequestConfigurer());
 
