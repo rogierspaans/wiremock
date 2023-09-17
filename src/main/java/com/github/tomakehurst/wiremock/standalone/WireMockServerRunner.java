@@ -35,18 +35,18 @@ import java.io.PrintStream;
 public class WireMockServerRunner {
 
   private static final String BANNER =
-    "\n"
-      + "\u001B[34m██     ██ ██ ██████  ███████ \u001B[33m███    ███  ██████   ██████ ██   ██ \n"
+      "\n"
+          + "\u001B[34m██     ██ ██ ██████  ███████ \u001B[33m███    ███  ██████   ██████ ██   ██ \n"
           + "\u001B[34m██     ██ ██ ██   ██ ██      \u001B[33m████  ████ ██    ██ ██      ██  ██  \n"
           + "\u001B[34m██  █  ██ ██ ██████  █████   \u001B[33m██ ████ ██ ██    ██ ██      █████   \n"
           + "\u001B[34m██ ███ ██ ██ ██   ██ ██      \u001B[33m██  ██  ██ ██    ██ ██      ██  ██  \n"
           + "\u001B[34m ███ ███  ██ ██   ██ ███████ \u001B[33m██      ██  ██████   ██████ ██   ██ \n"
-      + "\n\u001B[0m"
-      + "----------------------------------------------------------------\n"
-      + "|               Cloud: https://wiremock.io/cloud               |\n"
-      + "|                                                              |\n"
-      + "|               Slack: https://slack.wiremock.org              |\n"
-      + "----------------------------------------------------------------";
+          + "\n\u001B[0m"
+          + "----------------------------------------------------------------\n"
+          + "|               Cloud: https://wiremock.io/cloud               |\n"
+          + "|                                                              |\n"
+          + "|               Slack: https://slack.wiremock.org              |\n"
+          + "----------------------------------------------------------------";
 
   private WireMockServer wireMockServer;
 
@@ -130,16 +130,15 @@ public class WireMockServerRunner {
 
   private void addProxyMapping(final String baseUrl) {
     wireMockServer.loadMappingsUsing(
-       stubMappings -> {
+        stubMappings -> {
           RequestPattern requestPattern = newRequestPattern(ANY, anyUrl()).build();
           ResponseDefinition responseDef = responseDefinition().proxiedFrom(baseUrl).build();
 
           StubMapping proxyBasedMapping = new StubMapping(requestPattern, responseDef);
           proxyBasedMapping.setPriority(
-            10); // Make it low priority so that existing stubs will take precedence
+              10); // Make it low priority so that existing stubs will take precedence
           stubMappings.addMapping(proxyBasedMapping);
-        }
-      );
+        });
   }
 
   public void stop() {

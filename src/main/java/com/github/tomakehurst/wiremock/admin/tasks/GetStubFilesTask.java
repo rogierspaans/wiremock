@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Thomas Akehurst
+ * Copyright (C) 2011-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,25 @@ package com.github.tomakehurst.wiremock.admin.tasks;
 
 import static com.github.tomakehurst.wiremock.core.WireMockApp.FILES_ROOT;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.github.tomakehurst.wiremock.admin.AdminTask;
-import com.github.tomakehurst.wiremock.common.url.PathParams;
 import com.github.tomakehurst.wiremock.common.Errors;
 import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.common.TextFile;
+import com.github.tomakehurst.wiremock.common.url.PathParams;
 import com.github.tomakehurst.wiremock.core.Admin;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 
 public class GetStubFilesTask implements AdminTask {
-    @Override
-    public ResponseDefinition execute(final Admin admin, final ServeEvent serveEvent, final PathParams pathParams) {
-        try {
-            final FileSource fileSource = admin.getOptions().filesRoot().child(FILES_ROOT);
-            final TextFile textFile = fileSource.getTextFileNamed(pathParams.get("0"));
-            return ResponseDefinition.okForJson(textFile.readContentsAsString());
-        } catch (final Exception e) {
-            return ResponseDefinition.badRequest(Errors.single(60, "Could not find specified file."));
-        }
+  @Override
+  public ResponseDefinition execute(
+      final Admin admin, final ServeEvent serveEvent, final PathParams pathParams) {
+    try {
+      final FileSource fileSource = admin.getOptions().filesRoot().child(FILES_ROOT);
+      final TextFile textFile = fileSource.getTextFileNamed(pathParams.get("0"));
+      return ResponseDefinition.okForJson(textFile.readContentsAsString());
+    } catch (final Exception e) {
+      return ResponseDefinition.badRequest(Errors.single(60, "Could not find specified file."));
     }
+  }
 }

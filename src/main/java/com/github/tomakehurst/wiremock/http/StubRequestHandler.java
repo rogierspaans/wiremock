@@ -35,12 +35,12 @@ import java.util.Map;
 
 public class StubRequestHandler extends AbstractRequestHandler {
 
-    private final StubServer stubServer;
-    private final Admin admin;
-    private final Map<String, PostServeAction> postServeActions;
-    private final Map<String, ServeEventListener> serveEventListeners;
+  private final StubServer stubServer;
+  private final Admin admin;
+  private final Map<String, PostServeAction> postServeActions;
+  private final Map<String, ServeEventListener> serveEventListeners;
   private final RequestJournal requestJournal;
-    private final boolean loggingDisabled;
+  private final boolean loggingDisabled;
 
   private final NotMatchedRenderer notMatchedRenderer;
 
@@ -74,10 +74,10 @@ public class StubRequestHandler extends AbstractRequestHandler {
     return serveEvent;
   }
 
-    @Override
-    protected boolean logRequests() {
-        return !loggingDisabled;
-    }
+  @Override
+  protected boolean logRequests() {
+    return !loggingDisabled;
+  }
 
   @Override
   protected void beforeResponseSent(ServeEvent serveEvent, Response response) {

@@ -41,10 +41,8 @@ import com.github.tomakehurst.wiremock.store.SettingsStore;
 import com.github.tomakehurst.wiremock.store.Stores;
 import com.github.tomakehurst.wiremock.stubbing.*;
 import com.github.tomakehurst.wiremock.verification.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 public class WireMockApp implements StubServer, Admin {
@@ -91,38 +89,38 @@ public class WireMockApp implements StubServer, Admin {
     this.settingsStore = stores.getSettingsStore();
 
     extensions =
-      new Extensions(
-        options.getDeclaredExtensions(),
-        this,
-        options,
-        stores,
-        options.filesRoot().child(FILES_ROOT));
+        new Extensions(
+            options.getDeclaredExtensions(),
+            this,
+            options,
+            stores,
+            options.filesRoot().child(FILES_ROOT));
     extensions.load();
 
     Map<String, RequestMatcherExtension> customMatchers =
-      extensions.ofType(RequestMatcherExtension.class);
+        extensions.ofType(RequestMatcherExtension.class);
 
     requestJournal =
-      options.requestJournalDisabled()
-        ? new DisabledRequestJournal()
-        : new StoreBackedRequestJournal(
-        options.maxRequestJournalEntries().orElse(null),
-        customMatchers,
-        stores.getRequestJournalStore());
+        options.requestJournalDisabled()
+            ? new DisabledRequestJournal()
+            : new StoreBackedRequestJournal(
+                options.maxRequestJournalEntries().orElse(null),
+                customMatchers,
+                stores.getRequestJournalStore());
 
     scenarios = new InMemoryScenarios(stores.getScenariosStore());
     stubMappings =
-      new StoreBackedStubMappings(
-        stores.getStubStore(),
-        scenarios,
-        customMatchers,
-        extensions.ofType(ResponseDefinitionTransformer.class),
-        extensions.ofType(ResponseDefinitionTransformerV2.class),
-        stores.getFilesBlobStore(),
-        List.copyOf(extensions.ofType(StubLifecycleListener.class).values()));
+        new StoreBackedStubMappings(
+            stores.getStubStore(),
+            scenarios,
+            customMatchers,
+            extensions.ofType(ResponseDefinitionTransformer.class),
+            extensions.ofType(ResponseDefinitionTransformerV2.class),
+            stores.getFilesBlobStore(),
+            List.copyOf(extensions.ofType(StubLifecycleListener.class).values()));
     nearMissCalculator = new NearMissCalculator(stubMappings, requestJournal, scenarios);
     recorder =
-      new Recorder(this, extensions, stores.getFilesBlobStore(), stores.getRecorderStateStore());
+        new Recorder(this, extensions, stores.getFilesBlobStore(), stores.getRecorderStateStore());
     globalSettingsListeners = List.copyOf(extensions.ofType(GlobalSettingsListener.class).values());
 
     this.container = container;
@@ -130,16 +128,16 @@ public class WireMockApp implements StubServer, Admin {
   }
 
   public WireMockApp(
-    boolean browserProxyingEnabled,
-    MappingsLoader defaultMappingsLoader,
-    MappingsSaver mappingsSaver,
-    boolean requestJournalDisabled,
-    Integer maxRequestJournalEntries,
-    Map<String, ResponseDefinitionTransformer> transformers,
-    Map<String, ResponseDefinitionTransformerV2> v2transformers,
-    Map<String, RequestMatcherExtension> requestMatchers,
-    FileSource rootFileSource,
-    Container container) {
+      boolean browserProxyingEnabled,
+      MappingsLoader defaultMappingsLoader,
+      MappingsSaver mappingsSaver,
+      boolean requestJournalDisabled,
+      Integer maxRequestJournalEntries,
+      Map<String, ResponseDefinitionTransformer> transformers,
+      Map<String, ResponseDefinitionTransformerV2> v2transformers,
+      Map<String, RequestMatcherExtension> requestMatchers,
+      FileSource rootFileSource,
+      Container container) {
 
     this.proxyHandler = new ProxyHandler(this);
 
@@ -150,102 +148,104 @@ public class WireMockApp implements StubServer, Admin {
     this.mappingsSaver = mappingsSaver;
     this.settingsStore = stores.getSettingsStore();
     requestJournal =
-      requestJournalDisabled
-        ? new DisabledRequestJournal()
-        : new StoreBackedRequestJournal(
-        maxRequestJournalEntries, requestMatchers, stores.getRequestJournalStore());
+        requestJournalDisabled
+            ? new DisabledRequestJournal()
+            : new StoreBackedRequestJournal(
+                maxRequestJournalEntries, requestMatchers, stores.getRequestJournalStore());
     scenarios = new InMemoryScenarios(stores.getScenariosStore());
     stubMappings =
-      new StoreBackedStubMappings(
-        stores.getStubStore(),
-        scenarios,
-        requestMatchers,
-        transformers,
-        v2transformers,
-        stores.getFilesBlobStore(),
-        Collections.emptyList());
+        new StoreBackedStubMappings(
+            stores.getStubStore(),
+            scenarios,
+            requestMatchers,
+            transformers,
+            v2transformers,
+            stores.getFilesBlobStore(),
+            Collections.emptyList());
     this.container = container;
     nearMissCalculator = new NearMissCalculator(stubMappings, requestJournal, scenarios);
     recorder =
-      new Recorder(this, extensions, stores.getFilesBlobStore(), stores.getRecorderStateStore());
+        new Recorder(this, extensions, stores.getFilesBlobStore(), stores.getRecorderStateStore());
     globalSettingsListeners = Collections.emptyList();
     loadDefaultMappings();
   }
 
   public AdminRequestHandler buildAdminRequestHandler() {
     AdminRoutes adminRoutes =
-      AdminRoutes.forServer(extensions.ofType(AdminApiExtension.class).values(), stores);
+        AdminRoutes.forServer(extensions.ofType(AdminApiExtension.class).values(), stores);
     return new AdminRequestHandler(
-      adminRoutes,
-      this,
-      new BasicResponseRenderer(),
-      options.getAdminAuthenticator(),
-      options.getHttpsRequiredForAdminApi(),
-      getAdminRequestFilters(),
-      getV2AdminRequestFilters(),
-      options.getDataTruncationSettings());
+        adminRoutes,
+        this,
+        new BasicResponseRenderer(),
+        options.getAdminAuthenticator(),
+        options.getHttpsRequiredForAdminApi(),
+        getAdminRequestFilters(),
+        getV2AdminRequestFilters(),
+        options.getDataTruncationSettings());
   }
 
   public StubRequestHandler buildStubRequestHandler() {
     Map<String, PostServeAction> postServeActions = extensions.ofType(PostServeAction.class);
 
-    Map<String, ServeEventListener> concatenatedMap = new HashMap<>(extensions.ofType(ServeEventListener.class));
+    Map<String, ServeEventListener> concatenatedMap =
+        new HashMap<>(extensions.ofType(ServeEventListener.class));
     concatenatedMap.put("wiremock-gui", new GuiServeEventListener());
 
-    Map<String, ServeEventListener> serveEventListeners = Collections.unmodifiableMap(concatenatedMap);
+    Map<String, ServeEventListener> serveEventListeners =
+        Collections.unmodifiableMap(concatenatedMap);
 
     BrowserProxySettings browserProxySettings = options.browserProxySettings();
     return new StubRequestHandler(
-      this,
-      new StubResponseRenderer(
-        options.getStores().getFilesBlobStore(),
-        settingsStore,
-        new ProxyResponseRenderer(
-          options.proxyVia(),
-          options.httpsSettings().trustStore(),
-          options.shouldPreserveHostHeader(),
-          options.proxyHostHeader(),
-          settingsStore,
-          browserProxySettings.trustAllProxyTargets(),
-          browserProxySettings.trustedProxyTargets(),
-          options.getStubCorsEnabled(),
-          options.getProxyTargetRules(),
-          options.proxyTimeout()),
-        List.copyOf(extensions.ofType(ResponseTransformer.class).values()),
-        List.copyOf(extensions.ofType(ResponseTransformerV2.class).values())),
-      this,
-      postServeActions,
-      serveEventListeners,
-      requestJournal,
-      getStubRequestFilters(),
-      getV2StubRequestFilters(),
-      options.getStubRequestLoggingDisabled(),
-      options.getDataTruncationSettings(),
-      options.getNotMatchedRendererFactory().apply(extensions));
+        this,
+        new StubResponseRenderer(
+            options.getStores().getFilesBlobStore(),
+            settingsStore,
+            new ProxyResponseRenderer(
+                options.proxyVia(),
+                options.httpsSettings().trustStore(),
+                options.shouldPreserveHostHeader(),
+                options.proxyHostHeader(),
+                settingsStore,
+                browserProxySettings.trustAllProxyTargets(),
+                browserProxySettings.trustedProxyTargets(),
+                options.getStubCorsEnabled(),
+                options.getProxyTargetRules(),
+                options.proxyTimeout()),
+            List.copyOf(extensions.ofType(ResponseTransformer.class).values()),
+            List.copyOf(extensions.ofType(ResponseTransformerV2.class).values())),
+        this,
+        postServeActions,
+        serveEventListeners,
+        requestJournal,
+        getStubRequestFilters(),
+        getV2StubRequestFilters(),
+        options.getStubRequestLoggingDisabled(),
+        options.getDataTruncationSettings(),
+        options.getNotMatchedRendererFactory().apply(extensions));
   }
 
   private List<RequestFilter> getAdminRequestFilters() {
     return extensions.ofType(RequestFilter.class).values().stream()
-      .filter(RequestFilter::applyToAdmin)
-      .collect(Collectors.toList());
+        .filter(RequestFilter::applyToAdmin)
+        .collect(Collectors.toList());
   }
 
   private List<RequestFilterV2> getV2AdminRequestFilters() {
     return extensions.ofType(RequestFilterV2.class).values().stream()
-      .filter(RequestFilterV2::applyToAdmin)
-      .collect(Collectors.toList());
+        .filter(RequestFilterV2::applyToAdmin)
+        .collect(Collectors.toList());
   }
 
   private List<RequestFilter> getStubRequestFilters() {
     return extensions.ofType(RequestFilter.class).values().stream()
-      .filter(RequestFilter::applyToStubs)
-      .collect(Collectors.toList());
+        .filter(RequestFilter::applyToStubs)
+        .collect(Collectors.toList());
   }
 
   private List<RequestFilterV2> getV2StubRequestFilters() {
     return extensions.ofType(RequestFilterV2.class).values().stream()
-      .filter(RequestFilterV2::applyToStubs)
-      .collect(Collectors.toList());
+        .filter(RequestFilterV2::applyToStubs)
+        .collect(Collectors.toList());
   }
 
   private void loadDefaultMappings() {
@@ -261,11 +261,11 @@ public class WireMockApp implements StubServer, Admin {
     ServeEvent serveEvent = stubMappings.serveFor(initialServeEvent);
 
     if (serveEvent.isNoExactMatch()
-      && browserProxyingEnabled
-      && serveEvent.getRequest().isBrowserProxyRequest()
-      && getGlobalSettings().getSettings().getProxyPassThrough()) {
+        && browserProxyingEnabled
+        && serveEvent.getRequest().isBrowserProxyRequest()
+        && getGlobalSettings().getSettings().getProxyPassThrough()) {
       return ServeEvent.ofUnmatched(
-        serveEvent.getRequest(), ResponseDefinition.browserProxy(serveEvent.getRequest()));
+          serveEvent.getRequest(), ResponseDefinition.browserProxy(serveEvent.getRequest()));
     }
 
     return serveEvent;
@@ -288,13 +288,13 @@ public class WireMockApp implements StubServer, Admin {
   @Override
   public void removeStubMapping(StubMapping stubMapping) {
     stubMappings
-      .get(stubMapping.getId())
-      .ifPresent(
-        stubToDelete -> {
-          if (stubToDelete.shouldBePersisted()) {
-            mappingsSaver.remove(stubToDelete);
-          }
-        });
+        .get(stubMapping.getId())
+        .ifPresent(
+            stubToDelete -> {
+              if (stubToDelete.shouldBePersisted()) {
+                mappingsSaver.remove(stubToDelete);
+              }
+            });
 
     stubMappings.removeMapping(stubMapping);
 
@@ -387,7 +387,7 @@ public class WireMockApp implements StubServer, Admin {
       return GetServeEventsResult.requestJournalEnabled(LimitAndOffsetPaginator.none(serveEvents));
     } catch (RequestJournalDisabledException e) {
       return GetServeEventsResult.requestJournalDisabled(
-        LimitAndOffsetPaginator.none(requestJournal.getAllServeEvents()));
+          LimitAndOffsetPaginator.none(requestJournal.getAllServeEvents()));
     }
   }
 
@@ -399,7 +399,8 @@ public class WireMockApp implements StubServer, Admin {
   @Override
   public VerificationResult countRequestsMatching(final RequestPattern requestPattern) {
     try {
-      return VerificationResult.withCount(this.requestJournal.countRequestsMatching(requestPattern));
+      return VerificationResult.withCount(
+          this.requestJournal.countRequestsMatching(requestPattern));
     } catch (final RequestJournalDisabledException e) {
       return VerificationResult.withRequestJournalDisabled();
     }
@@ -419,10 +420,10 @@ public class WireMockApp implements StubServer, Admin {
   public FindRequestsResult findUnmatchedRequests() {
     try {
       List<LoggedRequest> requests =
-        requestJournal.getAllServeEvents().stream()
-          .filter(ServeEvent::isNoExactMatch)
-          .map(ServeEvent::getRequest)
-          .collect(Collectors.toList());
+          requestJournal.getAllServeEvents().stream()
+              .filter(ServeEvent::isNoExactMatch)
+              .map(ServeEvent::getRequest)
+              .collect(Collectors.toList());
       return FindRequestsResult.withRequests(requests);
     } catch (RequestJournalDisabledException e) {
       return FindRequestsResult.withRequestJournalDisabled();
@@ -441,18 +442,18 @@ public class WireMockApp implements StubServer, Admin {
 
   @Override
   public FindServeEventsResult removeServeEventsForStubsMatchingMetadata(
-    StringValuePattern metadataPattern) {
+      StringValuePattern metadataPattern) {
     return new FindServeEventsResult(
-      requestJournal.removeServeEventsForStubsMatchingMetadata(metadataPattern));
+        requestJournal.removeServeEventsForStubsMatchingMetadata(metadataPattern));
   }
 
   @Override
   public FindNearMissesResult findNearMissesForUnmatchedRequests() {
     List<NearMiss> nearMisses = new ArrayList<>();
     List<ServeEvent> unmatchedServeEvents =
-      requestJournal.getAllServeEvents().stream()
-        .filter(ServeEvent::isNoExactMatch)
-        .collect(Collectors.toList());
+        requestJournal.getAllServeEvents().stream()
+            .filter(ServeEvent::isNoExactMatch)
+            .collect(Collectors.toList());
 
     for (final ServeEvent serveEvent : unmatchedServeEvents) {
       nearMisses.addAll(this.nearMissCalculator.findNearestTo(serveEvent.getRequest()));
@@ -591,7 +592,7 @@ public class WireMockApp implements StubServer, Admin {
   @Override
   public ListStubMappingsResult findAllStubsByMetadata(final StringValuePattern pattern) {
     return new ListStubMappingsResult(
-      LimitAndOffsetPaginator.none(this.stubMappings.findByMetadata(pattern)));
+        LimitAndOffsetPaginator.none(this.stubMappings.findByMetadata(pattern)));
   }
 
   @Override
@@ -606,7 +607,7 @@ public class WireMockApp implements StubServer, Admin {
   public void importStubs(StubImport stubImport) {
     List<StubMapping> mappings = stubImport.getMappings();
     StubImport.Options importOptions =
-      getFirstNonNull(stubImport.getImportOptions(), StubImport.Options.DEFAULTS);
+        getFirstNonNull(stubImport.getImportOptions(), StubImport.Options.DEFAULTS);
 
     for (int i = mappings.size() - 1; i >= 0; i--) {
       StubMapping mapping = mappings.get(i);

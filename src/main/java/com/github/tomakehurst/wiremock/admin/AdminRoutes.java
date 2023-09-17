@@ -118,7 +118,7 @@ public class AdminRoutes {
     router.add(GET, "/proxy", GetProxyConfigTask.class);
     router.add(PUT, "/proxy/{id}", EnableProxyTask.class);
     router.add(DELETE, "/proxy/{id}", DisableProxyTask.class);
-    }
+  }
 
   protected void initAdditionalRoutes(final Router routeBuilder) {
     for (final AdminApiExtension apiExtension : this.apiExtensions) {
@@ -153,22 +153,24 @@ public class AdminRoutes {
 
     @Override
     public void add(
-        final RequestMethod method, final String urlTemplate, final Class<? extends AdminTask> taskClass) {
-            try {
-                final AdminTask task = taskClass.getDeclaredConstructor().newInstance();
+        final RequestMethod method,
+        final String urlTemplate,
+        final Class<? extends AdminTask> taskClass) {
+      try {
+        final AdminTask task = taskClass.getDeclaredConstructor().newInstance();
         this.add(requestSpec(method, urlTemplate), task);
       } catch (final Exception e) {
-                throwUnchecked(e);
-            }
-        }
+        throwUnchecked(e);
+      }
+    }
 
     @Override
     public void add(final RequestMethod method, final String urlTemplate, final AdminTask task) {
-            this.add(requestSpec(method, urlTemplate), task);
+      this.add(requestSpec(method, urlTemplate), task);
     }
 
     public void add(final RequestSpec requestSpec, final AdminTask task) {
-            this.builder.put(requestSpec, task);
+      this.builder.put(requestSpec, task);
     }
 
     ImmutableBiMap<RequestSpec, AdminTask> build() {

@@ -30,39 +30,41 @@ import java.util.UUID;
 
 public interface Admin {
 
-    void addStubMapping(StubMapping stubMapping);
+  void addStubMapping(StubMapping stubMapping);
 
-    void editStubMapping(StubMapping stubMapping);
+  void editStubMapping(StubMapping stubMapping);
 
-    void removeStubMapping(StubMapping stubbMapping);
+  void removeStubMapping(StubMapping stubbMapping);
 
-    void removeStubMapping(UUID id);
+  void removeStubMapping(UUID id);
 
   ListStubMappingsResult listAllStubMappings();
 
-    SingleStubMappingResult getStubMapping(UUID id);
+  SingleStubMappingResult getStubMapping(UUID id);
 
-    void saveMappings();
+  void saveMappings();
 
-    void resetRequests();
+  void resetRequests();
 
-    void resetScenarios();
+  void resetScenarios();
 
-    void resetMappings();
+  void resetMappings();
 
-    void resetAll();
+  void resetAll();
 
-    void resetToDefaultMappings();
+  void resetToDefaultMappings();
 
-    GetServeEventsResult getServeEvents();
+  GetServeEventsResult getServeEvents();
 
-  GetServeEventsResult getServeEvents(ServeEventQuery query);  SingleServedStubResult getServedStub(UUID id);
+  GetServeEventsResult getServeEvents(ServeEventQuery query);
 
-    VerificationResult countRequestsMatching(RequestPattern requestPattern);
+  SingleServedStubResult getServedStub(UUID id);
 
-    FindRequestsResult findRequestsMatching(RequestPattern requestPattern);
+  VerificationResult countRequestsMatching(RequestPattern requestPattern);
 
-    FindRequestsResult findUnmatchedRequests();
+  FindRequestsResult findRequestsMatching(RequestPattern requestPattern);
+
+  FindRequestsResult findUnmatchedRequests();
 
   void removeServeEvent(UUID eventId);
 
@@ -70,11 +72,11 @@ public interface Admin {
 
   FindServeEventsResult removeServeEventsForStubsMatchingMetadata(StringValuePattern pattern);
 
-    FindNearMissesResult findTopNearMissesFor(LoggedRequest loggedRequest);
+  FindNearMissesResult findTopNearMissesFor(LoggedRequest loggedRequest);
 
-    FindNearMissesResult findTopNearMissesFor(RequestPattern requestPattern);
+  FindNearMissesResult findTopNearMissesFor(RequestPattern requestPattern);
 
-    FindNearMissesResult findNearMissesForUnmatchedRequests();
+  FindNearMissesResult findNearMissesForUnmatchedRequests();
 
   GetScenariosResult getAllScenarios();
 
@@ -84,21 +86,21 @@ public interface Admin {
 
   void updateGlobalSettings(GlobalSettings settings);
 
-    SnapshotRecordResult snapshotRecord();
+  SnapshotRecordResult snapshotRecord();
 
-    SnapshotRecordResult snapshotRecord(RecordSpec spec);
+  SnapshotRecordResult snapshotRecord(RecordSpec spec);
 
-    SnapshotRecordResult snapshotRecord(RecordSpecBuilder spec);
+  SnapshotRecordResult snapshotRecord(RecordSpecBuilder spec);
 
-    void startRecording(String targetBaseUrl);
+  void startRecording(String targetBaseUrl);
 
-    void startRecording(RecordSpec spec);
+  void startRecording(RecordSpec spec);
 
-    void startRecording(RecordSpecBuilder recordSpec);
+  void startRecording(RecordSpecBuilder recordSpec);
 
-    SnapshotRecordResult stopRecording();
+  SnapshotRecordResult stopRecording();
 
-    RecordingStatusResult getRecordingStatus();
+  RecordingStatusResult getRecordingStatus();
 
   Options getOptions();
 
@@ -106,13 +108,13 @@ public interface Admin {
 
   ProxyConfig getProxyConfig();
 
-    void enableProxy(UUID id);
+  void enableProxy(UUID id);
 
-    void disableProxy(UUID id);
+  void disableProxy(UUID id);
 
-    ListStubMappingsResult findAllStubsByMetadata(StringValuePattern pattern);
+  ListStubMappingsResult findAllStubsByMetadata(StringValuePattern pattern);
 
-    void removeStubsByMetadata(StringValuePattern pattern);
+  void removeStubsByMetadata(StringValuePattern pattern);
 
   void importStubs(StubImport stubImport);
 

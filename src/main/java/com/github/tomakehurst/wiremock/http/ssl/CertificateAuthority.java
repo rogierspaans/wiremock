@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Thomas Akehurst
+ * Copyright (C) 2020-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,8 +76,11 @@ public class CertificateAuthority {
   }
 
   private static X509CertImpl selfSign(X509CertInfo info, PrivateKey privateKey, String sigAlg)
-      throws CertificateException, NoSuchAlgorithmException, InvalidKeyException,
-          NoSuchProviderException, SignatureException {
+      throws CertificateException,
+          NoSuchAlgorithmException,
+          InvalidKeyException,
+          NoSuchProviderException,
+          SignatureException {
     X509CertImpl certificate = new X509CertImpl(info);
     certificate.sign(privateKey, sigAlg);
     return certificate;
@@ -151,8 +154,12 @@ public class CertificateAuthority {
   }
 
   private X509CertImpl sign(X509CertInfo info)
-      throws CertificateException, IOException, NoSuchAlgorithmException, InvalidKeyException,
-          NoSuchProviderException, SignatureException {
+      throws CertificateException,
+          IOException,
+          NoSuchAlgorithmException,
+          InvalidKeyException,
+          NoSuchProviderException,
+          SignatureException {
     X509Certificate issuerCertificate = certificateChain[0];
     info.set(X509CertInfo.ISSUER, issuerCertificate.getSubjectDN());
 

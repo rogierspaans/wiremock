@@ -617,12 +617,7 @@ public class EqualToJsonTest {
 
     assertThat(match.getSubEvents().size(), is(1));
     Errors.Error error =
-        match.getSubEvents().stream()
-            .findFirst()
-            .get()
-            .getDataAs(Errors.class)
-            .getErrors()
-            .stream()
+        match.getSubEvents().stream().findFirst().get().getDataAs(Errors.class).getErrors().stream()
             .findFirst()
             .get();
     assertThat(error.getDetail(), startsWith("Unexpected end-of-input"));

@@ -84,7 +84,9 @@ public class MultipartBodyMatchingAcceptanceTest extends AcceptanceTestBase {
     assertThat(response.getCode(), is(404));
   }
 
-  /** @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a> */
+  /**
+   * @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a>
+   */
   @Test
   public void acceptsAMultipartMixedRequestContainingATextAndAFilePart() throws Exception {
     stubFor(
@@ -109,7 +111,9 @@ public class MultipartBodyMatchingAcceptanceTest extends AcceptanceTestBase {
     assertThat(EntityUtils.toString(response.getEntity()), response.getCode(), is(200));
   }
 
-  /** @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a> */
+  /**
+   * @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a>
+   */
   @Test
   public void acceptsAMultipartRelatedRequestContainingATextAndAFilePart() throws Exception {
     stubFor(

@@ -61,10 +61,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
-
 public abstract class JettyHttpServer implements HttpServer {
   private static final String FILES_URL_MATCH = String.format("/%s/*", WireMockApp.FILES_ROOT);
-  private static final String[] GZIPPABLE_METHODS = new String[]{"POST", "PUT", "PATCH", "DELETE"};
+  private static final String[] GZIPPABLE_METHODS = new String[] {"POST", "PUT", "PATCH", "DELETE"};
   private static final MutableBoolean STRICT_HTTP_HEADERS_APPLIED = new MutableBoolean(false);
 
   protected final Server jettyServer;
@@ -75,8 +74,8 @@ public abstract class JettyHttpServer implements HttpServer {
 
   public JettyHttpServer(
       final Options options,
-            final AdminRequestHandler adminRequestHandler,
-            final StubRequestHandler stubRequestHandler) {
+      final AdminRequestHandler adminRequestHandler,
+      final StubRequestHandler stubRequestHandler) {
     if (!options.getDisableStrictHttpHeaders() && STRICT_HTTP_HEADERS_APPLIED.isFalse()) {
       System.setProperty("org.eclipse.jetty.http.HttpGenerator.STRICT", String.valueOf(true));
       STRICT_HTTP_HEADERS_APPLIED.setTrue();
@@ -120,15 +119,16 @@ public abstract class JettyHttpServer implements HttpServer {
     this.finalizeSetup(options);
   }
 
-  protected void applyAdditionalServerConfiguration(Server jettyServer, Options options) {
-    }
+  protected void applyAdditionalServerConfiguration(Server jettyServer, Options options) {}
 
   protected HandlerCollection createHandler(
-      final Options options, final AdminRequestHandler adminRequestHandler,
-                                              final StubRequestHandler stubRequestHandler) {
+      final Options options,
+      final AdminRequestHandler adminRequestHandler,
+      final StubRequestHandler stubRequestHandler) {
     final Notifier notifier = options.notifier();
-        final ServletContextHandler adminContext = this.addAdminContext(adminRequestHandler, notifier);
-    final ServletContextHandler mockServiceContext = this.addMockServiceContext(
+    final ServletContextHandler adminContext = this.addAdminContext(adminRequestHandler, notifier);
+    final ServletContextHandler mockServiceContext =
+        this.addMockServiceContext(
             stubRequestHandler,
             options.filesRoot(),
             options.getAsynchronousResponseSettings(),
@@ -175,9 +175,9 @@ public abstract class JettyHttpServer implements HttpServer {
     }
   }
 
-    protected void finalizeSetup(final Options options) {
-        if (options.jettySettings().getStopTimeout().isEmpty()) {
-            this.jettyServer.setStopTimeout(1000);
+  protected void finalizeSetup(final Options options) {
+    if (options.jettySettings().getStopTimeout().isEmpty()) {
+      this.jettyServer.setStopTimeout(1000);
     }
   }
 
@@ -200,20 +200,20 @@ public abstract class JettyHttpServer implements HttpServer {
     try {
       this.jettyServer.start();
     } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-        final long timeout = System.currentTimeMillis() + 30000;
-        while (!this.jettyServer.isStarted()) {
+      throw new RuntimeException(e);
+    }
+    final long timeout = System.currentTimeMillis() + 30000;
+    while (!this.jettyServer.isStarted()) {
       try {
         Thread.sleep(100);
       } catch (final InterruptedException e) {
-                // no-op
-            }
-            if (System.currentTimeMillis() > timeout) {
-                throw new RuntimeException("Server took too long to start up.");
-            }
-        }
+        // no-op
+      }
+      if (System.currentTimeMillis() > timeout) {
+        throw new RuntimeException("Server took too long to start up.");
+      }
     }
+  }
 
   @Override
   public void stop() {
@@ -274,7 +274,8 @@ public abstract class JettyHttpServer implements HttpServer {
       boolean stubCorsEnabled,
       boolean browserProxyingEnabled,
       Notifier notifier) {
-    final ServletContextHandler mockServiceContext = new ServletContextHandler(this.jettyServer, "/");
+    final ServletContextHandler mockServiceContext =
+        new ServletContextHandler(this.jettyServer, "/");
 
     mockServiceContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
     mockServiceContext.setInitParameter(
@@ -290,7 +291,8 @@ public abstract class JettyHttpServer implements HttpServer {
     mockServiceContext.setAttribute(
         Options.ChunkedEncodingPolicy.class.getName(), chunkedEncodingPolicy);
     mockServiceContext.setAttribute("browserProxyingEnabled", browserProxyingEnabled);
-    final ServletHolder servletHolder = mockServiceContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
+    final ServletHolder servletHolder =
+        mockServiceContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
     servletHolder.setInitOrder(1);
     servletHolder.setInitParameter(
         RequestHandler.HANDLER_CLASS_KEY, StubRequestHandler.class.getName());
@@ -310,20 +312,25 @@ public abstract class JettyHttpServer implements HttpServer {
         MultipartRequestConfigurer.KEY, buildMultipartRequestConfigurer());
 
     final MimeTypes mimeTypes = new MimeTypes();
-        mimeTypes.addMimeMapping("json", "application/json");
-        mimeTypes.addMimeMapping("html", "text/html");
-        mimeTypes.addMimeMapping("xml", "application/xml");
-        mimeTypes.addMimeMapping("txt", "text/plain");
-        mockServiceContext.setMimeTypes(mimeTypes);
-        mockServiceContext.setWelcomeFiles(new String[]{"index.json", "index.html", "index.xml", "index.txt"});
+    mimeTypes.addMimeMapping("json", "application/json");
+    mimeTypes.addMimeMapping("html", "text/html");
+    mimeTypes.addMimeMapping("xml", "application/xml");
+    mimeTypes.addMimeMapping("txt", "text/plain");
+    mockServiceContext.setMimeTypes(mimeTypes);
+    mockServiceContext.setWelcomeFiles(
+        new String[] {"index.json", "index.html", "index.xml", "index.txt"});
 
     NotFoundHandler errorHandler = new NotFoundHandler(mockServiceContext);
     mockServiceContext.setErrorHandler(errorHandler);
 
     mockServiceContext.addFilter(
-        ContentTypeSettingFilter.class, JettyHttpServer.FILES_URL_MATCH, EnumSet.of(DispatcherType.FORWARD));
+        ContentTypeSettingFilter.class,
+        JettyHttpServer.FILES_URL_MATCH,
+        EnumSet.of(DispatcherType.FORWARD));
     mockServiceContext.addFilter(
-        TrailingSlashFilter.class, JettyHttpServer.FILES_URL_MATCH, EnumSet.allOf(DispatcherType.class));
+        TrailingSlashFilter.class,
+        JettyHttpServer.FILES_URL_MATCH,
+        EnumSet.allOf(DispatcherType.class));
 
     if (stubCorsEnabled) {
       addCorsFilter(mockServiceContext);
@@ -333,17 +340,18 @@ public abstract class JettyHttpServer implements HttpServer {
   }
 
   private ServletContextHandler addAdminContext(
-      final AdminRequestHandler adminRequestHandler,
-            final Notifier notifier) {
-    final ServletContextHandler adminContext = new ServletContextHandler(this.jettyServer, ADMIN_CONTEXT_ROOT);
+      final AdminRequestHandler adminRequestHandler, final Notifier notifier) {
+    final ServletContextHandler adminContext =
+        new ServletContextHandler(this.jettyServer, ADMIN_CONTEXT_ROOT);
 
     adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
 
     final String javaVendor = System.getProperty("java.vendor");
-        if (javaVendor != null && javaVendor.toLowerCase().contains("android")) {
-            //Special case for Android, fixes IllegalArgumentException("resource assets not found."):
-            //  The Android ClassLoader apparently does not resolve directories.
-            //  Furthermore, lib assets will be merged into a single asset directory when a jar file is// assimilated into an apk.
+    if (javaVendor != null && javaVendor.toLowerCase().contains("android")) {
+      // Special case for Android, fixes IllegalArgumentException("resource assets not found."):
+      //  The Android ClassLoader apparently does not resolve directories.
+      //  Furthermore, lib assets will be merged into a single asset directory when a jar file is//
+      // assimilated into an apk.
       //  As resources can be addressed like "assets/swagger-ui/index.html", a static path element
       // will suffice.
       adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.resourceBase", "assets");
@@ -364,9 +372,11 @@ public abstract class JettyHttpServer implements HttpServer {
     ServletHolder webapp = adminContext.addServlet(DefaultServlet.class, "/webapp/*");
     webapp.setAsyncSupported(false);
 
-    JakartaWebSocketServletContainerInitializer.configure(adminContext,(servletContext, serverContainer) -> {
-      serverContainer.addEndpoint(WebSocketEndpoint.class);
-    });
+    JakartaWebSocketServletContainerInitializer.configure(
+        adminContext,
+        (servletContext, serverContainer) -> {
+          serverContainer.addEndpoint(WebSocketEndpoint.class);
+        });
 
     final RewriteHandler rewrite = new RewriteHandler();
     rewrite.setRewriteRequestURI(true);
@@ -379,8 +389,10 @@ public abstract class JettyHttpServer implements HttpServer {
 
     adminContext.insertHandler(rewrite);
 
-    ServletHolder servletHolder = adminContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
-    servletHolder.setInitParameter(RequestHandler.HANDLER_CLASS_KEY, AdminRequestHandler.class.getName());
+    ServletHolder servletHolder =
+        adminContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
+    servletHolder.setInitParameter(
+        RequestHandler.HANDLER_CLASS_KEY, AdminRequestHandler.class.getName());
     adminContext.setAttribute(AdminRequestHandler.class.getName(), adminRequestHandler);
     adminContext.setAttribute(Notifier.KEY, notifier);
 
@@ -420,28 +432,29 @@ public abstract class JettyHttpServer implements HttpServer {
   private static class NetworkTrafficListenerAdapter implements NetworkTrafficListener {
     private final WiremockNetworkTrafficListener wiremockNetworkTrafficListener;
 
-    NetworkTrafficListenerAdapter(final WiremockNetworkTrafficListener wiremockNetworkTrafficListener) {
+    NetworkTrafficListenerAdapter(
+        final WiremockNetworkTrafficListener wiremockNetworkTrafficListener) {
       this.wiremockNetworkTrafficListener = wiremockNetworkTrafficListener;
     }
 
     @Override
     public void opened(final Socket socket) {
-            this.wiremockNetworkTrafficListener.opened(socket);
+      this.wiremockNetworkTrafficListener.opened(socket);
     }
 
     @Override
     public void incoming(final Socket socket, final ByteBuffer bytes) {
-            this.wiremockNetworkTrafficListener.incoming(socket, bytes);
+      this.wiremockNetworkTrafficListener.incoming(socket, bytes);
     }
 
     @Override
     public void outgoing(final Socket socket, final ByteBuffer bytes) {
-            this.wiremockNetworkTrafficListener.outgoing(socket, bytes);
+      this.wiremockNetworkTrafficListener.outgoing(socket, bytes);
     }
 
     @Override
     public void closed(final Socket socket) {
-            this.wiremockNetworkTrafficListener.closed(socket);
+      this.wiremockNetworkTrafficListener.closed(socket);
     }
   }
 }

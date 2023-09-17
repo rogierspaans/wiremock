@@ -57,7 +57,9 @@ public interface Options {
 
   int containerThreads();
 
-  /** @deprecated use {@link BrowserProxySettings#enabled()} */
+  /**
+   * @deprecated use {@link BrowserProxySettings#enabled()}
+   */
   @Deprecated
   boolean browserProxyingEnabled();
 

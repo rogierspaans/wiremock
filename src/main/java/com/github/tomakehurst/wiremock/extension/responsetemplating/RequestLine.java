@@ -27,7 +27,9 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 @Deprecated
-/** @deprecated Use the accessors on {@link RequestTemplateModel} */
+/**
+ * @deprecated Use the accessors on {@link RequestTemplateModel}
+ */
 public class RequestLine {
   private final RequestMethod method;
   private final String scheme;

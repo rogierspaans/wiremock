@@ -57,7 +57,7 @@ public class Metadata extends LinkedHashMap<String, Object> {
     return checkPresenceValidityAndCast(key, List.class);
   }
 
-  public Map<String,?> getMap(String key) {
+  public Map<String, ?> getMap(String key) {
     return checkPresenceValidityAndCast(key, Map.class);
   }
 

@@ -19,7 +19,9 @@ import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.http.Request;
 
 @Deprecated
-/** @deprecated Use {@link RequestFilterV2} instead */
+/**
+ * @deprecated Use {@link RequestFilterV2} instead
+ */
 public interface RequestFilter extends Extension {
 
   RequestFilterAction filter(Request request);
