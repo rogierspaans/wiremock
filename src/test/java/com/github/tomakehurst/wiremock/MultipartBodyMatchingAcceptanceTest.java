@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Thomas Akehurst
+ * Copyright (C) 2018-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.github.tomakehurst.wiremock;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.testsupport.MultipartBody.part;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.hc.core5.http.ContentType.MULTIPART_FORM_DATA;
 import static org.apache.hc.core5.http.ContentType.TEXT_PLAIN;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,6 +35,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class MultipartBodyMatchingAcceptanceTest extends AcceptanceTestBase {
 
@@ -82,7 +84,9 @@ public class MultipartBodyMatchingAcceptanceTest extends AcceptanceTestBase {
     assertThat(response.getCode(), is(404));
   }
 
-  /** @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a> */
+  /**
+   * @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a>
+   */
   @Test
   public void acceptsAMultipartMixedRequestContainingATextAndAFilePart() throws Exception {
     stubFor(
@@ -107,7 +111,9 @@ public class MultipartBodyMatchingAcceptanceTest extends AcceptanceTestBase {
     assertThat(EntityUtils.toString(response.getEntity()), response.getCode(), is(200));
   }
 
-  /** @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a> */
+  /**
+   * @see <a href="https://github.com/tomakehurst/wiremock/issues/1047">#1047</a>
+   */
   @Test
   public void acceptsAMultipartRelatedRequestContainingATextAndAFilePart() throws Exception {
     stubFor(
@@ -146,6 +152,22 @@ public class MultipartBodyMatchingAcceptanceTest extends AcceptanceTestBase {
     WireMockResponse response =
         testClient.postWithMultiparts(
             "/multipart", singletonList(part("wiremocktest", "Whatever", TEXT_PLAIN)));
+
+    assertThat(response.statusCode(), is(200));
+  }
+
+  @Test
+  @Timeout(2)
+  void handlesLargeMultipartBody() {
+    stubFor(
+        post("/multipart")
+            .withMultipartRequestBody(
+                aMultipart().withHeader("Content-Disposition", containing("vlarge")))
+            .willReturn(ok()));
+
+    WireMockResponse response =
+        testClient.postWithMultiparts(
+            "/multipart", singletonList(part("vlarge", randomAlphanumeric(300000), TEXT_PLAIN)));
 
     assertThat(response.statusCode(), is(200));
   }

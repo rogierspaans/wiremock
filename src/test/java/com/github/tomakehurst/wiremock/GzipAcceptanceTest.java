@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Thomas Akehurst
+ * Copyright (C) 2015-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ public class GzipAcceptanceTest {
       assertThat(response.firstHeader("Content-Encoding"), is("gzip"));
       assertThat(response.firstHeader("Transfer-Encoding"), is("chunked"));
       assertThat(response.headers().containsKey("Content-Length"), is(false));
+      assertThat(response.headers().containsKey("Vary"), is(false));
 
       byte[] gzippedContent = response.binaryContent();
 
@@ -62,7 +63,7 @@ public class GzipAcceptanceTest {
     }
 
     @Test
-    public void servesGzippedResponseForPost() throws Exception {
+    public void servesGzippedResponseForPost() {
       wireMockServer.stubFor(post("/gzip-response").willReturn(ok("body text")));
 
       WireMockResponse response =

@@ -1,1 +1,2 @@
-Merge upstream wiremock version 2.35.1
+Update to wiremock 3.0.4
+

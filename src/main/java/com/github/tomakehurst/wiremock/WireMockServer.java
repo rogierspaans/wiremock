@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Thomas Akehurst
+ * Copyright (C) 2011-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.github.tomakehurst.wiremock;
 
+import static com.github.tomakehurst.wiremock.common.ParameterUtils.checkState;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.google.common.base.Preconditions.checkState;
 
 import com.github.tomakehurst.wiremock.admin.model.*;
 import com.github.tomakehurst.wiremock.client.CountMatchingStrategy;
@@ -29,7 +29,6 @@ import com.github.tomakehurst.wiremock.core.Container;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockApp;
 import com.github.tomakehurst.wiremock.global.GlobalSettings;
-import com.github.tomakehurst.wiremock.global.GlobalSettingsHolder;
 import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.HttpServerFactory;
 import com.github.tomakehurst.wiremock.http.RequestListener;
@@ -43,6 +42,7 @@ import com.github.tomakehurst.wiremock.recording.RecordSpecBuilder;
 import com.github.tomakehurst.wiremock.recording.RecordingStatusResult;
 import com.github.tomakehurst.wiremock.recording.SnapshotRecordResult;
 import com.github.tomakehurst.wiremock.standalone.MappingsLoader;
+import com.github.tomakehurst.wiremock.store.files.FileSourceBlobStore;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.github.tomakehurst.wiremock.stubbing.StubImport;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -56,8 +56,8 @@ public class WireMockServer implements Container, Stubbing, Admin {
   private final WireMockApp wireMockApp;
   private final StubRequestHandler stubRequestHandler;
 
-    private final HttpServer httpServer;
-    private final Notifier notifier;
+  private final HttpServer httpServer;
+  private final Notifier notifier;
 
   protected final Options options;
 
@@ -71,7 +71,7 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
     this.stubRequestHandler = this.wireMockApp.buildStubRequestHandler();
     final HttpServerFactory httpServerFactory = options.httpServerFactory();
-        this.httpServer =
+    this.httpServer =
         httpServerFactory.buildHttpServer(
             options, this.wireMockApp.buildAdminRequestHandler(), this.stubRequestHandler);
 
@@ -79,99 +79,116 @@ public class WireMockServer implements Container, Stubbing, Admin {
   }
 
   public WireMockServer(
-      final int port, final Integer httpsPort, final FileSource fileSource, final boolean enableBrowserProxying,
-                          final ProxySettings proxySettings, final Notifier notifier) {
-        this(wireMockConfig()
-                     .port(port)
-                     .httpsPort(httpsPort)
-                     .fileSource(fileSource)
-                     .enableBrowserProxying(enableBrowserProxying)
-                     .proxyVia(proxySettings)
-                     .notifier(notifier));
-    }
+      final int port,
+      final Integer httpsPort,
+      final FileSource fileSource,
+      final boolean enableBrowserProxying,
+      final ProxySettings proxySettings,
+      final Notifier notifier) {
+    this(
+        wireMockConfig()
+            .port(port)
+            .httpsPort(httpsPort)
+            .fileSource(fileSource)
+            .enableBrowserProxying(enableBrowserProxying)
+            .proxyVia(proxySettings)
+            .notifier(notifier));
+  }
 
-    public WireMockServer(final int port, final FileSource fileSource, final boolean enableBrowserProxying,
-                          final ProxySettings proxySettings) {
-        this(wireMockConfig()
-                     .port(port)
-                     .fileSource(fileSource)
-                     .enableBrowserProxying(enableBrowserProxying)
-                     .proxyVia(proxySettings));
-    }
+  public WireMockServer(
+      final int port,
+      final FileSource fileSource,
+      final boolean enableBrowserProxying,
+      final ProxySettings proxySettings) {
+    this(
+        wireMockConfig()
+            .port(port)
+            .fileSource(fileSource)
+            .enableBrowserProxying(enableBrowserProxying)
+            .proxyVia(proxySettings));
+  }
 
-  public WireMockServer(final int port, final FileSource fileSource, final boolean enableBrowserProxying) {
-        this(wireMockConfig()
-                     .port(port)
-                     .fileSource(fileSource)
-                     .enableBrowserProxying(enableBrowserProxying));
-    }
+  public WireMockServer(
+      final int port, final FileSource fileSource, final boolean enableBrowserProxying) {
+    this(
+        wireMockConfig()
+            .port(port)
+            .fileSource(fileSource)
+            .enableBrowserProxying(enableBrowserProxying));
+  }
 
   public WireMockServer(final int port) {
-        this(wireMockConfig().port(port));
-    }
+    this(wireMockConfig().port(port));
+  }
 
   public WireMockServer(final int port, final Integer httpsPort) {
     this(wireMockConfig().port(port).httpsPort(httpsPort));
   }
 
-    public WireMockServer() {
-        this(wireMockConfig());
-    }
-
-    public void loadMappingsUsing(final MappingsLoader mappingsLoader) {
-        this.wireMockApp.loadMappingsUsing(mappingsLoader);
-    }
-
-  public GlobalSettingsHolder getGlobalSettingsHolder() {
-    return this.wireMockApp.getGlobalSettingsHolder();
+  public WireMockServer() {
+    this(wireMockConfig());
   }
 
-  public void addMockServiceRequestListener(final RequestListener listener) {
-        this.stubRequestHandler.addRequestListener(listener);
-    }
+  public WireMockServer(String filenameTemplate) {
+    this(wireMockConfig().filenameTemplate(filenameTemplate));
+  }
 
-    public void enableRecordMappings(final FileSource mappingsFileSource, final FileSource filesFileSource) {
-        this.addMockServiceRequestListener(
+  public void loadMappingsUsing(final MappingsLoader mappingsLoader) {
+    this.wireMockApp.loadMappingsUsing(mappingsLoader);
+  }
+
+  public void addMockServiceRequestListener(RequestListener listener) {
+    stubRequestHandler.addRequestListener(listener);
+  }
+
+  public void enableRecordMappings(
+      final FileSource mappingsFileSource, final FileSource filesFileSource) {
+    this.addMockServiceRequestListener(
         new StubMappingJsonRecorder(
-            mappingsFileSource, filesFileSource, this.wireMockApp, this.options.matchingHeaders()));
+            new FileSourceBlobStore(mappingsFileSource),
+            new FileSourceBlobStore(filesFileSource),
+            this.wireMockApp,
+            this.options.matchingHeaders()));
     this.notifier.info("Recording mappings to " + mappingsFileSource.getPath());
-    }
+  }
 
   public void stop() {
     this.httpServer.stop();
-    }
+  }
 
-    public void start() {
+  public void start() {
     // Try to ensure this is warmed up on the main thread so that it's inherited by worker threads
-    Json.getObjectMapper();    try {
-            this.httpServer.start();
+    Json.getObjectMapper();
+    try {
+      this.httpServer.start();
     } catch (final Exception e) {
-            throw new FatalStartupException(e);
-        }
+      throw new FatalStartupException(e);
     }
+  }
 
-    /**
-     * Gracefully shutdown the server.
-     * <p>
+  /**
+   * Gracefully shutdown the server.
+   *
+   * <p>
+   *
    * <p>This method assumes it is being called as the result of an incoming HTTP request.
    */
   @Override
   public void shutdown() {
     final WireMockServer server = this;
-    final Thread shutdownThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                  // We have to sleep briefly to finish serving the shutdown request before stopping
-                  // the server, as
-                  // there's no support in Jetty for shutting down after the current request.
-                  // See http://stackoverflow.com/questions/4650713
-                  Thread.sleep(100);
-                } catch (final InterruptedException e) {
-                  throw new RuntimeException(e);
-                }
-                server.stop();
+    final Thread shutdownThread =
+        new Thread(
+            () -> {
+              try {
+                // We have to sleep briefly to finish serving the shutdown request before stopping
+                // the server, as
+                // there's no support in Jetty for shutting down after the current request.
+                // See http://stackoverflow.com/questions/4650713
+                Thread.sleep(100);
+              } catch (final InterruptedException e) {
+                throw new RuntimeException(e);
               }
+              server.stop();
             });
     shutdownThread.start();
   }
@@ -208,8 +225,8 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   public String baseUrl() {
     final boolean https = options.httpsSettings().enabled();
-        final String protocol = https ? "https" : "http";
-        final int port = https ? httpsPort() : port();
+    final String protocol = https ? "https" : "http";
+    final int port = https ? httpsPort() : port();
 
     return String.format("%s://localhost:%d", protocol, port);
   }
@@ -230,17 +247,17 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void editStub(final MappingBuilder mappingBuilder) {
-        this.client.editStubMapping(mappingBuilder);
+    this.client.editStubMapping(mappingBuilder);
   }
 
   @Override
   public void removeStub(final MappingBuilder mappingBuilder) {
-        this.client.removeStubMapping(mappingBuilder);
+    this.client.removeStubMapping(mappingBuilder);
   }
 
   @Override
   public void removeStub(final StubMapping stubMapping) {
-        this.client.removeStubMapping(stubMapping);
+    this.client.removeStubMapping(stubMapping);
   }
 
   @Override
@@ -260,12 +277,12 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void removeStubMappingsByMetadata(final StringValuePattern pattern) {
-        this.client.removeStubsByMetadataPattern(pattern);
+    this.client.removeStubsByMetadataPattern(pattern);
   }
 
   @Override
   public void removeStubMapping(final StubMapping stubMapping) {
-        this.wireMockApp.removeStubMapping(stubMapping);
+    this.wireMockApp.removeStubMapping(stubMapping);
   }
 
   @Override
@@ -275,12 +292,12 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void verify(final RequestPatternBuilder requestPatternBuilder) {
-        this.client.verifyThat(requestPatternBuilder);
+    this.client.verifyThat(requestPatternBuilder);
   }
 
   @Override
   public void verify(final int count, final RequestPatternBuilder requestPatternBuilder) {
-        this.client.verifyThat(count, requestPatternBuilder);
+    this.client.verifyThat(count, requestPatternBuilder);
   }
 
   @Override
@@ -301,7 +318,7 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void setGlobalFixedDelay(final int milliseconds) {
-        this.client.setGlobalFixedDelayVariable(milliseconds);
+    this.client.setGlobalFixedDelayVariable(milliseconds);
   }
 
   @Override
@@ -326,12 +343,12 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void addStubMapping(final StubMapping stubMapping) {
-        this.wireMockApp.addStubMapping(stubMapping);
+    this.wireMockApp.addStubMapping(stubMapping);
   }
 
   @Override
   public void editStubMapping(final StubMapping stubMapping) {
-        this.wireMockApp.editStubMapping(stubMapping);
+    this.wireMockApp.editStubMapping(stubMapping);
   }
 
   @Override
@@ -422,7 +439,7 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void updateGlobalSettings(final GlobalSettings newSettings) {
-        this.wireMockApp.updateGlobalSettings(newSettings);
+    this.wireMockApp.updateGlobalSettings(newSettings);
   }
 
   @Override
@@ -457,17 +474,17 @@ public class WireMockServer implements Container, Stubbing, Admin {
 
   @Override
   public void startRecording(final String targetBaseUrl) {
-        this.wireMockApp.startRecording(targetBaseUrl);
+    this.wireMockApp.startRecording(targetBaseUrl);
   }
 
   @Override
   public void startRecording(final RecordSpec spec) {
-        this.wireMockApp.startRecording(spec);
+    this.wireMockApp.startRecording(spec);
   }
 
   @Override
   public void startRecording(final RecordSpecBuilder recordSpec) {
-        this.wireMockApp.startRecording(recordSpec);
+    this.wireMockApp.startRecording(recordSpec);
   }
 
   @Override
@@ -503,17 +520,17 @@ public class WireMockServer implements Container, Stubbing, Admin {
   @Override
   public void shutdownServer() {
     this.shutdown();
-    }
+  }
 
-    @Override
-    public ProxyConfig getProxyConfig() {
-        return this.wireMockApp.getProxyConfig();
-    }
+  @Override
+  public ProxyConfig getProxyConfig() {
+    return this.wireMockApp.getProxyConfig();
+  }
 
-    @Override
-    public void enableProxy(final UUID id) {
-        this.wireMockApp.enableProxy(id);
-    }
+  @Override
+  public void enableProxy(final UUID id) {
+    this.wireMockApp.enableProxy(id);
+  }
 
   @Override
   public void disableProxy(final UUID id) {
@@ -521,13 +538,13 @@ public class WireMockServer implements Container, Stubbing, Admin {
   }
 
   @Override
-    public ListStubMappingsResult findAllStubsByMetadata(final StringValuePattern pattern) {
-        return this.wireMockApp.findAllStubsByMetadata(pattern);
-    }
+  public ListStubMappingsResult findAllStubsByMetadata(final StringValuePattern pattern) {
+    return this.wireMockApp.findAllStubsByMetadata(pattern);
+  }
 
-    @Override
+  @Override
   public void removeStubsByMetadata(final StringValuePattern pattern) {
-        this.wireMockApp.removeStubsByMetadata(pattern);
+    this.wireMockApp.removeStubsByMetadata(pattern);
   }
 
   @Override

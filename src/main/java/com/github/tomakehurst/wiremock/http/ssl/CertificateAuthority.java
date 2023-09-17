@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Thomas Akehurst
+ * Copyright (C) 2020-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class CertificateAuthority {
           makeX509CertInfo(
               sigAlg,
               "WireMock Local Self Signed Root Certificate",
+              ZonedDateTime.now().minus(Period.ofDays(1)),
               Period.ofYears(10),
               pair.getPublic(),
               certificateAuthorityExtensions(pair.getPublic()));
@@ -75,8 +76,11 @@ public class CertificateAuthority {
   }
 
   private static X509CertImpl selfSign(X509CertInfo info, PrivateKey privateKey, String sigAlg)
-      throws CertificateException, NoSuchAlgorithmException, InvalidKeyException,
-          NoSuchProviderException, SignatureException {
+      throws CertificateException,
+          NoSuchAlgorithmException,
+          InvalidKeyException,
+          NoSuchProviderException,
+          SignatureException {
     X509CertImpl certificate = new X509CertImpl(info);
     certificate.sign(privateKey, sigAlg);
     return certificate;
@@ -125,6 +129,7 @@ public class CertificateAuthority {
           makeX509CertInfo(
               sigAlg,
               hostName.getAsciiName(),
+              ZonedDateTime.now().minus(Period.ofDays(1)),
               Period.ofYears(1),
               pair.getPublic(),
               subjectAlternativeName(hostName));
@@ -149,8 +154,12 @@ public class CertificateAuthority {
   }
 
   private X509CertImpl sign(X509CertInfo info)
-      throws CertificateException, IOException, NoSuchAlgorithmException, InvalidKeyException,
-          NoSuchProviderException, SignatureException {
+      throws CertificateException,
+          IOException,
+          NoSuchAlgorithmException,
+          InvalidKeyException,
+          NoSuchProviderException,
+          SignatureException {
     X509Certificate issuerCertificate = certificateChain[0];
     info.set(X509CertInfo.ISSUER, issuerCertificate.getSubjectDN());
 
@@ -168,11 +177,11 @@ public class CertificateAuthority {
   private static X509CertInfo makeX509CertInfo(
       String sigAlg,
       String subjectName,
+      ZonedDateTime start,
       Period validity,
       PublicKey publicKey,
       CertificateExtensions certificateExtensions)
       throws IOException, CertificateException, NoSuchAlgorithmException {
-    ZonedDateTime start = ZonedDateTime.now();
     ZonedDateTime end = start.plus(validity);
 
     X500Name myname = new X500Name("CN=" + subjectName);
