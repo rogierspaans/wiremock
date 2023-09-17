@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Thomas Akehurst
+ * Copyright (C) 2011-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -751,6 +751,22 @@ public class CommandLineOptionsTest {
     Limit limit = options.getDataTruncationSettings().getMaxResponseBodySize();
 
     assertThat(limit.isExceededBy(Integer.MAX_VALUE), is(false));
+  }
+
+  @Test
+  void proxyTargetRules() {
+    CommandLineOptions options =
+        new CommandLineOptions(
+            "--allow-proxy-targets", "192.168.1.1,10.1.1.1-10.2.2.2",
+            "--deny-proxy-targets", "192.168.56.1,*host");
+
+    NetworkAddressRules proxyTargetRules = options.getProxyTargetRules();
+
+    assertThat(proxyTargetRules.isAllowed("192.168.1.1"), is(true));
+    assertThat(proxyTargetRules.isAllowed("10.1.2.3"), is(true));
+
+    assertThat(proxyTargetRules.isAllowed("10.3.2.1"), is(false));
+    assertThat(proxyTargetRules.isAllowed("localhost"), is(false));
   }
 
   public static class ResponseDefinitionTransformerExt1 extends ResponseDefinitionTransformer {

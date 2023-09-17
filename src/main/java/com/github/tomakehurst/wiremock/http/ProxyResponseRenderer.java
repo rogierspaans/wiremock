@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Thomas Akehurst
+ * Copyright (C) 2011-2023 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import static com.github.tomakehurst.wiremock.common.HttpClientUtils.getEntityAs
 import static com.github.tomakehurst.wiremock.http.Response.response;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
+import com.github.tomakehurst.wiremock.common.NetworkAddressRules;
+import com.github.tomakehurst.wiremock.common.ProhibitedNetworkAddressException;
 import com.github.tomakehurst.wiremock.common.ProxySettings;
 import com.github.tomakehurst.wiremock.common.ssl.KeyStoreSettings;
 import com.github.tomakehurst.wiremock.global.GlobalSettingsHolder;
@@ -61,6 +63,8 @@ public class ProxyResponseRenderer implements ResponseRenderer {
   private final GlobalSettingsHolder globalSettingsHolder;
   private final boolean stubCorsEnabled;
 
+  private final NetworkAddressRules targetAddressRules;
+
   public ProxyResponseRenderer(
       ProxySettings proxySettings,
       KeyStoreSettings trustStoreSettings,
@@ -69,7 +73,8 @@ public class ProxyResponseRenderer implements ResponseRenderer {
       GlobalSettingsHolder globalSettingsHolder,
       boolean trustAllProxyTargets,
       List<String> trustedProxyTargets,
-      boolean stubCorsEnabled) {
+      boolean stubCorsEnabled,
+      NetworkAddressRules targetAddressRules) {
     this.globalSettingsHolder = globalSettingsHolder;
     reverseProxyClient =
         HttpClientFactory.createClient(
@@ -78,8 +83,9 @@ public class ProxyResponseRenderer implements ResponseRenderer {
             proxySettings,
             trustStoreSettings,
             true,
-            Collections.<String>emptyList(),
-            true);
+            Collections.emptyList(),
+            true,
+            targetAddressRules);
     forwardProxyClient =
         HttpClientFactory.createClient(
             1000,
@@ -88,16 +94,26 @@ public class ProxyResponseRenderer implements ResponseRenderer {
             trustStoreSettings,
             trustAllProxyTargets,
             trustAllProxyTargets ? Collections.emptyList() : trustedProxyTargets,
-            false);
+            false,
+            targetAddressRules);
 
     this.preserveHostHeader = preserveHostHeader;
     this.hostHeaderValue = hostHeaderValue;
     this.stubCorsEnabled = stubCorsEnabled;
+    this.targetAddressRules = targetAddressRules;
   }
 
   @Override
   public Response render(ServeEvent serveEvent) {
     ResponseDefinition responseDefinition = serveEvent.getResponseDefinition();
+    //    if (targetAddressProhibited(responseDefinition.getProxyUrl())) {
+    //      return response()
+    //          .status(500)
+    //          .headers(new HttpHeaders(new HttpHeader("Content-Type", "text/plain")))
+    //          .body("The target proxy address is denied in WireMock's configuration.")
+    //          .build();
+    //    }
+
     HttpUriRequest httpRequest = getHttpRequestFor(responseDefinition);
     addRequestHeaders(httpRequest, responseDefinition);
 
@@ -106,7 +122,7 @@ public class ProxyResponseRenderer implements ResponseRenderer {
         || originalRequest.containsHeader(CONTENT_LENGTH)) {
       httpRequest.setEntity(buildEntityFrom(originalRequest));
     }
-    CloseableHttpClient client = buildClient(serveEvent.getRequest().isBrowserProxyRequest());
+    CloseableHttpClient client = chooseClient(serveEvent.getRequest().isBrowserProxyRequest());
     try (CloseableHttpResponse httpResponse = client.execute(httpRequest)) {
       return response()
           .status(httpResponse.getCode())
@@ -119,6 +135,12 @@ public class ProxyResponseRenderer implements ResponseRenderer {
               responseDefinition.getFixedDelayMilliseconds(),
               responseDefinition.getDelayDistribution())
           .chunkedDribbleDelay(responseDefinition.getChunkedDribbleDelay())
+          .build();
+    } catch (ProhibitedNetworkAddressException e) {
+      return response()
+          .status(HTTP_INTERNAL_ERROR)
+          .headers(new HttpHeaders(new HttpHeader("Content-Type", "text/plain")))
+          .body("The target proxy address is denied in WireMock's configuration.")
           .build();
     } catch (SSLException e) {
       return proxyResponseError("SSL", httpRequest, e);
@@ -142,12 +164,12 @@ public class ProxyResponseRenderer implements ResponseRenderer {
   private static String extractUri(HttpUriRequest request) {
     try {
       return request.getUri().toString();
-    } catch (URISyntaxException e1) {
+    } catch (URISyntaxException ignored) {
     }
     return request.getRequestUri();
   }
 
-  private CloseableHttpClient buildClient(boolean browserProxyRequest) {
+  private CloseableHttpClient chooseClient(boolean browserProxyRequest) {
     if (browserProxyRequest) {
       return forwardProxyClient;
     } else {
