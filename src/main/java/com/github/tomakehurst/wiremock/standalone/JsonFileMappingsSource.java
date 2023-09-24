@@ -149,9 +149,10 @@ public class JsonFileMappingsSource implements MappingsSource {
     if (metadata == null) {
       return false;
     }
-    return metadata.getMap(WIREMOCK_GUI_KEY) != null
-        && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) != null
-        && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) instanceof String;
+
+    return metadata.containsKey(WIREMOCK_GUI_KEY)
+      && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) != null
+      && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) instanceof String;
   }
 
   private String getFolderDefinition(final StubMapping mapping) {
