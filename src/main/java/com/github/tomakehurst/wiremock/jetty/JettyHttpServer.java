@@ -52,6 +52,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.DebugHandler;
+import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -126,6 +128,7 @@ public abstract class JettyHttpServer implements HttpServer {
       AdminRequestHandler adminRequestHandler,
       StubRequestHandler stubRequestHandler) {
     Notifier notifier = options.notifier();
+
     ServletContextHandler adminContext = addAdminContext(adminRequestHandler, notifier);
     ServletContextHandler mockServiceContext =
         addMockServiceContext(
@@ -149,8 +152,13 @@ public abstract class JettyHttpServer implements HttpServer {
             baseRequest.getHttpChannel().getState().setTimeout(options.timeout());
           }
         };
+
     handlers.setHandlers(
         ArrayUtils.addAll(extensionHandlers(), adminContext, asyncTimeoutSettingHandler));
+
+    // We prepend the rewrite handle for the wiremock gui web app to make sure that we route the requests properly
+    final RewriteHandler rewriteHandler = webAppRewriteContext(adminContext);
+    handlers.prependHandler(rewriteHandler);
 
     if (options.getGzipDisabled()) {
       handlers.addHandler(mockServiceContext);
@@ -362,26 +370,6 @@ public abstract class JettyHttpServer implements HttpServer {
     swaggerUiServletHolder.setAsyncSupported(false);
     adminContext.addServlet(DefaultServlet.class, "/recorder/*");
 
-    ServletHolder webapp = adminContext.addServlet(DefaultServlet.class, "/webapp/*");
-    webapp.setAsyncSupported(false);
-
-    JakartaWebSocketServletContainerInitializer.configure(
-        adminContext,
-        (servletContext, serverContainer) -> {
-          serverContainer.addEndpoint(WebSocketEndpoint.class);
-        });
-
-    final RewriteHandler rewrite = new RewriteHandler();
-    rewrite.setRewriteRequestURI(true);
-    rewrite.setRewritePathInfo(true);
-
-    RewriteRegexRule rewriteRule = new RewriteRegexRule();
-    rewriteRule.setRegex("/webapp/(mappings|matched|unmatched|state).*");
-    rewriteRule.setReplacement("/index.html");
-    rewrite.addRule(rewriteRule);
-
-    adminContext.insertHandler(rewrite);
-
     ServletHolder servletHolder =
         adminContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
     servletHolder.setInitParameter(
@@ -395,7 +383,40 @@ public abstract class JettyHttpServer implements HttpServer {
 
     addCorsFilter(adminContext);
 
+    // Include wiremock-gui into admin context
+    ServletHolder webapp = adminContext.addServlet(DefaultServlet.class, "/webapp/*");
+    webapp.setAsyncSupported(false);
+
+    // Include wiremock-gui websocket into admin context
+    JakartaWebSocketServletContainerInitializer.configure(
+      adminContext,
+      (servletContext, serverContainer) -> {
+        serverContainer.addEndpoint(WebSocketEndpoint.class);
+      });
+
     return adminContext;
+  }
+
+  /**
+   * Rewrite web app. We use Angular. We must rewrite every /__admin/webapp path to the index.html of our
+   * single page application.
+   *
+   * @param adminContextHandler admin context handler is used to provide the static file content
+   * @return the rewrite handler
+   */
+  private RewriteHandler webAppRewriteContext(ServletContextHandler adminContextHandler) {
+    final RewriteHandler rewrite = new RewriteHandler();
+    rewrite.setRewriteRequestURI(true);
+    rewrite.setRewritePathInfo(true);
+
+    RewriteRegexRule rewriteRule = new RewriteRegexRule();
+    rewriteRule.setRegex("/__admin/webapp/(mappings|matched|unmatched|state).*");
+    rewriteRule.setReplacement("/__admin/webapp/index.html");
+    rewrite.addRule(rewriteRule);
+
+    rewrite.setHandler(adminContextHandler);
+
+    return rewrite;
   }
 
   private void addCorsFilter(ServletContextHandler context) {

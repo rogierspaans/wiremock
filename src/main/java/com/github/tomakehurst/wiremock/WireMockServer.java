@@ -546,4 +546,19 @@ public class WireMockServer implements Container, Stubbing, Admin {
       }
     }
   }
+
+  @Override
+  public ProxyConfig getProxyConfig() {
+    return this.wireMockApp.getProxyConfig();
+  }
+
+  @Override
+  public void enableProxy(final UUID id) {
+    this.wireMockApp.enableProxy(id);
+  }
+
+  @Override
+  public void disableProxy(final UUID id) {
+    this.wireMockApp.disableProxy(id);
+  }
 }
