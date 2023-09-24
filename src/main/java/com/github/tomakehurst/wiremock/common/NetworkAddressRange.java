@@ -15,8 +15,9 @@
  */
 package com.github.tomakehurst.wiremock.common;
 
-import com.google.common.net.InetAddresses;
-import java.math.BigInteger;
+import static com.github.tomakehurst.wiremock.common.NetworkAddressUtils.ipToLong;
+import static com.github.tomakehurst.wiremock.common.NetworkAddressUtils.isValidInet4Address;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
@@ -32,6 +33,11 @@ public abstract class NetworkAddressRange {
       Pattern.compile(SINGLE_IP.pattern() + "-" + SINGLE_IP.pattern());
 
   public static NetworkAddressRange of(String value) {
+
+    if (value == null || value.isEmpty()) {
+      throw new InvalidInputException(Errors.single(17, value + " is not a valid network address"));
+    }
+
     if (SINGLE_IP.matcher(value).matches()) {
       return new SingleIp(value);
     }
@@ -70,27 +76,34 @@ public abstract class NetworkAddressRange {
     public int hashCode() {
       return Objects.hash(inetAddress);
     }
+
+    @Override
+    public String toString() {
+      return inetAddress.toString();
+    }
   }
 
   private static class IpRange extends NetworkAddressRange {
 
-    private final BigInteger start;
-    private final BigInteger end;
+    private final Long start;
+    private final Long end;
+    private final String asString;
 
     private IpRange(String ipRange) {
       String[] parts = ipRange.split("-");
       if (parts.length != 2) {
         throw new InvalidInputException(Errors.single(18, ipRange + " is not a valid IP range"));
       }
-      this.start = InetAddresses.toBigInteger(parseIpAddress(parts[0]));
-      this.end = InetAddresses.toBigInteger(parseIpAddress(parts[1]));
+      this.start = ipToLong(parseIpAddress(parts[0]));
+      this.end = ipToLong(parseIpAddress(parts[1]));
+      this.asString = ipRange;
     }
 
     @Override
     public boolean isIncluded(String testValue) {
       InetAddress testValueAddress = lookup(testValue);
-      BigInteger intVal = InetAddresses.toBigInteger(testValueAddress);
-      return intVal.compareTo(start) >= 0 && intVal.compareTo(end) <= 0;
+      long longValue = ipToLong(testValueAddress);
+      return (longValue >= start && longValue <= end);
     }
 
     @Override
@@ -104,6 +117,11 @@ public abstract class NetworkAddressRange {
     @Override
     public int hashCode() {
       return Objects.hash(start, end);
+    }
+
+    @Override
+    public String toString() {
+      return asString;
     }
   }
 
@@ -126,12 +144,17 @@ public abstract class NetworkAddressRange {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       DomainNameWildcard that = (DomainNameWildcard) o;
-      return namePattern.equals(that.namePattern);
+      return namePattern.pattern().equals(that.namePattern.pattern());
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(namePattern);
+      return Objects.hash(namePattern.pattern());
+    }
+
+    @Override
+    public String toString() {
+      return namePattern.pattern();
     }
   }
 
@@ -144,7 +167,7 @@ public abstract class NetworkAddressRange {
   }
 
   private static InetAddress parseIpAddress(String ipAddress) {
-    if (!InetAddresses.isInetAddress(ipAddress)) {
+    if (!isValidInet4Address(ipAddress)) {
       throw new InvalidInputException(Errors.single(16, ipAddress + " is not a valid IP address"));
     }
 

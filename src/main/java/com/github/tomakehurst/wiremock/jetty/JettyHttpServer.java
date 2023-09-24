@@ -16,6 +16,7 @@
 package com.github.tomakehurst.wiremock.jetty;
 
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
+import static com.github.tomakehurst.wiremock.common.ResourceUtil.getResource;
 import static com.github.tomakehurst.wiremock.core.WireMockApp.ADMIN_CONTEXT_ROOT;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 
@@ -29,7 +30,6 @@ import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.http.trafficlistener.WiremockNetworkTrafficListener;
 import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.servlet.*;
-import com.google.common.io.Resources;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,15 +73,15 @@ public abstract class JettyHttpServer implements HttpServer {
   protected ScheduledExecutorService scheduledExecutorService;
 
   public JettyHttpServer(
-      final Options options,
-      final AdminRequestHandler adminRequestHandler,
-      final StubRequestHandler stubRequestHandler) {
+      Options options,
+      AdminRequestHandler adminRequestHandler,
+      StubRequestHandler stubRequestHandler) {
     if (!options.getDisableStrictHttpHeaders() && STRICT_HTTP_HEADERS_APPLIED.isFalse()) {
       System.setProperty("org.eclipse.jetty.http.HttpGenerator.STRICT", String.valueOf(true));
       STRICT_HTTP_HEADERS_APPLIED.setTrue();
     }
 
-    this.jettyServer = this.createServer(options);
+    jettyServer = createServer(options);
 
     NetworkTrafficListenerAdapter networkTrafficListenerAdapter =
         new NetworkTrafficListenerAdapter(options.networkTrafficListener());
@@ -99,15 +99,15 @@ public abstract class JettyHttpServer implements HttpServer {
     }
 
     if (options.httpsSettings().enabled()) {
-      this.httpsConnector =
-          this.createHttpsConnector(
+      httpsConnector =
+          createHttpsConnector(
               options.bindAddress(),
               options.httpsSettings(),
               options.jettySettings(),
               networkTrafficListenerAdapter);
-      this.jettyServer.addConnector(this.httpsConnector);
+      jettyServer.addConnector(httpsConnector);
     } else {
-      this.httpsConnector = null;
+      httpsConnector = null;
     }
 
     applyAdditionalServerConfiguration(jettyServer, options);
@@ -116,19 +116,19 @@ public abstract class JettyHttpServer implements HttpServer {
         createHandler(options, adminRequestHandler, stubRequestHandler);
     jettyServer.setHandler(handlers);
 
-    this.finalizeSetup(options);
+    finalizeSetup(options);
   }
 
   protected void applyAdditionalServerConfiguration(Server jettyServer, Options options) {}
 
   protected HandlerCollection createHandler(
-      final Options options,
-      final AdminRequestHandler adminRequestHandler,
-      final StubRequestHandler stubRequestHandler) {
-    final Notifier notifier = options.notifier();
-    final ServletContextHandler adminContext = this.addAdminContext(adminRequestHandler, notifier);
-    final ServletContextHandler mockServiceContext =
-        this.addMockServiceContext(
+      Options options,
+      AdminRequestHandler adminRequestHandler,
+      StubRequestHandler stubRequestHandler) {
+    Notifier notifier = options.notifier();
+    ServletContextHandler adminContext = addAdminContext(adminRequestHandler, notifier);
+    ServletContextHandler mockServiceContext =
+        addMockServiceContext(
             stubRequestHandler,
             options.filesRoot(),
             options.getAsynchronousResponseSettings(),
@@ -137,7 +137,7 @@ public abstract class JettyHttpServer implements HttpServer {
             options.browserProxySettings().enabled(),
             notifier);
 
-    final HandlerCollection handlers = new HandlerCollection();
+    HandlerCollection handlers = new HandlerCollection();
     AbstractHandler asyncTimeoutSettingHandler =
         new AbstractHandler() {
           @Override
@@ -150,7 +150,7 @@ public abstract class JettyHttpServer implements HttpServer {
           }
         };
     handlers.setHandlers(
-        ArrayUtils.addAll(this.extensionHandlers(), adminContext, asyncTimeoutSettingHandler));
+        ArrayUtils.addAll(extensionHandlers(), adminContext, asyncTimeoutSettingHandler));
 
     if (options.getGzipDisabled()) {
       handlers.addHandler(mockServiceContext);
@@ -162,8 +162,7 @@ public abstract class JettyHttpServer implements HttpServer {
   }
 
   private void addGZipHandler(
-      final ServletContextHandler mockServiceContext, final HandlerCollection handlers) {
-
+      ServletContextHandler mockServiceContext, HandlerCollection handlers) {
     try {
       GzipHandler gzipHandler = new GzipHandler();
       gzipHandler.addIncludedMethods(GZIPPABLE_METHODS);
@@ -175,13 +174,13 @@ public abstract class JettyHttpServer implements HttpServer {
     }
   }
 
-  protected void finalizeSetup(final Options options) {
+  protected void finalizeSetup(Options options) {
     if (options.jettySettings().getStopTimeout().isEmpty()) {
-      this.jettyServer.setStopTimeout(1000);
+      jettyServer.setStopTimeout(1000);
     }
   }
 
-  protected Server createServer(final Options options) {
+  protected Server createServer(Options options) {
     final Server server = new Server(options.threadPoolFactory().buildThreadPool(options));
     final JettySettings jettySettings = options.jettySettings();
     final Optional<Long> stopTimeout = jettySettings.getStopTimeout();
@@ -198,15 +197,15 @@ public abstract class JettyHttpServer implements HttpServer {
   @Override
   public void start() {
     try {
-      this.jettyServer.start();
-    } catch (final Exception e) {
+      jettyServer.start();
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    final long timeout = System.currentTimeMillis() + 30000;
-    while (!this.jettyServer.isStarted()) {
+    long timeout = System.currentTimeMillis() + 30000;
+    while (!jettyServer.isStarted()) {
       try {
         Thread.sleep(100);
-      } catch (final InterruptedException e) {
+      } catch (InterruptedException e) {
         // no-op
       }
       if (System.currentTimeMillis() > timeout) {
@@ -240,21 +239,21 @@ public abstract class JettyHttpServer implements HttpServer {
 
   @Override
   public boolean isRunning() {
-    return this.jettyServer.isRunning();
+    return jettyServer.isRunning();
   }
 
   @Override
   public int port() {
-    return this.httpConnector.getLocalPort();
+    return httpConnector.getLocalPort();
   }
 
   @Override
   public int httpsPort() {
-    return this.httpsConnector.getLocalPort();
+    return httpsConnector.getLocalPort();
   }
 
   public long stopTimeout() {
-    return this.jettyServer.getStopTimeout();
+    return jettyServer.getStopTimeout();
   }
 
   protected abstract ServerConnector createHttpConnector(
@@ -274,15 +273,14 @@ public abstract class JettyHttpServer implements HttpServer {
       boolean stubCorsEnabled,
       boolean browserProxyingEnabled,
       Notifier notifier) {
-    final ServletContextHandler mockServiceContext =
-        new ServletContextHandler(this.jettyServer, "/");
+    ServletContextHandler mockServiceContext = new ServletContextHandler(jettyServer, "/");
 
     mockServiceContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
     mockServiceContext.setInitParameter(
         "org.eclipse.jetty.servlet.Default.resourceBase", fileSource.getPath());
     mockServiceContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
 
-    mockServiceContext.addServlet(DefaultServlet.class, JettyHttpServer.FILES_URL_MATCH);
+    mockServiceContext.addServlet(DefaultServlet.class, FILES_URL_MATCH);
 
     mockServiceContext.setAttribute(
         JettyFaultInjectorFactory.class.getName(), new JettyFaultInjectorFactory());
@@ -291,7 +289,7 @@ public abstract class JettyHttpServer implements HttpServer {
     mockServiceContext.setAttribute(
         Options.ChunkedEncodingPolicy.class.getName(), chunkedEncodingPolicy);
     mockServiceContext.setAttribute("browserProxyingEnabled", browserProxyingEnabled);
-    final ServletHolder servletHolder =
+    ServletHolder servletHolder =
         mockServiceContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
     servletHolder.setInitOrder(1);
     servletHolder.setInitParameter(
@@ -311,7 +309,7 @@ public abstract class JettyHttpServer implements HttpServer {
     mockServiceContext.setAttribute(
         MultipartRequestConfigurer.KEY, buildMultipartRequestConfigurer());
 
-    final MimeTypes mimeTypes = new MimeTypes();
+    MimeTypes mimeTypes = new MimeTypes();
     mimeTypes.addMimeMapping("json", "application/json");
     mimeTypes.addMimeMapping("html", "text/html");
     mimeTypes.addMimeMapping("xml", "application/xml");
@@ -324,13 +322,9 @@ public abstract class JettyHttpServer implements HttpServer {
     mockServiceContext.setErrorHandler(errorHandler);
 
     mockServiceContext.addFilter(
-        ContentTypeSettingFilter.class,
-        JettyHttpServer.FILES_URL_MATCH,
-        EnumSet.of(DispatcherType.FORWARD));
+        ContentTypeSettingFilter.class, FILES_URL_MATCH, EnumSet.of(DispatcherType.FORWARD));
     mockServiceContext.addFilter(
-        TrailingSlashFilter.class,
-        JettyHttpServer.FILES_URL_MATCH,
-        EnumSet.allOf(DispatcherType.class));
+        TrailingSlashFilter.class, FILES_URL_MATCH, EnumSet.allOf(DispatcherType.class));
 
     if (stubCorsEnabled) {
       addCorsFilter(mockServiceContext);
@@ -340,17 +334,16 @@ public abstract class JettyHttpServer implements HttpServer {
   }
 
   private ServletContextHandler addAdminContext(
-      final AdminRequestHandler adminRequestHandler, final Notifier notifier) {
-    final ServletContextHandler adminContext =
-        new ServletContextHandler(this.jettyServer, ADMIN_CONTEXT_ROOT);
+      AdminRequestHandler adminRequestHandler, Notifier notifier) {
+    ServletContextHandler adminContext = new ServletContextHandler(jettyServer, ADMIN_CONTEXT_ROOT);
 
     adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
 
-    final String javaVendor = System.getProperty("java.vendor");
+    String javaVendor = System.getProperty("java.vendor");
     if (javaVendor != null && javaVendor.toLowerCase().contains("android")) {
       // Special case for Android, fixes IllegalArgumentException("resource assets not found."):
       //  The Android ClassLoader apparently does not resolve directories.
-      //  Furthermore, lib assets will be merged into a single asset directory when a jar file is//
+      //  Furthermore, lib assets will be merged into a single asset directory when a jar file is
       // assimilated into an apk.
       //  As resources can be addressed like "assets/swagger-ui/index.html", a static path element
       // will suffice.
@@ -358,10 +351,10 @@ public abstract class JettyHttpServer implements HttpServer {
     } else {
       adminContext.setInitParameter(
           "org.eclipse.jetty.servlet.Default.resourceBase",
-          Resources.getResource("assets").toString());
+          getResource(JettyHttpServer.class, "assets").toString());
     }
 
-    Resources.getResource("assets/swagger-ui/index.html");
+    getResource(JettyHttpServer.class, "assets/swagger-ui/index.html");
 
     adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
     ServletHolder swaggerUiServletHolder =
@@ -432,29 +425,28 @@ public abstract class JettyHttpServer implements HttpServer {
   private static class NetworkTrafficListenerAdapter implements NetworkTrafficListener {
     private final WiremockNetworkTrafficListener wiremockNetworkTrafficListener;
 
-    NetworkTrafficListenerAdapter(
-        final WiremockNetworkTrafficListener wiremockNetworkTrafficListener) {
+    NetworkTrafficListenerAdapter(WiremockNetworkTrafficListener wiremockNetworkTrafficListener) {
       this.wiremockNetworkTrafficListener = wiremockNetworkTrafficListener;
     }
 
     @Override
-    public void opened(final Socket socket) {
-      this.wiremockNetworkTrafficListener.opened(socket);
+    public void opened(Socket socket) {
+      wiremockNetworkTrafficListener.opened(socket);
     }
 
     @Override
-    public void incoming(final Socket socket, final ByteBuffer bytes) {
-      this.wiremockNetworkTrafficListener.incoming(socket, bytes);
+    public void incoming(Socket socket, ByteBuffer bytes) {
+      wiremockNetworkTrafficListener.incoming(socket, bytes);
     }
 
     @Override
-    public void outgoing(final Socket socket, final ByteBuffer bytes) {
-      this.wiremockNetworkTrafficListener.outgoing(socket, bytes);
+    public void outgoing(Socket socket, ByteBuffer bytes) {
+      wiremockNetworkTrafficListener.outgoing(socket, bytes);
     }
 
     @Override
-    public void closed(final Socket socket) {
-      this.wiremockNetworkTrafficListener.closed(socket);
+    public void closed(Socket socket) {
+      wiremockNetworkTrafficListener.closed(socket);
     }
   }
 }

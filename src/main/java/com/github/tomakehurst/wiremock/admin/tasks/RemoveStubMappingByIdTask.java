@@ -24,7 +24,7 @@ public class RemoveStubMappingByIdTask extends AbstractSingleStubTask {
 
   @Override
   protected ResponseDefinition processStubMapping(
-      Admin admin, ServeEvent serveEvent, StubMapping stubMapping) {
+    Admin admin, ServeEvent serveEvent, StubMapping stubMapping) {
     admin.removeStubMapping(stubMapping);
     return ResponseDefinition.okEmptyJson();
   }

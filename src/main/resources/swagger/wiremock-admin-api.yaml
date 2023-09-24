@@ -2,7 +2,7 @@ openapi: 3.0.0
 
 info:
   title: WireMock
-  version: 3.0.4
+  version: 3.1.0
 
 externalDocs:
   description: WireMock user documentation
@@ -311,7 +311,7 @@ paths:
             application/json:
               example:
                 $ref: "examples/requests.yaml"
-
+                    
   /__admin/requests/remove-by-metadata:
     post:
       summary: Delete requests mappings matching metadata

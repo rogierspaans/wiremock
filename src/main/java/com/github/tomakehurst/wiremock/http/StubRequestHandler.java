@@ -86,6 +86,7 @@ public class StubRequestHandler extends AbstractRequestHandler {
     }
 
     requestJournal.requestReceived(serveEvent);
+
     triggerListeners(BEFORE_RESPONSE_SENT, serveEvent);
   }
 
@@ -105,7 +106,7 @@ public class StubRequestHandler extends AbstractRequestHandler {
   }
 
   @Override
-  protected void afterResponseSent(final ServeEvent serveEvent, final Response response) {
+  protected void afterResponseSent(ServeEvent serveEvent, Response response) {
     requestJournal.serveCompleted(serveEvent);
 
     triggerPostServeActions(serveEvent);
@@ -114,8 +115,8 @@ public class StubRequestHandler extends AbstractRequestHandler {
   }
 
   private void triggerPostServeActions(ServeEvent serveEvent) {
-    for (final PostServeAction postServeAction : this.postServeActions.values()) {
-      postServeAction.doGlobalAction(serveEvent, this.admin);
+    for (PostServeAction postServeAction : postServeActions.values()) {
+      postServeAction.doGlobalAction(serveEvent, admin);
     }
 
     List<PostServeActionDefinition> postServeActionDefs = serveEvent.getPostServeActions();

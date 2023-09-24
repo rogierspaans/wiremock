@@ -50,7 +50,7 @@ public class AdminRoutes {
     routes = routeBuilder.build();
   }
 
-  private void initDefaultRoutes(final Router router) {
+  private void initDefaultRoutes(Router router) {
     router.add(GET, "/", new RootTask());
     router.add(GET, "", new RootRedirectTask());
     router.add(POST, "/reset", new ResetTask());
@@ -120,8 +120,8 @@ public class AdminRoutes {
     router.add(DELETE, "/proxy/{id}", DisableProxyTask.class);
   }
 
-  protected void initAdditionalRoutes(final Router routeBuilder) {
-    for (final AdminApiExtension apiExtension : this.apiExtensions) {
+  protected void initAdditionalRoutes(Router routeBuilder) {
+    for (AdminApiExtension apiExtension : apiExtensions) {
       apiExtension.contributeAdminApiRoutes(routeBuilder);
     }
   }
@@ -148,33 +148,31 @@ public class AdminRoutes {
     private final ImmutableBiMap.Builder<RequestSpec, AdminTask> builder;
 
     public RouteBuilder() {
-      this.builder = ImmutableBiMap.builder();
+      builder = ImmutableBiMap.builder();
     }
 
     @Override
     public void add(
-        final RequestMethod method,
-        final String urlTemplate,
-        final Class<? extends AdminTask> taskClass) {
+        RequestMethod method, String urlTemplate, Class<? extends AdminTask> taskClass) {
       try {
-        final AdminTask task = taskClass.getDeclaredConstructor().newInstance();
-        this.add(requestSpec(method, urlTemplate), task);
-      } catch (final Exception e) {
+        AdminTask task = taskClass.getDeclaredConstructor().newInstance();
+        add(requestSpec(method, urlTemplate), task);
+      } catch (Exception e) {
         throwUnchecked(e);
       }
     }
 
     @Override
-    public void add(final RequestMethod method, final String urlTemplate, final AdminTask task) {
-      this.add(requestSpec(method, urlTemplate), task);
+    public void add(RequestMethod method, String urlTemplate, AdminTask task) {
+      add(requestSpec(method, urlTemplate), task);
     }
 
-    public void add(final RequestSpec requestSpec, final AdminTask task) {
-      this.builder.put(requestSpec, task);
+    public void add(RequestSpec requestSpec, AdminTask task) {
+      builder.put(requestSpec, task);
     }
 
     ImmutableBiMap<RequestSpec, AdminTask> build() {
-      return this.builder.build();
+      return builder.build();
     }
   }
 }

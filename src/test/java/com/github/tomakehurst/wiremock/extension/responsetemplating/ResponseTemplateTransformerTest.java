@@ -1043,7 +1043,7 @@ public class ResponseTemplateTransformerTest {
 
     assertThat(result.substring(0, 100), startsWith("Line 100000\nLine 100001\nLine 100002\n"));
     assertThat(result.length(), equalTo(1_200_000));
-    assertThat(timeTaken, lessThan(Duration.ofSeconds(8)));
+    assertThat(timeTaken, lessThan(Duration.ofSeconds(5)));
   }
 
   private Integer transformToInt(String responseBodyTemplate) {

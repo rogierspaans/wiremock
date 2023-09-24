@@ -20,9 +20,7 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 
 @Deprecated
-/**
- * @deprecated Use {@link ResponseTransformerV2} instead
- */
+/** @deprecated Use {@link ResponseTransformerV2} instead */
 public abstract class ResponseTransformer extends AbstractTransformer<Response> {
 
   @Override

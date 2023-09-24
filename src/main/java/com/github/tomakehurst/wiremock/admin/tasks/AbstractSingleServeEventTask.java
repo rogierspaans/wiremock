@@ -27,7 +27,7 @@ public abstract class AbstractSingleServeEventTask implements AdminTask {
 
   @Override
   public ResponseDefinition execute(
-      Admin admin, ServeEvent adminServeEvent, PathParams pathParams) {
+    Admin admin, ServeEvent adminServeEvent, PathParams pathParams) {
     String idString = pathParams.get("id");
     UUID id;
     try {
@@ -40,5 +40,5 @@ public abstract class AbstractSingleServeEventTask implements AdminTask {
   }
 
   protected abstract ResponseDefinition processServeEvent(
-      Admin admin, ServeEvent adminServeEvent, UUID id);
+    Admin admin, ServeEvent adminServeEvent, UUID id);
 }

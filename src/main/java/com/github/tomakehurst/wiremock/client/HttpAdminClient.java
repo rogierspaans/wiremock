@@ -47,6 +47,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.github.tomakehurst.wiremock.verification.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -73,36 +74,31 @@ public class HttpAdminClient implements Admin {
 
   private final CloseableHttpClient httpClient;
 
-  public HttpAdminClient(final String scheme, final String host, final int port) {
+  public HttpAdminClient(String scheme, String host, int port) {
     this(scheme, host, port, "");
   }
 
-  public HttpAdminClient(final String host, final int port, final String urlPathPrefix) {
+  public HttpAdminClient(String host, int port, String urlPathPrefix) {
     this("http", host, port, urlPathPrefix);
   }
 
-  public HttpAdminClient(
-      final String scheme, final String host, final int port, final String urlPathPrefix) {
+  public HttpAdminClient(String scheme, String host, int port, String urlPathPrefix) {
     this(scheme, host, port, urlPathPrefix, null, null, 0, noClientAuthenticator());
   }
 
   public HttpAdminClient(
-      final String scheme,
-      final String host,
-      final int port,
-      final String urlPathPrefix,
-      final String hostHeader) {
+      String scheme, String host, int port, String urlPathPrefix, String hostHeader) {
     this(scheme, host, port, urlPathPrefix, hostHeader, null, 0, noClientAuthenticator());
   }
 
   public HttpAdminClient(
-      final String scheme,
-      final String host,
-      final int port,
-      final String urlPathPrefix,
-      final String hostHeader,
-      final String proxyHost,
-      final int proxyPort) {
+      String scheme,
+      String host,
+      int port,
+      String urlPathPrefix,
+      String hostHeader,
+      String proxyHost,
+      int proxyPort) {
     this(
         scheme,
         host,
@@ -115,14 +111,14 @@ public class HttpAdminClient implements Admin {
   }
 
   public HttpAdminClient(
-      final String scheme,
-      final String host,
-      final int port,
-      final String urlPathPrefix,
-      final String hostHeader,
-      final String proxyHost,
-      final int proxyPort,
-      final ClientAuthenticator authenticator) {
+      String scheme,
+      String host,
+      int port,
+      String urlPathPrefix,
+      String hostHeader,
+      String proxyHost,
+      int proxyPort,
+      ClientAuthenticator authenticator) {
     this.scheme = scheme;
     this.host = host;
     this.port = port;
@@ -130,30 +126,29 @@ public class HttpAdminClient implements Admin {
     this.hostHeader = hostHeader;
     this.authenticator = authenticator;
 
-    this.adminRoutes = AdminRoutes.forClient();
+    adminRoutes = AdminRoutes.forClient();
 
-    this.httpClient =
-        HttpClientFactory.createClient(this.createProxySettings(proxyHost, proxyPort));
+    httpClient = HttpClientFactory.createClient(createProxySettings(proxyHost, proxyPort));
   }
 
-  public HttpAdminClient(final String host, final int port) {
+  public HttpAdminClient(String host, int port) {
     this(host, port, "");
   }
 
-  private static StringEntity jsonStringEntity(final String json) {
+  private static StringEntity jsonStringEntity(String json) {
     return new StringEntity(json, StandardCharsets.UTF_8);
   }
 
   @Override
-  public void addStubMapping(final StubMapping stubMapping) {
+  public void addStubMapping(StubMapping stubMapping) {
     if (stubMapping.getRequest().hasInlineCustomMatcher()) {
       throw new AdminException(
           "Custom matchers can't be used when administering a remote WireMock server. "
               + "Use WireMockRule.stubFor() or WireMockServer.stubFor() to administer the local instance.");
     }
 
-    this.executeRequest(
-        this.adminRoutes.requestSpecForTask(CreateStubMappingTask.class),
+    executeRequest(
+        adminRoutes.requestSpecForTask(CreateStubMappingTask.class),
         PathParams.empty(),
         stubMapping,
         Void.class);
@@ -168,8 +163,8 @@ public class HttpAdminClient implements Admin {
 
   @Override
   public void removeStubMapping(StubMapping stubbMapping) {
-    this.postJsonAssertOkAndReturnBody(
-        this.urlFor(RemoveMatchingStubMappingTask.class), Json.write(stubbMapping));
+    postJsonAssertOkAndReturnBody(
+        urlFor(RemoveMatchingStubMappingTask.class), Json.write(stubbMapping));
   }
 
   @Override
@@ -182,53 +177,52 @@ public class HttpAdminClient implements Admin {
 
   @Override
   public ListStubMappingsResult listAllStubMappings() {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(GetAllStubMappingsTask.class),
-        ListStubMappingsResult.class);
+    return executeRequest(
+        adminRoutes.requestSpecForTask(GetAllStubMappingsTask.class), ListStubMappingsResult.class);
   }
 
   @Override
   public SingleStubMappingResult getStubMapping(UUID id) {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(GetStubMappingTask.class),
+    return executeRequest(
+        adminRoutes.requestSpecForTask(GetStubMappingTask.class),
         PathParams.single("id", id),
         SingleStubMappingResult.class);
   }
 
   @Override
   public void saveMappings() {
-    this.postJsonAssertOkAndReturnBody(this.urlFor(SaveMappingsTask.class), null);
+    postJsonAssertOkAndReturnBody(urlFor(SaveMappingsTask.class), null);
   }
 
   @Override
   public void resetAll() {
-    this.postJsonAssertOkAndReturnBody(this.urlFor(ResetTask.class), null);
+    postJsonAssertOkAndReturnBody(urlFor(ResetTask.class), null);
   }
 
   @Override
   public void resetRequests() {
-    this.executeRequest(this.adminRoutes.requestSpecForTask(ResetRequestsTask.class));
+    executeRequest(adminRoutes.requestSpecForTask(ResetRequestsTask.class));
   }
 
   @Override
   public void resetScenarios() {
-    this.executeRequest(this.adminRoutes.requestSpecForTask(ResetScenariosTask.class));
+    executeRequest(adminRoutes.requestSpecForTask(ResetScenariosTask.class));
   }
 
   @Override
   public void resetMappings() {
-    this.executeRequest(this.adminRoutes.requestSpecForTask(ResetStubMappingsTask.class));
+    executeRequest(adminRoutes.requestSpecForTask(ResetStubMappingsTask.class));
   }
 
   @Override
   public void resetToDefaultMappings() {
-    this.postJsonAssertOkAndReturnBody(this.urlFor(ResetToDefaultMappingsTask.class), null);
+    postJsonAssertOkAndReturnBody(urlFor(ResetToDefaultMappingsTask.class), null);
   }
 
   @Override
   public GetServeEventsResult getServeEvents() {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(GetAllRequestsTask.class), GetServeEventsResult.class);
+    return executeRequest(
+        adminRoutes.requestSpecForTask(GetAllRequestsTask.class), GetServeEventsResult.class);
   }
 
   @Override
@@ -249,18 +243,18 @@ public class HttpAdminClient implements Admin {
   }
 
   @Override
-  public SingleServedStubResult getServedStub(final UUID id) {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(GetServedStubTask.class),
+  public SingleServedStubResult getServedStub(UUID id) {
+    return executeRequest(
+        adminRoutes.requestSpecForTask(GetServedStubTask.class),
         PathParams.single("id", id),
         SingleServedStubResult.class);
   }
 
   @Override
-  public VerificationResult countRequestsMatching(final RequestPattern requestPattern) {
-    final String body =
-        this.postJsonAssertOkAndReturnBody(
-            this.urlFor(GetRequestCountTask.class), Json.write(requestPattern));
+  public VerificationResult countRequestsMatching(RequestPattern requestPattern) {
+    String body =
+        postJsonAssertOkAndReturnBody(
+            urlFor(GetRequestCountTask.class), Json.write(requestPattern));
     return VerificationResult.from(body);
   }
 
@@ -273,8 +267,7 @@ public class HttpAdminClient implements Admin {
 
   @Override
   public FindRequestsResult findUnmatchedRequests() {
-    final String body =
-        this.getJsonAssertOkAndReturnBody(this.urlFor(FindUnmatchedRequestsTask.class));
+    String body = getJsonAssertOkAndReturnBody(urlFor(FindUnmatchedRequestsTask.class));
     return Json.read(body, FindRequestsResult.class);
   }
 
@@ -305,15 +298,14 @@ public class HttpAdminClient implements Admin {
 
   @Override
   public FindNearMissesResult findNearMissesForUnmatchedRequests() {
-    final String body =
-        this.getJsonAssertOkAndReturnBody(this.urlFor(FindNearMissesForUnmatchedTask.class));
+    String body = getJsonAssertOkAndReturnBody(urlFor(FindNearMissesForUnmatchedTask.class));
     return Json.read(body, FindNearMissesResult.class);
   }
 
   @Override
   public GetScenariosResult getAllScenarios() {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(GetAllScenariosTask.class), GetScenariosResult.class);
+    return executeRequest(
+        adminRoutes.requestSpecForTask(GetAllScenariosTask.class), GetScenariosResult.class);
   }
 
   @Override
@@ -334,88 +326,83 @@ public class HttpAdminClient implements Admin {
   }
 
   @Override
-  public FindNearMissesResult findTopNearMissesFor(final LoggedRequest loggedRequest) {
-    final String body =
-        this.postJsonAssertOkAndReturnBody(
-            this.urlFor(FindNearMissesForRequestTask.class), Json.write(loggedRequest));
+  public FindNearMissesResult findTopNearMissesFor(LoggedRequest loggedRequest) {
+    String body =
+        postJsonAssertOkAndReturnBody(
+            urlFor(FindNearMissesForRequestTask.class), Json.write(loggedRequest));
 
     return Json.read(body, FindNearMissesResult.class);
   }
 
   @Override
-  public FindNearMissesResult findTopNearMissesFor(final RequestPattern requestPattern) {
-    final String body =
-        this.postJsonAssertOkAndReturnBody(
-            this.urlFor(FindNearMissesForRequestPatternTask.class), Json.write(requestPattern));
+  public FindNearMissesResult findTopNearMissesFor(RequestPattern requestPattern) {
+    String body =
+        postJsonAssertOkAndReturnBody(
+            urlFor(FindNearMissesForRequestPatternTask.class), Json.write(requestPattern));
 
     return Json.read(body, FindNearMissesResult.class);
   }
 
   @Override
-  public void updateGlobalSettings(final GlobalSettings settings) {
-    this.postJsonAssertOkAndReturnBody(
-        this.urlFor(GlobalSettingsUpdateTask.class), Json.write(settings));
+  public void updateGlobalSettings(GlobalSettings settings) {
+    postJsonAssertOkAndReturnBody(urlFor(GlobalSettingsUpdateTask.class), Json.write(settings));
   }
 
   @Override
   public SnapshotRecordResult snapshotRecord() {
-    final String body = this.postJsonAssertOkAndReturnBody(this.urlFor(SnapshotTask.class), "");
+    String body = postJsonAssertOkAndReturnBody(urlFor(SnapshotTask.class), "");
 
     return Json.read(body, SnapshotRecordResult.class);
   }
 
   @Override
-  public SnapshotRecordResult snapshotRecord(final RecordSpecBuilder spec) {
-    return this.snapshotRecord(spec.build());
+  public SnapshotRecordResult snapshotRecord(RecordSpecBuilder spec) {
+    return snapshotRecord(spec.build());
   }
 
   @Override
-  public SnapshotRecordResult snapshotRecord(final RecordSpec spec) {
-    final String body =
-        this.postJsonAssertOkAndReturnBody(this.urlFor(SnapshotTask.class), Json.write(spec));
+  public SnapshotRecordResult snapshotRecord(RecordSpec spec) {
+    String body = postJsonAssertOkAndReturnBody(urlFor(SnapshotTask.class), Json.write(spec));
 
     return Json.read(body, SnapshotRecordResult.class);
   }
 
   @Override
-  public void startRecording(final String targetBaseUrl) {
-    this.startRecording(RecordSpec.forBaseUrl(targetBaseUrl));
+  public void startRecording(String targetBaseUrl) {
+    startRecording(RecordSpec.forBaseUrl(targetBaseUrl));
   }
 
   @Override
-  public void startRecording(final RecordSpec recordSpec) {
-    this.postJsonAssertOkAndReturnBody(
-        this.urlFor(StartRecordingTask.class), Json.write(recordSpec));
+  public void startRecording(RecordSpec recordSpec) {
+    postJsonAssertOkAndReturnBody(urlFor(StartRecordingTask.class), Json.write(recordSpec));
   }
 
   @Override
-  public void startRecording(final RecordSpecBuilder recordSpec) {
-    this.startRecording(recordSpec.build());
+  public void startRecording(RecordSpecBuilder recordSpec) {
+    startRecording(recordSpec.build());
   }
 
   @Override
   public SnapshotRecordResult stopRecording() {
-    final String body =
-        this.postJsonAssertOkAndReturnBody(this.urlFor(StopRecordingTask.class), "");
+    String body = postJsonAssertOkAndReturnBody(urlFor(StopRecordingTask.class), "");
 
     return Json.read(body, SnapshotRecordResult.class);
   }
 
   @Override
   public RecordingStatusResult getRecordingStatus() {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(GetRecordingStatusTask.class),
-        RecordingStatusResult.class);
+    return executeRequest(
+        adminRoutes.requestSpecForTask(GetRecordingStatusTask.class), RecordingStatusResult.class);
   }
 
   @Override
   public Options getOptions() {
-    return new WireMockConfiguration().port(this.port).bindAddress(this.host);
+    return new WireMockConfiguration().port(port).bindAddress(host);
   }
 
   @Override
   public void shutdownServer() {
-    this.postJsonAssertOkAndReturnBody(this.urlFor(ShutdownServerTask.class), null);
+    postJsonAssertOkAndReturnBody(urlFor(ShutdownServerTask.class), null);
   }
 
   @Override
@@ -436,16 +423,16 @@ public class HttpAdminClient implements Admin {
 
   @Override
   public ListStubMappingsResult findAllStubsByMetadata(final StringValuePattern pattern) {
-    return this.executeRequest(
-        this.adminRoutes.requestSpecForTask(FindStubMappingsByMetadataTask.class),
+    return executeRequest(
+        adminRoutes.requestSpecForTask(FindStubMappingsByMetadataTask.class),
         pattern,
         ListStubMappingsResult.class);
   }
 
   @Override
-  public void removeStubsByMetadata(final StringValuePattern pattern) {
-    this.executeRequest(
-        this.adminRoutes.requestSpecForTask(RemoveStubMappingsByMetadataTask.class),
+  public void removeStubsByMetadata(StringValuePattern pattern) {
+    executeRequest(
+        adminRoutes.requestSpecForTask(RemoveStubMappingsByMetadataTask.class),
         pattern,
         Void.class);
   }
@@ -463,55 +450,48 @@ public class HttpAdminClient implements Admin {
   }
 
   public int port() {
-    return this.port;
+    return port;
   }
 
-  private ProxySettings createProxySettings(final String proxyHost, final int proxyPort) {
+  private ProxySettings createProxySettings(String proxyHost, int proxyPort) {
     if (StringUtils.isNotBlank(proxyHost)) {
       return new ProxySettings(proxyHost, proxyPort);
     }
     return ProxySettings.NO_PROXY;
   }
 
-  private String postJsonAssertOkAndReturnBody(final String url, final String json) {
-    final HttpPost post = new HttpPost(url);
-    if (json != null) {
-      post.setEntity(HttpAdminClient.jsonStringEntity(json));
-    }
-
+  private String postJsonAssertOkAndReturnBody(String url, String json) {
+    HttpPost post = new HttpPost(url);
+    post.setEntity(jsonStringEntity(Optional.ofNullable(json).orElse("")));
     return safelyExecuteRequest(url, post);
   }
 
   private String putJsonAssertOkAndReturnBody(String url, String json) {
-    HttpPut post = new HttpPut(url);
-    if (json != null) {
-      post.setEntity(jsonStringEntity(json));
-    }
-
-    return this.safelyExecuteRequest(url, post);
+    HttpPut put = new HttpPut(url);
+    put.setEntity(jsonStringEntity(Optional.ofNullable(json).orElse("")));
+    return safelyExecuteRequest(url, put);
   }
 
-  protected String getJsonAssertOkAndReturnBody(final String url) {
-    final HttpGet get = new HttpGet(url);
-    return this.safelyExecuteRequest(url, get);
+  protected String getJsonAssertOkAndReturnBody(String url) {
+    HttpGet get = new HttpGet(url);
+    return safelyExecuteRequest(url, get);
   }
 
-  private void executeRequest(final RequestSpec requestSpec) {
-    this.executeRequest(requestSpec, PathParams.empty(), null, Void.class);
+  private void executeRequest(RequestSpec requestSpec) {
+    executeRequest(requestSpec, PathParams.empty(), null, Void.class);
   }
 
-  private <B, R> R executeRequest(
-      final RequestSpec requestSpec, final B requestBody, final Class<R> responseType) {
-    return this.executeRequest(requestSpec, PathParams.empty(), requestBody, responseType);
+  private <B, R> R executeRequest(RequestSpec requestSpec, B requestBody, Class<R> responseType) {
+    return executeRequest(requestSpec, PathParams.empty(), requestBody, responseType);
   }
 
-  private <B, R> R executeRequest(final RequestSpec requestSpec, final Class<R> responseType) {
-    return this.executeRequest(requestSpec, PathParams.empty(), null, responseType);
+  private <B, R> R executeRequest(RequestSpec requestSpec, Class<R> responseType) {
+    return executeRequest(requestSpec, PathParams.empty(), null, responseType);
   }
 
   private <B, R> R executeRequest(
-      final RequestSpec requestSpec, final PathParams pathParams, final Class<R> responseType) {
-    return this.executeRequest(requestSpec, pathParams, null, responseType);
+      RequestSpec requestSpec, PathParams pathParams, Class<R> responseType) {
+    return executeRequest(requestSpec, pathParams, null, responseType);
   }
 
   private <B, R> R executeRequest(
@@ -535,11 +515,12 @@ public class HttpAdminClient implements Admin {
     ClassicRequestBuilder requestBuilder =
         ClassicRequestBuilder.create(requestSpec.method().getName()).setUri(url);
 
-    if (requestBody != null) {
-      requestBuilder.setEntity(HttpAdminClient.jsonStringEntity(Json.write(requestBody)));
+    if (requestSpec.method().hasEntity()) {
+      requestBuilder.setEntity(
+          jsonStringEntity(Optional.ofNullable(requestBody).map(Json::write).orElse("")));
     }
 
-    final String responseBodyString = this.safelyExecuteRequest(url, requestBuilder.build());
+    String responseBodyString = safelyExecuteRequest(url, requestBuilder.build());
 
     return responseType == Void.class ? null : Json.read(responseBodyString, responseType);
   }
@@ -549,15 +530,15 @@ public class HttpAdminClient implements Admin {
       request.addHeader(HOST, hostHeader);
     }
 
-    final List<HttpHeader> httpHeaders = this.authenticator.generateAuthHeaders();
-    for (final HttpHeader header : httpHeaders) {
-      for (final String value : header.values()) {
+    List<HttpHeader> httpHeaders = authenticator.generateAuthHeaders();
+    for (HttpHeader header : httpHeaders) {
+      for (String value : header.values()) {
         request.addHeader(header.key(), value);
       }
     }
 
-    try (final CloseableHttpResponse response = this.httpClient.execute(request)) {
-      final int statusCode = response.getCode();
+    try (CloseableHttpResponse response = httpClient.execute(request)) {
+      int statusCode = response.getCode();
       if (HttpStatus.isServerError(statusCode)) {
         throw new VerificationException(
             "Expected status 2xx for " + url + " but was " + statusCode);
@@ -567,14 +548,14 @@ public class HttpAdminClient implements Admin {
         throw new NotAuthorisedException();
       }
 
-      final String body = getEntityAsStringAndCloseStream(response);
+      String body = getEntityAsStringAndCloseStream(response);
       if (HttpStatus.isClientError(statusCode)) {
-        final Errors errors = Json.read(body, Errors.class);
+        Errors errors = Json.read(body, Errors.class);
         throw ClientError.fromErrors(errors);
       }
 
       return body;
-    } catch (final Exception e) {
+    } catch (Exception e) {
       return throwUnchecked(e, String.class);
     }
   }
