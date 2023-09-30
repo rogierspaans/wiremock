@@ -97,6 +97,8 @@ public interface Options {
 
   ExtensionDeclarations getDeclaredExtensions();
 
+  boolean isExtensionScanningEnabled();
+
   WiremockNetworkTrafficListener networkTrafficListener();
 
   Authenticator getAdminAuthenticator();

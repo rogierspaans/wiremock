@@ -52,8 +52,6 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.DebugHandler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -128,7 +126,6 @@ public abstract class JettyHttpServer implements HttpServer {
       AdminRequestHandler adminRequestHandler,
       StubRequestHandler stubRequestHandler) {
     Notifier notifier = options.notifier();
-
     ServletContextHandler adminContext = addAdminContext(adminRequestHandler, notifier);
     ServletContextHandler mockServiceContext =
         addMockServiceContext(
@@ -283,6 +280,8 @@ public abstract class JettyHttpServer implements HttpServer {
       Notifier notifier) {
     ServletContextHandler mockServiceContext = new ServletContextHandler(jettyServer, "/");
 
+    decorateMockServiceContextBeforeConfig(mockServiceContext);
+
     mockServiceContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
     mockServiceContext.setInitParameter(
         "org.eclipse.jetty.servlet.Default.resourceBase", fileSource.getPath());
@@ -338,12 +337,20 @@ public abstract class JettyHttpServer implements HttpServer {
       addCorsFilter(mockServiceContext);
     }
 
+    decorateMockServiceContextAfterConfig(mockServiceContext);
+
     return mockServiceContext;
   }
+
+  protected void decorateMockServiceContextBeforeConfig(ServletContextHandler mockServiceContext) {}
+
+  protected void decorateMockServiceContextAfterConfig(ServletContextHandler mockServiceContext) {}
 
   private ServletContextHandler addAdminContext(
       AdminRequestHandler adminRequestHandler, Notifier notifier) {
     ServletContextHandler adminContext = new ServletContextHandler(jettyServer, ADMIN_CONTEXT_ROOT);
+
+    decorateAdminServiceContextBeforeConfig(adminContext);
 
     adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
 
@@ -394,8 +401,16 @@ public abstract class JettyHttpServer implements HttpServer {
         serverContainer.addEndpoint(WebSocketEndpoint.class);
       });
 
+    decorateAdminServiceContextAfterConfig(adminContext);
+
     return adminContext;
   }
+
+  protected void decorateAdminServiceContextBeforeConfig(
+      ServletContextHandler adminServiceContext) {}
+
+  protected void decorateAdminServiceContextAfterConfig(
+      ServletContextHandler adminServiceContext) {}
 
   /**
    * Rewrite web app. We use Angular. We must rewrite every /__admin/webapp path to the index.html of our
