@@ -1,4 +1,4 @@
-import {Component, HostBinding, Input, OnInit} from '@angular/core';
+import {Component, HostBinding, Input} from '@angular/core';
 import { UtilService } from '../../services/util.service';
 
 @Component({
@@ -6,8 +6,7 @@ import { UtilService } from '../../services/util.service';
   templateUrl: './code-entry.component.html',
   styleUrls: [ './code-entry.component.scss' ]
 })
-export class CodeEntryComponent implements OnInit {
-
+export class CodeEntryComponent {
 
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
@@ -22,8 +21,5 @@ export class CodeEntryComponent implements OnInit {
   language?: string;
 
   constructor() {
-  }
-
-  ngOnInit() {
   }
 }

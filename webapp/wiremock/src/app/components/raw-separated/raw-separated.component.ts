@@ -1,28 +1,31 @@
 import {
-  AfterViewInit,
-  Component, ContentChild, ElementRef, EventEmitter,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
-  OnInit, Output,
-  ViewEncapsulation
+  OnInit,
+  Output,
+  ViewEncapsulation,
 } from '@angular/core';
-import {takeUntil} from 'rxjs/operators';
-import {UtilService} from '../../services/util.service';
-import {Tab, TabSelectionService} from '../../services/tab-selection.service';
-import {Subject} from 'rxjs/internal/Subject';
+import { takeUntil } from 'rxjs/operators';
+import { UtilService } from '../../services/util.service';
+import { Tab, TabSelectionService } from '../../services/tab-selection.service';
+import { Subject } from 'rxjs/internal/Subject';
 
 @Component({
   selector: 'wm-raw-separated',
   templateUrl: './raw-separated.component.html',
   styleUrls: [ './raw-separated.component.scss' ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class RawSeparatedComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   @Input()
   separatedDisabled = false;
@@ -60,13 +63,9 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
-  }
-
-  ngAfterViewInit(): void {
   }
 
   onActiveIdChange($event: Tab) {

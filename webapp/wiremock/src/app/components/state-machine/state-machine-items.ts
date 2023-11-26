@@ -1,9 +1,9 @@
 import * as joint from 'jointjs';
-import {dia} from 'jointjs';
+import { dia } from 'jointjs';
+import { StateMappingInfoComponent } from '../state-mapping-info/state-mapping-info.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { StubMapping } from '../../model/wiremock/stub-mapping';
 import Element = dia.Element;
-import {StateMappingInfoComponent} from '../state-mapping-info/state-mapping-info.component';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {StubMapping} from '../../model/wiremock/stub-mapping';
 
 class InfoButton extends joint.linkTools.Button {
   constructor(modalService: NgbModal, mapping: StubMapping) {
@@ -14,8 +14,8 @@ class InfoButton extends joint.linkTools.Button {
         attributes: {
           'r': 7,
           'fill': '#f58e00',
-          'cursor': 'pointer'
-        }
+          'cursor': 'pointer',
+        },
       }, {
         tagName: 'path',
         selector: 'icon',
@@ -24,18 +24,18 @@ class InfoButton extends joint.linkTools.Button {
           'fill': 'none',
           'stroke': '#FFFFFF',
           'stroke-width': 2,
-          'pointer-events': 'none'
-        }
+          'pointer-events': 'none',
+        },
       } ],
       distance: '50%',
       offset: 0,
-      action: function (evt) {
+      action: function() {
         const modalRef = modalService.open(StateMappingInfoComponent, {
           size: 'lg',
-          windowClass: 'modal-h70'
+          windowClass: 'modal-h70',
         });
         modalRef.componentInstance.mapping = mapping;
-      }
+      },
     });
   }
 }
@@ -47,7 +47,7 @@ export class StateMachineItems {
     const infoButton = new InfoButton(modalService, mapping);
 
     return new joint.dia.ToolsView({
-      tools: [ infoButton ]
+      tools: [ infoButton ],
     });
   }
 
@@ -56,8 +56,8 @@ export class StateMachineItems {
     circle.resize(1, 1);
     circle.attr({
       body: {
-        fill: 'black'
-      }
+        fill: 'black',
+      },
     });
     return circle;
   }
@@ -75,14 +75,14 @@ export class StateMachineItems {
           text: 'Started',
           height: '50%',
           ellipsis: true,
-          width: -20
+          width: -20,
         },
-        title: 'Started'
+        title: 'Started',
       },
       body: {
         fill: color,
-        cursor: 'move'
-      }
+        cursor: 'move',
+      },
     });
     return circle;
   }
@@ -96,14 +96,14 @@ export class StateMachineItems {
           text: 'ANY',
           height: '50%',
           ellipsis: true,
-          width: -20
+          width: -20,
         },
-        title: 'ANY'
+        title: 'ANY',
       },
       body: {
         fill: '#29ABE2',
-        cursor: 'move'
-      }
+        cursor: 'move',
+      },
     });
     return ellipse;
   }
@@ -129,12 +129,12 @@ export class StateMachineItems {
         },
         title: title,
         color: color,
-        fill: color
+        fill: color,
       },
       body: {
         fill: bgColor,
-        cursor: 'move'
-      }
+        cursor: 'move',
+      },
     });
     return ellipse;
   }

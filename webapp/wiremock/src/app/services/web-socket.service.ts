@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
-import {UtilService} from './util.service';
-import {Observable} from 'rxjs/internal/Observable';
-import {Subject} from 'rxjs/internal/Subject';
-import {filter} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { UtilService } from './util.service';
+import { Observable } from 'rxjs/internal/Observable';
+import { Subject } from 'rxjs/internal/Subject';
+import { filter } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebSocketService {
 
@@ -36,6 +36,7 @@ export class ReconnectWebSocket {
 
   constructor() {
     // We need the var because of overwritten method this would be the actual WebSocket
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     reconnectWebSocket = this;
 
     this.subject = new Subject<MessageEvent>();
@@ -57,13 +58,13 @@ export class ReconnectWebSocket {
 
   private privateOnerror(ev: Event): void {
     if (UtilService.isDefined(reconnectWebSocket.onerror)) {
-      reconnectWebSocket.onerror(ev);
+      reconnectWebSocket.onerror();
     }
   }
 
   private privateOnclose(ev: CloseEvent): void {
     if (UtilService.isDefined(reconnectWebSocket.onclose)) {
-      reconnectWebSocket.onclose(ev);
+      reconnectWebSocket.onclose();
     }
 
     setTimeout(() => reconnectWebSocket.socketReconnect(), 5000);
@@ -73,16 +74,17 @@ export class ReconnectWebSocket {
     reconnectWebSocket.subject.next(ev);
   }
 
-  onerror(ev: Event): void {
+  onerror(): void {
   }
 
-  onclose(ev: CloseEvent): void {
+  onclose(): void {
   }
 
   readyState(): number {
     return this.webSocket.readyState;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   send(data: any) {
     this.webSocket.send(data);
   }

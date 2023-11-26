@@ -1,12 +1,12 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {UtilService} from '../services/util.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { UtilService } from '../services/util.service';
 
 @Pipe({
-  name: 'prettify'
+  name: 'prettify',
 })
 export class PrettifyPipe implements PipeTransform {
 
-  transform(value: string, args?: any): any {
+  transform(value: string): string {
     return UtilService.prettify(value) + '';
   }
 

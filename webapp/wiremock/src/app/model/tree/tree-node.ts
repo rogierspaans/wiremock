@@ -1,5 +1,4 @@
 import {Item} from '../wiremock/item';
-import {UtilService} from '../../services/util.service';
 
 export class TreeNode {
   constructor(public value: Item, public depth: number, public parent?: TreeNode,

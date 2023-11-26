@@ -60,7 +60,7 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
 
   private editor?: Editor;
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   private editorChanges: Subject<string> = new Subject();
 
@@ -150,8 +150,10 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
     if (this.editor) {
       this.editor.setOptions(this.options);
       if (this.options.readOnly) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this.editor.renderer as any).$cursorLayer.element.style.display = 'none';
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this.editor.renderer as any).$cursorLayer.element.style.display = 'block';
       }
     }

@@ -1,6 +1,6 @@
-import {Item} from './item';
-import {UtilService} from '../../services/util.service';
-import {Proxy} from './proxy';
+import { Item } from './item';
+import { UtilService } from '../../services/util.service';
+import { Proxy } from './proxy';
 import moment from 'moment';
 
 export class LoggedRequest extends Proxy implements Item {
@@ -9,12 +9,16 @@ export class LoggedRequest extends Proxy implements Item {
   absoluteUrl!: string;
   clientIp!: string;
   method!: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cookies: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   queryParams: any;
   body!: string;
   bodyAsBase64!: string;
   isBrowserProxyRequest!: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loggedDate: any;
   date!: string;
 
@@ -36,6 +40,7 @@ export class LoggedRequest extends Proxy implements Item {
 
   getId(): string {
     // value exists in transient layer. This way we skip typescripts type safety.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this as any).id;
   }
 

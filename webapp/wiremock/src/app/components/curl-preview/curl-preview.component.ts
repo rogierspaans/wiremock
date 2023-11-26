@@ -1,10 +1,6 @@
 import {
-  AfterContentChecked,
   AfterViewInit,
-  Component, ElementRef,
-  OnChanges,
-  OnInit,
-  SimpleChanges, ViewChild
+  Component, ElementRef, ViewChild
 } from '@angular/core';
 import {Curl} from '../../services/curl-extractor';
 import {CodeEditorComponent} from '../code-editor/code-editor.component';
@@ -17,7 +13,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './curl-preview.component.html',
   styleUrls: [ './curl-preview.component.scss' ]
 })
-export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, AfterContentChecked {
+export class CurlPreviewComponent implements AfterViewInit {
 
   @ViewChild('editor')
   private codeEditor!: CodeEditorComponent;
@@ -38,10 +34,6 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
 
   constructor(private elementRef: ElementRef, private messageService: MessageService, public activeModal: NgbActiveModal) {
   }
-
-  ngOnInit() {
-  }
-
   copyCurl() {
     this.activeModal.dismiss();
     const code = this.codeEditor.getCode();
@@ -53,9 +45,6 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-  }
-
   ngAfterViewInit(): void {
     const offsetParent = this.elementRef.nativeElement.offsetParent;
 
@@ -63,8 +52,5 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
       this.visible = true;
       this.codeEditor.resize();
     }
-  }
-
-  ngAfterContentChecked(): void {
   }
 }

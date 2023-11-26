@@ -1,13 +1,13 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {UtilService} from '../services/util.service';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'splitCamelCase'
+  name: 'splitCamelCase',
 })
 export class SplitCamelCasePipe implements PipeTransform {
 
-  transform(value: any, args?: any): any {
-    if (UtilService.isUndefined(value)) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  transform(value: string | undefined): string {
+    if (!value) {
       return '';
     }
     // return value.split(/(?=[A-Z])/).join(' ');

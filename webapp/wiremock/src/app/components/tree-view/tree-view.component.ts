@@ -1,31 +1,33 @@
 import {
-  AfterViewChecked, AfterViewInit,
-  Component, ElementRef,
+  AfterViewChecked,
+  Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
   OnChanges,
-  OnInit,
-  Output, QueryList,
-  SimpleChanges, ViewChild,
-  ViewChildren
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
-import {Item} from '../../model/wiremock/item';
-import {UtilService} from '../../services/util.service';
-import {WiremockService} from '../../services/wiremock.service';
-import {MessageService} from '../message/message.service';
-import {Tree} from '../../model/tree/tree';
-import {Root} from '../../model/tree/root';
-import {TreeNode} from '../../model/tree/tree-node';
-import {Folder} from '../../model/tree/folder';
-import {TreeHelper} from './tree-helper';
+import { Item } from '../../model/wiremock/item';
+import { UtilService } from '../../services/util.service';
+import { WiremockService } from '../../services/wiremock.service';
+import { MessageService } from '../message/message.service';
+import { Tree } from '../../model/tree/tree';
+import { Root } from '../../model/tree/root';
+import { TreeNode } from '../../model/tree/tree-node';
+import { Folder } from '../../model/tree/folder';
+import { TreeHelper } from './tree-helper';
 
 @Component({
   selector: 'wm-tree-view',
   templateUrl: './tree-view.component.html',
-  styleUrls: [ './tree-view.component.scss' ]
+  styleUrls: [ './tree-view.component.scss' ],
 })
-export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked {
+export class TreeViewComponent implements OnChanges, AfterViewChecked {
 
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
@@ -69,9 +71,6 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
     this.activeItemChange.emit(this.activeItem);
   }
 
-  ngOnInit() {
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     // only when we actually change items. No need to change when activeItem changes because this would only
     // include expand and this is done by user.
@@ -96,9 +95,6 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
       this.treeItems = TreeHelper.sortTreeFoldersFirstAndMapToList(this.previousTree);
       this.activeItemChanged = true;
     }
-  }
-
-  ngAfterViewInit(): void {
   }
 
   ngAfterViewChecked(): void {

@@ -1,8 +1,9 @@
-import {ServeEvent} from './serve-event';
+import { ServeEvent } from './serve-event';
 
 export class GetServeEventsResult {
 
   requests!: ServeEvent[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta: any;
   requestJournalDisabled!: boolean;
 

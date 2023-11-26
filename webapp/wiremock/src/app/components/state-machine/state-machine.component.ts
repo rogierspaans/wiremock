@@ -1,35 +1,25 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
 import * as joint from 'jointjs';
+import { dia } from 'jointjs';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import {dia} from 'jointjs';
+import { StateMachineItems } from './state-machine-items';
+import { UtilService } from '../../services/util.service';
+import { StateLink } from '../../model/state-link';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Scenario } from '../../model/wiremock/scenario';
 import Paper = dia.Paper;
-import {StateMachineItems} from './state-machine-items';
 import Element = dia.Element;
-import {UtilService} from '../../services/util.service';
-import {StateLink} from '../../model/state-link';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import LinkView = dia.LinkView;
-import {Scenario} from '../../model/wiremock/scenario';
 import Graph = dia.Graph;
 
 
 @Component({
   selector: 'wm-state-machine',
   templateUrl: './state-machine.component.html',
-  styleUrls: [ './state-machine.component.scss' ]
+  styleUrls: [ './state-machine.component.scss' ],
 })
-export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
+export class StateMachineComponent implements OnChanges {
 
   private static readonly ANY = '{{ANY}}';
 
@@ -58,10 +48,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private container: ElementRef, private modalService: NgbModal) {
   }
 
-  ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (UtilService.isUndefined(this.item) || UtilService.isUndefined(this.item.mappings)) {
       return;
     }
@@ -87,7 +74,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
     if (!this.lastItem || this.lastItem.getId() !== this.item.getId()) {
       // reset position to 0, 0 if scenario changed or nothing was yet open
-      this.paperPos = {x: 0, y: 0};
+      this.paperPos = { x: 0, y: 0 };
     }
 
     if (this.paperPos) {
@@ -104,19 +91,19 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
       model: this.graph,
       height: this.container.nativeElement.offsetHeight,
       width: this.container.nativeElement.offsetWidth,
-      gridSize: 10
+      gridSize: 10,
     });
     this.paper.translate(0, 0);
 
     this.dragStartPosition = undefined;
 
-    this.paper.on('blank:pointerdown', (event, x, y) => {
+    this.paper.on('blank:pointerdown', (_event, x, y) => {
       if (this.space) {
-        this.dragStartPosition = {x: x, y: y};
+        this.dragStartPosition = { x: x, y: y };
       }
     });
 
-    this.paper.on('cell:pointerup blank:pointerup', (cellView, x, y) => {
+    this.paper.on('cell:pointerup blank:pointerup', () => {
       this.dragStartPosition = undefined;
     });
   }
@@ -158,7 +145,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   private addStatesToGraph(states: Map<string, dia.Element>) {
-    states.forEach((state, stateName) => {
+    states.forEach((state) => {
       state.addTo(this.graph);
     });
   }
@@ -178,18 +165,18 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
       if (data.source === data.target) {
         link.connector('rounded', {
-          radius: 20
+          radius: 20,
         });
         link.router('manhattan', {
           step: 10,
           padding: 15,
-          maxAllowedDirectionChange: 0
+          maxAllowedDirectionChange: 0,
         });
       } else {
         link.connector('rounded');
         link.router('normal', {
           step: 30,
-          padding: 30
+          padding: 30,
         });
       }
 
@@ -212,11 +199,8 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
       clusterPadding: 50,
       rankDir: 'TB',
       marginX: 100,
-      marginY: 50
+      marginY: 50,
     });
-  }
-
-  ngAfterViewInit(): void {
   }
 
   @HostListener('window:resize', [ '$event' ])
@@ -229,7 +213,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
   onMove(event: MouseEvent) {
     if (this.paper && this.dragStartPosition) {
-      this.paperPos = {x: event.offsetX - this.dragStartPosition.x, y: event.offsetY - this.dragStartPosition.y};
+      this.paperPos = { x: event.offsetX - this.dragStartPosition.x, y: event.offsetY - this.dragStartPosition.y };
       this.paper.translate(this.paperPos.x, this.paperPos.y);
       //  var scale = V(paper.viewport).scale();
       // dragStartPosition = { x: x * scale.sx, y: y * scale.sy};
@@ -237,13 +221,13 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   @HostListener('document:keyup.space', [ '$event' ])
-  onSpaceUp(event: Event) {
+  onSpaceUp() {
     this.space = false;
     this.dragStartPosition = undefined;
   }
 
   @HostListener('document:keydown.space', [ '$event' ])
-  onSpaceDown(event: Event) {
+  onSpaceDown() {
     this.space = true;
   }
 

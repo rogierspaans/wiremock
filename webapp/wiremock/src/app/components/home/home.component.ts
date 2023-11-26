@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   isCollapsed = true;
 

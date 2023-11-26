@@ -1,27 +1,27 @@
-import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
-import {UtilService} from '../../services/util.service';
-import {WiremockService} from '../../services/wiremock.service';
-import {WebSocketService} from '../../services/web-socket.service';
-import {Message, MessageService, MessageType} from '../message/message.service';
-import {FindRequestResult} from '../../model/wiremock/find-request-result';
-import {LoggedRequest} from '../../model/wiremock/logged-request';
-import {debounceTime, filter, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs/internal/Subject';
-import {CurlExtractor} from '../../services/curl-extractor';
-import {AutoRefreshService} from '../../services/auto-refresh.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {CurlPreviewComponent} from '../curl-preview/curl-preview.component';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { UtilService } from '../../services/util.service';
+import { WiremockService } from '../../services/wiremock.service';
+import { WebSocketService } from '../../services/web-socket.service';
+import { Message, MessageService, MessageType } from '../message/message.service';
+import { FindRequestResult } from '../../model/wiremock/find-request-result';
+import { LoggedRequest } from '../../model/wiremock/logged-request';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/internal/Subject';
+import { CurlExtractor } from '../../services/curl-extractor';
+import { AutoRefreshService } from '../../services/auto-refresh.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CurlPreviewComponent } from '../curl-preview/curl-preview.component';
 
 @Component({
   selector: 'wm-unmatched',
   templateUrl: './unmatched.component.html',
-  styleUrls: [ './unmatched.component.scss' ]
+  styleUrls: [ './unmatched.component.scss' ],
 })
 export class UnmatchedComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   requestResult!: FindRequestResult;
 
@@ -79,7 +79,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
     const curl = CurlExtractor.extractCurl(request);
     const modalRef = this.modalService.open(CurlPreviewComponent, {
       size: 'lg',
-      windowClass: 'modal-h70'
+      windowClass: 'modal-h70',
     });
     modalRef.componentInstance.curl = curl;
   }

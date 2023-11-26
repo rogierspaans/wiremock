@@ -1,27 +1,27 @@
-import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
-import {WiremockService} from '../../services/wiremock.service';
-import {WebSocketService} from '../../services/web-socket.service';
-import {Message, MessageService, MessageType} from '../message/message.service';
-import {UtilService} from '../../services/util.service';
-import {GetServeEventsResult} from '../../model/wiremock/get-serve-events-result';
-import {ServeEvent} from '../../model/wiremock/serve-event';
-import {debounceTime, filter, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs/internal/Subject';
-import {CurlExtractor} from '../../services/curl-extractor';
-import {AutoRefreshService} from '../../services/auto-refresh.service';
-import {CurlPreviewComponent} from '../curl-preview/curl-preview.component';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { WiremockService } from '../../services/wiremock.service';
+import { WebSocketService } from '../../services/web-socket.service';
+import { Message, MessageService, MessageType } from '../message/message.service';
+import { UtilService } from '../../services/util.service';
+import { GetServeEventsResult } from '../../model/wiremock/get-serve-events-result';
+import { ServeEvent } from '../../model/wiremock/serve-event';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/internal/Subject';
+import { CurlExtractor } from '../../services/curl-extractor';
+import { AutoRefreshService } from '../../services/auto-refresh.service';
+import { CurlPreviewComponent } from '../curl-preview/curl-preview.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'wm-matched',
   templateUrl: './matched.component.html',
-  styleUrls: [ './matched.component.scss' ]
+  styleUrls: [ './matched.component.scss' ],
 })
 export class MatchedComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   serveEventResult?: GetServeEventsResult;
 
@@ -62,7 +62,7 @@ export class MatchedComponent implements OnInit, OnDestroy {
     const curl = CurlExtractor.extractCurl(request);
     const modalRef = this.modalService.open(CurlPreviewComponent, {
       size: 'lg',
-      windowClass: 'modal-h70'
+      windowClass: 'modal-h70',
     });
     modalRef.componentInstance.curl = curl;
   }

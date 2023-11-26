@@ -1,9 +1,9 @@
-import {RequestPattern} from './request-pattern';
-import {ResponseDefinition} from './response-definition';
-import {Item} from './item';
-import {UtilService} from '../../services/util.service';
-import {Proxy} from './proxy';
-import {ProxyConfig} from './proxy-config';
+import { RequestPattern } from './request-pattern';
+import { ResponseDefinition } from './response-definition';
+import { Item } from './item';
+import { UtilService } from '../../services/util.service';
+import { Proxy } from './proxy';
+import { ProxyConfig } from './proxy-config';
 
 export class StubMapping extends Proxy implements Item {
 
@@ -17,8 +17,10 @@ export class StubMapping extends Proxy implements Item {
   requiredScenarioState!: string;
   newScenarioState!: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   postServeActions!: Map<string, any>;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata: any;
 
   constructor() {
@@ -35,10 +37,10 @@ export class StubMapping extends Proxy implements Item {
     mapping.response = new ResponseDefinition();
     mapping.response.status = 200;
     mapping.response.jsonBody = {
-      'some': 'value'
+      'some': 'value',
     };
     mapping.response.headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     };
 
     return mapping;

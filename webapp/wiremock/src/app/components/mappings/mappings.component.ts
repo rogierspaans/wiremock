@@ -1,36 +1,35 @@
-import {Component, HostBinding, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {WiremockService} from '../../services/wiremock.service';
-import {ListStubMappingsResult} from '../../model/wiremock/list-stub-mappings-result';
-import {UtilService} from '../../services/util.service';
-import {StubMapping} from '../../model/wiremock/stub-mapping';
-import {WebSocketService} from '../../services/web-socket.service';
-import {WebSocketListener} from '../../interfaces/web-socket-listener';
-import {debounceTime, filter, takeUntil} from 'rxjs/operators';
-import {MappingHelperService} from './mapping-helper.service';
-import {Message, MessageService, MessageType} from '../message/message.service';
-import {Item} from '../../model/wiremock/item';
-import {Subject} from 'rxjs/internal/Subject';
-import {ProxyConfig} from '../../model/wiremock/proxy-config';
-import {Tab, TabSelectionService} from '../../services/tab-selection.service';
-import {AutoRefreshService} from '../../services/auto-refresh.service';
+import { Component, HostBinding, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { WiremockService } from '../../services/wiremock.service';
+import { ListStubMappingsResult } from '../../model/wiremock/list-stub-mappings-result';
+import { UtilService } from '../../services/util.service';
+import { StubMapping } from '../../model/wiremock/stub-mapping';
+import { WebSocketService } from '../../services/web-socket.service';
+import { WebSocketListener } from '../../interfaces/web-socket-listener';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { MappingHelperService } from './mapping-helper.service';
+import { Message, MessageService, MessageType } from '../message/message.service';
+import { Item } from '../../model/wiremock/item';
+import { Subject } from 'rxjs/internal/Subject';
+import { ProxyConfig } from '../../model/wiremock/proxy-config';
+import { Tab, TabSelectionService } from '../../services/tab-selection.service';
+import { AutoRefreshService } from '../../services/auto-refresh.service';
 import { CodeEditorComponent } from '../code-editor/code-editor.component';
 
 @Component({
   selector: 'wm-mappings',
   templateUrl: './mappings.component.html',
-  styleUrls: [ './mappings.component.scss' ]
+  styleUrls: [ './mappings.component.scss' ],
 })
-export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocketListener {
+export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   private static COPY_FAILURE = 'Was not able to copy. Details in log';
-  private static ACTION_GENERAL_FAILURE = 'Was not able to execute the selected action';
   private static ACTION_FAILURE_PREFIX = 'Action not possible: ';
 
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
   @ViewChild('editor') editor!: CodeEditorComponent;
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   result?: ListStubMappingsResult;
 
@@ -66,7 +65,7 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     showLineNumbers: true,
     // ..
     wrap: true,
-    enableMultiselect: true
+    enableMultiselect: true,
   };
 
   codeReadOnlyOptions = {
@@ -93,7 +92,7 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     showLineNumbers: true,
     // ..
     wrap: true,
-    enableMultiselect: true
+    enableMultiselect: true,
   };
 
   RAW = Tab.RAW;
@@ -120,26 +119,26 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     this.loadMappings();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-  }
-
-
   private loadMappings() {
-    this.wiremockService.getProxyConfig().subscribe(proxyData => {
-      this.loadActualMappings(new ProxyConfig().deserialze(proxyData));
-    }, err => {
-      console.log('Could not load proxy config. Proxy feature deactivated');
-      this.loadActualMappings();
+    this.wiremockService.getProxyConfig().subscribe({
+      next: proxyData => {
+        this.loadActualMappings(new ProxyConfig().deserialze(proxyData));
+      }, error: () => {
+        console.log('Could not load proxy config. Proxy feature deactivated');
+        this.loadActualMappings();
+      },
     });
   }
 
   private loadActualMappings(proxyConfig?: ProxyConfig) {
-    this.wiremockService.getMappings().subscribe(data => {
+    this.wiremockService.getMappings().subscribe({
+      next: data => {
         this.result = new ListStubMappingsResult().deserialize(data, proxyConfig);
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      },
+    });
   }
 
   editorValueChange(value: string) {
@@ -155,11 +154,13 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
 
   saveNewMapping() {
     if (this.editorText) {
-      this.wiremockService.saveNewMapping(this.editorText).subscribe(data => {
-        this.activeItemId = data.getId();
-        this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
-      }, err => {
-        UtilService.showErrorMessage(this.messageService, err);
+      this.wiremockService.saveNewMapping(this.editorText).subscribe({
+        next: data => {
+          this.activeItemId = data.getId();
+          this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
+        }, error: err => {
+          UtilService.showErrorMessage(this.messageService, err);
+        },
       });
       this.editMode = State.NORMAL;
     }
@@ -174,11 +175,13 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
 
   saveEditMapping(item: Item) {
     if (this.editorText) {
-      this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe(data => {
-        this.activeItemId = data.getId();
-        this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
-      }, err => {
-        UtilService.showErrorMessage(this.messageService, err);
+      this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe({
+        next: data => {
+          this.activeItemId = data.getId();
+          this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
+        }, error: err => {
+          UtilService.showErrorMessage(this.messageService, err);
+        },
       });
       this.editMode = State.NORMAL;
     }
@@ -194,42 +197,52 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
   }
 
   removeMapping(item: Item) {
-    this.wiremockService.deleteMapping(item.getId()).subscribe(() => {
-      // do nothing
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
+    this.wiremockService.deleteMapping(item.getId()).subscribe({
+      next: () => {
+        // do nothing
+      }, error: err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      },
     });
   }
 
   saveMappings() {
-    this.wiremockService.saveMappings().subscribe(() => {
-      // do nothing
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
+    this.wiremockService.saveMappings().subscribe({
+      next: () => {
+        // do nothing
+      }, error: err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      },
     });
   }
 
   resetMappings() {
-    this.wiremockService.resetMappings().subscribe(() => {
-      // do nothing
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
+    this.wiremockService.resetMappings().subscribe({
+      next: () => {
+        // do nothing
+      }, error: err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      },
     });
   }
 
   removeAllMappings() {
-    this.wiremockService.deleteAllMappings().subscribe(() => {
-      this.messageService.setMessage(new Message('All mappings removed', MessageType.INFO, 3000));
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
+    this.wiremockService.deleteAllMappings().subscribe({
+      next: () => {
+        this.messageService.setMessage(new Message('All mappings removed', MessageType.INFO, 3000));
+      }, error: err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      },
     });
   }
 
   resetAllScenarios() {
-    this.wiremockService.resetScenarios().subscribe(() => {
-      this.messageService.setMessage(new Message('Reset of all scenarios successful', MessageType.INFO, 3000));
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
+    this.wiremockService.resetScenarios().subscribe({
+      next: () => {
+        this.messageService.setMessage(new Message('Reset of all scenarios successful', MessageType.INFO, 3000));
+      }, error: err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      },
     });
   }
 
@@ -238,6 +251,7 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
   }
 
   // ##### HELPER #####
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private showHelperErrorMessage(err: any) {
     this.messageService.setMessage(new Message(err.name + ': message=' + err.message +
       ', lineNumber=' + err.lineNumber + ', columnNumber=' + err.columnNumber,

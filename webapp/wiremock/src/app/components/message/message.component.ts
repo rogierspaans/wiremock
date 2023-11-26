@@ -1,14 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {Message, MessageService} from './message.service';
-import {UtilService} from '../../services/util.service';
+import { Component } from '@angular/core';
+import { Message, MessageService } from './message.service';
 
 @Component({
   // selector: 'wm-message',
   selector: 'wm-message',
   templateUrl: './message.component.html',
-  styleUrls: [ './message.component.scss' ]
+  styleUrls: [ './message.component.scss' ],
 })
-export class MessageComponent implements OnInit {
+export class MessageComponent {
 
   // @HostBinding('class') classes = 'wmAlert';
 
@@ -31,9 +30,6 @@ export class MessageComponent implements OnInit {
         }, next.duration);
       }
     });
-  }
-
-  ngOnInit() {
   }
 
   closeAlert() {

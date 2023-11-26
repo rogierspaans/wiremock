@@ -1,7 +1,6 @@
 import {
   Component,
   ContentChild,
-  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
@@ -30,7 +29,7 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
 
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   @ContentChild('content') content!: TemplateRef<{$implicit: Item | undefined}>;
   @ContentChild('actions') actions!: TemplateRef<{$implicit: Item | undefined}>;
@@ -137,7 +136,7 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.filteredItems && this.filteredItems.length > 0) {
 
-      const foundIndex = this.filteredItems.findIndex((item: Item, index: number) => {
+      const foundIndex = this.filteredItems.findIndex((item: Item) => {
         return UtilService.isDefined(this.activeItemId) && item.getId() === this.activeItemId;
       });
 

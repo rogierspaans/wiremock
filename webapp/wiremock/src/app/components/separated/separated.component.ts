@@ -1,20 +1,20 @@
-import {Component, HostBinding, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Item} from '../../model/wiremock/item';
-import {ServeEvent} from '../../model/wiremock/serve-event';
-import {StubMapping} from '../../model/wiremock/stub-mapping';
-import {ResponseDefinition} from '../../model/wiremock/response-definition';
-import {WiremockService} from '../../services/wiremock.service';
-import {debounceTime} from 'rxjs/operators';
-import {LoggedRequest} from '../../model/wiremock/logged-request';
+import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { Item } from '../../model/wiremock/item';
+import { ServeEvent } from '../../model/wiremock/serve-event';
+import { StubMapping } from '../../model/wiremock/stub-mapping';
+import { ResponseDefinition } from '../../model/wiremock/response-definition';
+import { WiremockService } from '../../services/wiremock.service';
+import { debounceTime } from 'rxjs/operators';
+import { LoggedRequest } from '../../model/wiremock/logged-request';
 import queryString from 'query-string';
 
 
 @Component({
   selector: 'wm-separated',
   templateUrl: './separated.component.html',
-  styleUrls: [ './separated.component.scss' ]
+  styleUrls: [ './separated.component.scss' ],
 })
-export class SeparatedComponent implements OnInit, OnChanges {
+export class SeparatedComponent implements OnChanges {
 
   @HostBinding('class') classes = 'wmHolyGrailScroll';
 
@@ -41,10 +41,7 @@ export class SeparatedComponent implements OnInit, OnChanges {
   constructor(private wiremockService: WiremockService) {
   }
 
-  ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this._activeItem) {
       let responseDefinition: ResponseDefinition | undefined;
       if (this._activeItem instanceof StubMapping) {
@@ -73,7 +70,7 @@ export class SeparatedComponent implements OnInit, OnChanges {
   }
 
   private xWwwFormUrlEncoded(responseDefinition?: ResponseDefinition) {
-    let headers: {[key: string]: string} = {};
+    let headers: { [key: string]: string } = {};
     let body;
     if (responseDefinition) {
       headers = responseDefinition.headers;
@@ -93,6 +90,7 @@ export class SeparatedComponent implements OnInit, OnChanges {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isObject(property: any): boolean {
     return typeof property === 'object';
   }

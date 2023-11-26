@@ -1,10 +1,9 @@
-import {ElementRef, Injectable, QueryList} from '@angular/core';
+import { ElementRef, Injectable, QueryList } from '@angular/core';
 import * as vkbeautify from 'vkbeautify';
-import {Item} from '../model/wiremock/item';
-import {Message, MessageService, MessageType} from '../components/message/message.service';
-import {StubMapping} from '../model/wiremock/stub-mapping';
-// @ts-ignore
-import {v4 as uuidv4} from 'uuid';
+import { Item } from '../model/wiremock/item';
+import { Message, MessageService, MessageType } from '../components/message/message.service';
+import { StubMapping } from '../model/wiremock/stub-mapping';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UtilService {
@@ -61,6 +60,7 @@ export class UtilService {
     return false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static showErrorMessage(messageService: MessageService, err: any): void {
     if (UtilService.isDefined(err)) {
       let message = err.statusText + '\nstatus=' + err.status + '\nmessage:\n' + err.message;
@@ -94,6 +94,7 @@ export class UtilService {
     return /\/.*?Envelope\/.*?Body\/([^: ]+:)?(.+)/;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isDefined(value: any): boolean {
     return !(value === null || typeof value === 'undefined');
   }
@@ -106,6 +107,7 @@ export class UtilService {
     return UtilService.isGuiDefined(value) && UtilService.isDefined(value.metadata[UtilService.WIREMOCK_GUI_KEY][UtilService.DIR_KEY]);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isUndefined(value: any): boolean {
     return !UtilService.isDefined(value);
   }
@@ -118,11 +120,12 @@ export class UtilService {
     return !this.isBlank(value);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static itemModelStringify(item: any): string {
     if (item._code === null || typeof item._code === 'undefined') {
       Object.defineProperty(item, '_code', {
         enumerable: false,
-        writable: true
+        writable: true,
       });
       item._code = JSON.stringify(item);
     }
@@ -158,7 +161,7 @@ export class UtilService {
     let splitKeyValue;
     for (let i = 0; i < array.length; i++) {
       splitKeyValue = array[i].split('=');
-      result.push({key: splitKeyValue[0], value: splitKeyValue[1]});
+      result.push({ key: splitKeyValue[0], value: splitKeyValue[1] });
     }
 
     return result;
@@ -169,7 +172,9 @@ export class UtilService {
       return items;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let toSearch: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let func: any = UtilService.eachRecursiveRegex;
 
     try {
@@ -194,10 +199,12 @@ export class UtilService {
     return result;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isFunction(obj: any): boolean {
     return typeof obj === 'function';
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static eachRecursiveRegex(obj: any, regex: string): boolean {
     for (const k of Object.keys(obj)) {
       // hasOwnProperty check not needed. We are iterating over properties of object
@@ -217,6 +224,7 @@ export class UtilService {
     return false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static eachRecursive(obj: any, text: string): boolean {
     for (const k of Object.keys(obj)) {
       // hasOwnProperty check not needed. We are iterating over properties of object
@@ -242,28 +250,29 @@ export class UtilService {
       return '';
     }
 
+    if (!code) {
+      return code as string;
+    }
+
     try {
-      // @ts-ignore
       return vkbeautify.json(code);
     } catch (err) {
       // Try to escape single quote
       try {
-        // @ts-ignore
         const replaced = code.replace(new RegExp(/\\'/, 'g'), '%replaceMyQuote%');
         const pretty = vkbeautify.json(replaced);
         return pretty.replace(new RegExp(/%replaceMyQuote%/, 'g'), '\'');
       } catch (err2) {
         try {
-          // @ts-ignore
           return vkbeautify.xml(code);
         } catch (err3) {
-          // @ts-ignore
           return code;
         }
       }
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static toJson(value: any): string {
     if (UtilService.isUndefined(value)) {
       return '';
@@ -272,8 +281,9 @@ export class UtilService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static transient(obj: any, key: string, value: any) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       // move key to transient layer
       delete obj[key];
     }
@@ -281,7 +291,7 @@ export class UtilService {
       // create transient layer
       obj.__proto__ = {
         '__proto__': obj.__proto__,
-        '__tansient__': true
+        '__tansient__': true,
       };
     }
     obj.__proto__[key] = value;
@@ -317,9 +327,9 @@ export class UtilService {
             const rectElem = item.nativeElement.getBoundingClientRect();
             const rectContainer = container.nativeElement.getBoundingClientRect();
             if (rectElem.bottom > rectContainer.bottom) {
-              item.nativeElement.scrollIntoView({behavior: 'smooth', block: 'end'});
+              item.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
             } else if (rectElem.top < rectContainer.top) {
-              item.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+              item.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
           }
         });

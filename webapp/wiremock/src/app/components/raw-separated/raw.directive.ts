@@ -1,8 +1,8 @@
-import {Directive, HostBinding} from '@angular/core';
+import { Directive, HostBinding } from '@angular/core';
 
 @Directive({
-  // tslint:disable-next-line:directive-selector
-  selector: 'wm-raw-separated-raw'
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: 'wm-raw-separated-raw',
 })
 export class RawDirective {
 

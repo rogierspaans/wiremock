@@ -1,6 +1,5 @@
 import {Item} from '../../model/wiremock/item';
 import {Tree} from '../../model/tree/tree';
-import {UtilService} from '../../services/util.service';
 import {Folder} from '../../model/tree/folder';
 import {TreeNode} from '../../model/tree/tree-node';
 
