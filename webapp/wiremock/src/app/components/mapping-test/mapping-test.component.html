@@ -8,7 +8,8 @@
         <div class="input-group mb-2">
           <span class="input-group-text http-method-wrapper">
             <div ngbDropdown class="btn-group" role="group">
-              <button class="btn btn-secondary dropdown-toggle http-method" type="button" ngbDropdownToggle aria-expanded="false">
+              <button class="btn btn-secondary dropdown-toggle http-method" type="button"
+                      ngbDropdownToggle aria-expanded="false">
                 {{method}}
               </button>
               <div ngbDropdownMenu class="dropdown-menu">
@@ -47,7 +48,7 @@
       </form>
     </div>
   </div>
-  <div class="card text-black bg-primary mb-2" *ngIf="response">
+  <div class="card text-black bg-primary mb-1" *ngIf="response">
     <div class="card-header">
       Response
     </div>
@@ -59,7 +60,8 @@
                     [class.bg-danger]="!responseIsMapping">{{responseIsMapping ? 'Matches' : 'No Match'}}
             <fa-icon class="wmMatches" [icon]="responseIsMapping ? 'check' : 'times'"></fa-icon></span></h4>
           <h4 *ngIf="!responseIsMapping && responseMappingId">
-            <a [routerLink]="['/mappings']" [queryParams]="{active: responseMappingId}" class="wmMappingId wmStubMappingLink">{{responseMappingId}}</a>
+            <a [routerLink]="['/mappings']" [queryParams]="{active: responseMappingId}"
+               class="wmMappingId wmStubMappingLink">{{responseMappingId}}</a>
           </h4>
         </div>
         <div class="form-group mb-2">
@@ -69,7 +71,7 @@
           </div>
         </div>
 
-        <div class="form-group mb-2">
+        <div class="form-group">
           <label for="body">Body</label>
           <div class="wmEditorContainer wmEditorResponseContainer">
             <wm-code-editor [code]="responseBody"
