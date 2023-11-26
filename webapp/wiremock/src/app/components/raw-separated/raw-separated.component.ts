@@ -5,7 +5,6 @@ import {
   Input,
   OnDestroy,
   OnInit, Output,
-  ViewChild,
   ViewEncapsulation
 } from '@angular/core';
 import {takeUntil} from 'rxjs/operators';

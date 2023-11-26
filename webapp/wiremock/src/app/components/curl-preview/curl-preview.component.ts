@@ -6,7 +6,7 @@ import {
   OnInit,
   SimpleChanges, ViewChild
 } from '@angular/core';
-import {Curl, CurlExtractor} from '../../services/curl-extractor';
+import {Curl} from '../../services/curl-extractor';
 import {CodeEditorComponent} from '../code-editor/code-editor.component';
 import {UtilService} from '../../services/util.service';
 import {Message, MessageService, MessageType} from '../message/message.service';

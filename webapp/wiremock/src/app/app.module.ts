@@ -8,12 +8,9 @@ import {MappingsComponent} from './components/mappings/mappings.component';
 import {
   NgbAlertModule,
   NgbButtonsModule,
-  NgbCollapseModule, NgbDropdownMenu, NgbDropdownModule,
+  NgbCollapseModule, NgbDropdownModule,
   NgbModal,
   NgbModalModule,
-  NgbModule,
-  NgbNav,
-  NgbNavbar,
   NgbNavModule, NgbPaginationModule, NgbPopoverModule, NgbTooltipModule
 } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';

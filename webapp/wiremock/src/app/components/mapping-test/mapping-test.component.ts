@@ -1,14 +1,13 @@
 import {Component, HostBinding, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {StubMapping} from '../../model/wiremock/stub-mapping';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormControl} from '@angular/forms';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import mimeDb from 'mime-db';
 import {WiremockService} from '../../services/wiremock.service';
-import {HttpErrorResponse, HttpEventType, HttpHeaders, HttpProgressEvent, HttpResponse} from '@angular/common/http';
+import {HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import {Item} from '../../model/wiremock/item';
 import {ServeEvent} from '../../model/wiremock/serve-event';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {CodeEditorComponent} from '../code-editor/code-editor.component';
 
 @Component({

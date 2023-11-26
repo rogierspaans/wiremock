@@ -10,7 +10,6 @@ import {Subject} from 'rxjs/internal/Subject';
 import {CurlExtractor} from '../../services/curl-extractor';
 import {AutoRefreshService} from '../../services/auto-refresh.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {StateMappingInfoComponent} from '../state-mapping-info/state-mapping-info.component';
 import {CurlPreviewComponent} from '../curl-preview/curl-preview.component';
 
 @Component({

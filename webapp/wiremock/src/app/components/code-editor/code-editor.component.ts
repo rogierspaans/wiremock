@@ -10,9 +10,9 @@ import {
   SimpleChanges, ViewChild
 } from '@angular/core';
 import {UtilService} from '../../services/util.service';
-import {Subject, timer} from 'rxjs';
+import {Subject} from 'rxjs';
 import * as ace from 'ace-builds';
-import {debounce, takeUntil} from 'rxjs/operators';
+import { takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'wm-code-editor',
