@@ -1,9 +1,10 @@
-.wmSeparatedWrapper {
-  padding: 0.25em;
-}
+@import "../../../variables";
 
 .card-body {
   padding: 0;
+  overflow: hidden;
+  border-bottom-left-radius: $card-border-radius;
+  border-bottom-right-radius: $card-border-radius;
 }
 
 .table tr > td:not(:first-child) {

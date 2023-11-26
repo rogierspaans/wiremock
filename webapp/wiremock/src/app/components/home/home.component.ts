@@ -24,9 +24,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  isCollapsed = false;
+  isCollapsed = true;
 
-  currentRecordingStatus: RecordingStatus;
+  currentRecordingStatus?: RecordingStatus;
 
   RecordingStatus = RecordingStatus;
 
@@ -149,4 +149,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
+
+  protected readonly window = window;
 }

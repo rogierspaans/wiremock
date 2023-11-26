@@ -1,22 +1,22 @@
 import {Item} from './item';
 import {UtilService} from '../../services/util.service';
 import {Proxy} from './proxy';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export class LoggedRequest extends Proxy implements Item {
 
-  url: string;
-  absoluteUrl: string;
-  clientIp: string;
-  method: string;
+  url!: string;
+  absoluteUrl!: string;
+  clientIp!: string;
+  method!: string;
   headers: any;
   cookies: any;
   queryParams: any;
-  body: string;
-  bodyAsBase64: string;
-  isBrowserProxyRequest: boolean;
+  body!: string;
+  bodyAsBase64!: string;
+  isBrowserProxyRequest!: boolean;
   loggedDate: any;
-  date: string;
+  date!: string;
 
   constructor() {
     super();
@@ -28,8 +28,7 @@ export class LoggedRequest extends Proxy implements Item {
 
   getSubtitle(): string {
     let soap;
-    if (UtilService.isDefined(this.body) &&
-      UtilService.isDefined(soap = UtilService.getSoapMethodRegex().exec(this.body))) {
+    if (UtilService.isDefined(this.body) && (soap = UtilService.getSoapMethodRegex().exec(this.body))) {
       return soap[2];
     }
     return 'method=' + this.method;

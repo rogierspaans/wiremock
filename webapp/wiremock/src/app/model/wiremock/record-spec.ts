@@ -1,5 +1,5 @@
 export class RecordSpec {
-  targetBaseUrl: string;
+  targetBaseUrl!: string;
   filters: any;
   captureHeaders: any;
   requestBodyPattern: any;

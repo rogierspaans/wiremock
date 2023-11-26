@@ -2,6 +2,7 @@ $primary: #f58e00 !default;
 $secondary: #ced4da !default;
 $component-active-color: white !default;
 $navbar-light-active-color: $primary !default;
+$spacer: 1.5rem;
 
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables.scss";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";

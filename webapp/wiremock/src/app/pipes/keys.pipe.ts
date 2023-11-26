@@ -15,7 +15,7 @@ export class KeysPipe implements PipeTransform {
     }
 
     for (const key in value) {
-      if (value.hasOwnProperty(key) && !key.startsWith('_')) {
+      if (value.hasOwnProperty(key) && !key.startsWith('_') && value[key]) {
 
         result.push(new KeyValue(key, value[key]));
         // if (args === null || typeof args === 'undefined' || this.checkArgs(args, value[key])) {

@@ -15,11 +15,14 @@ export class TreeHelper {
    */
   public static sortItemsByFolderName(items: Item[]): void {
     items.sort((a: Item, b: Item) => {
-      if (a.hasFolderDefinition() && b.hasFolderDefinition()) {
-        if (a.getFolderName() < b.getFolderName()) {
+      const aFolder = a.getFolderName();
+      const bFolder = b.getFolderName();
+
+      if (a.hasFolderDefinition() && b.hasFolderDefinition() && aFolder && bFolder) {
+        if (aFolder < bFolder) {
           return -1;
         }
-        if (a.getFolderName() > b.getFolderName()) {
+        if (aFolder > bFolder) {
           return 1;
         }
         return 0;
@@ -44,8 +47,8 @@ export class TreeHelper {
    */
   public static insertIntoTree(tree: Tree, items: Item[], rootNode: TreeNode): void {
     items.forEach(value => {
-      if (value.hasFolderDefinition()) {
-        const folderName = value.getFolderName();
+      const folderName = value.getFolderName();
+      if (value.hasFolderDefinition() && folderName) {
         const folderNode = this.createFoldersAndGetFolderNode(folderName, tree, rootNode);
         tree.insertByNode(folderNode, value);
       } else {
@@ -79,7 +82,7 @@ export class TreeHelper {
         folderId = folderId + '/' + groupName;
       }
       let folder = tree.find(folderId);
-      if (!UtilService.isDefined(folder)) {
+      if (!folder) {
         // folder does not exist yet. Create it
         folder = tree.insertByNode(folderParentNode, new Folder(folderId, groupName));
       }
@@ -100,21 +103,21 @@ export class TreeHelper {
    * @param activeItem
    *        Also open folders based on active item.
    */
-  public static openFolders(newTree: Tree, oldTree: Tree, activeItem: Item): void {
+  public static openFolders(newTree: Tree, oldTree?: Tree, activeItem?: Item): void {
     // open folders again
-    if (UtilService.isDefined(oldTree)) {
+    if (oldTree) {
       for (const node of oldTree.preOrderTraversal()) {
         if (!node.collapsed) {
           const newValue = newTree.find(node.value.getId());
-          if (UtilService.isDefined(newValue)) {
+          if (newValue) {
             newValue.collapsed = false;
           }
         }
       }
     }
-    if (UtilService.isDefined(activeItem)) {
+    if (activeItem) {
       const nV = newTree.find(activeItem.getId());
-      if (UtilService.isDefined(nV)) {
+      if (nV) {
         nV.expandParents();
       }
     }
@@ -133,7 +136,14 @@ export class TreeHelper {
       // we sort children by folder before we add them too tree list.
       node.children.sort((a, b) => {
         if (a.value instanceof Folder && b.value instanceof Folder) {
-          return a.value.getFolderName() <= b.value.getFolderName() ? -1 : 1;
+          const aFolder = a.value.getFolderName();
+          const bFolder = b.value.getFolderName();
+
+          if (aFolder && bFolder) {
+            return aFolder <= bFolder ? -1 : 1;
+          } else {
+            return 0;
+          }
         } else if (a.value instanceof Folder) {
           return -1;
         } else if (b.value instanceof Folder) {

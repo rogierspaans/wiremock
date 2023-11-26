@@ -7,12 +7,12 @@ import {UtilService} from '../../services/util.service';
 import {Proxy} from './proxy';
 
 export class ServeEvent extends Proxy implements Item {
-  id: string;
-  request: LoggedRequest;
-  stubMapping: StubMapping;
-  responseDefinition: ResponseDefinition;
-  response: LoggedResponse;
-  wasMatched: boolean;
+  id!: string;
+  request!: LoggedRequest;
+  stubMapping!: StubMapping;
+  responseDefinition!: ResponseDefinition;
+  response!: LoggedResponse;
+  wasMatched!: boolean;
 
   constructor() {
     super();
@@ -45,7 +45,7 @@ export class ServeEvent extends Proxy implements Item {
   deserialize(unchecked: ServeEvent): ServeEvent {
     this.id = unchecked.id;
     this.request = new LoggedRequest().deserialize(unchecked.request);
-    this.stubMapping = new StubMapping().deserialize(unchecked.stubMapping, null);
+    this.stubMapping = new StubMapping().deserialize(unchecked.stubMapping);
     this.responseDefinition = unchecked.responseDefinition;
     this.response = unchecked.response;
     this.wasMatched = unchecked.wasMatched;

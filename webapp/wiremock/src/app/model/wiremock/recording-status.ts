@@ -1,5 +1,6 @@
 export enum RecordingStatus {
   NeverStarted,
   Recording,
-  Stopped
+  Stopped,
+  Unknown
 }

@@ -1,7 +1,7 @@
 import {RecordingStatus} from './recording-status';
 
 export class RecordingStatusResult {
-  status: RecordingStatus;
+  status!: RecordingStatus;
 
   deserialize(unchecked: RecordingStatusResult): RecordingStatusResult {
     this.status = this.deserializeStatus(unchecked.status);
@@ -16,6 +16,8 @@ export class RecordingStatusResult {
         return RecordingStatus.Recording;
       case 'Stopped':
         return RecordingStatus.Stopped;
+      default:
+        return RecordingStatus.Unknown;
     }
   }
 }

@@ -13,6 +13,8 @@ import {UtilService} from '../../services/util.service';
 import {Subject} from 'rxjs';
 import * as ace from 'ace-builds';
 import { takeUntil} from 'rxjs/operators';
+import { Ace } from 'ace-builds';
+import Editor = Ace.Editor;
 
 @Component({
   selector: 'wm-code-editor',
@@ -54,20 +56,20 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   };
 
   @ViewChild('editorCanvas')
-  editorCanvas: ElementRef;
+  editorCanvas!: ElementRef;
 
-  private editor;
+  private editor?: Editor;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
   private editorChanges: Subject<string> = new Subject();
 
-  _code: string;
+  _code!: string;
 
   @Input()
-  set code(value: string) {
+  set code(value: string | undefined) {
     if (this._code !== value) {
-      if (value === null || typeof value === 'undefined') {
+      if (UtilService.isUndefined(value)) {
         this._code = '';
       } else {
         // prettify with cast to string. Due to javascript type in-safety
@@ -78,7 +80,7 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   }
 
   @Input()
-  language: string;
+  language!: string;
 
   @Input()
   options = CodeEditorComponent.DEFAULT_OPTIONS;
@@ -99,53 +101,59 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (UtilService.isDefined(this.editor)) {
+    if (this.editor) {
 
-      if (UtilService.isDefined(changes.options)) {
+      if (changes['options']) {
         this.zone.runOutsideAngular(() => {
           this.setOptions();
         });
       }
 
-      if (UtilService.isDefined(changes.language)) {
+      if (changes['language']) {
         this.zone.runOutsideAngular(() => {
-          this.editor.session.setMode('ace/mode/' + this.language);
+          if (this.editor) {
+            this.editor.session.setMode('ace/mode/' + this.language);
+          }
         });
       }
     }
   }
 
   private setEditorValue() {
-    if (UtilService.isDefined(this.editor) && typeof this._code !== 'undefined') {
+    if (this.editor && UtilService.isDefined(this._code)) {
       this.zone.runOutsideAngular(() => {
-        this.editor.setValue(this._code);
-        this.editor.selection.clearSelection();
+        if (this.editor && UtilService.isDefined(this._code)) {
+          this.editor.setValue(this._code);
+          this.editor.selection.clearSelection();
+        }
       });
     }
   }
 
-  getCode(): string {
+  getCode(): string | undefined {
     return this._code;
   }
 
   refresh(): void {
-    if (UtilService.isDefined(this.editor)) {
+    if (this.editor) {
       this.setEditorValue();
     }
   }
 
   resize(): void {
-    if (UtilService.isDefined(this.editor)) {
+    if (this.editor) {
       this.editor.resize();
     }
   }
 
   private setOptions() {
-    this.editor.setOptions(this.options);
-    if (this.options.readOnly === true) {
-      this.editor.renderer.$cursorLayer.element.style.display = 'none';
-    } else {
-      this.editor.renderer.$cursorLayer.element.style.display = 'block';
+    if (this.editor) {
+      this.editor.setOptions(this.options);
+      if (this.options.readOnly) {
+        (this.editor.renderer as any).$cursorLayer.element.style.display = 'none';
+      } else {
+        (this.editor.renderer as any).$cursorLayer.element.style.display = 'block';
+      }
     }
   }
 
@@ -153,7 +161,7 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
     this.zone.runOutsideAngular(() => {
       this.editor = ace.edit(this.editorCanvas.nativeElement);
       this.editor.setTheme('ace/theme/monokai');
-      this.editor.container.style.lineHeight = 1.5;
+      this.editor.container.style.lineHeight = '1.5';
       this.setOptions();
       this.editor.session.setMode('ace/mode/' + this.language);
       this.setEditorValue();
@@ -162,7 +170,9 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
         // param would be delta but I do not need it
         // delta.start, delta.end, delta.lines, delta.action
         this.zone.run(() => {
-          this.editorChanges.next(this.editor.getValue());
+          if (this.editor) {
+            this.editorChanges.next(this.editor.getValue());
+          }
         });
       });
     });

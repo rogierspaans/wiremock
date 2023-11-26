@@ -20,12 +20,12 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, AfterContentChecked {
 
   @ViewChild('editor')
-  private codeEditor: CodeEditorComponent;
+  private codeEditor!: CodeEditorComponent;
 
-  private _curl: Curl;
-  curlString: string;
+  private _curl?: Curl;
+  curlString = '';
 
-  private visible: boolean;
+  private visible = false;
 
   set curl(value: Curl) {
     const toString = value.toString();
@@ -44,7 +44,9 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
 
   copyCurl() {
     this.activeModal.dismiss();
-    if (UtilService.copyToClipboard(this.codeEditor.getCode())) {
+    const code = this.codeEditor.getCode();
+
+    if (code && UtilService.copyToClipboard(code)) {
       this.messageService.setMessage(new Message('Curl copied to clipboard', MessageType.INFO, 3000));
     } else {
       this.messageService.setMessage(new Message('Was not able to copy. Details in log', MessageType.ERROR, 10000));

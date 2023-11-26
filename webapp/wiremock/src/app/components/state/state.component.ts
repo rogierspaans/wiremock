@@ -26,12 +26,12 @@ import {ProxyConfig} from '../../model/wiremock/proxy-config';
 export class StateComponent implements OnInit, OnDestroy {
 
   @ViewChild('canvas')
-  canvas: ElementRef;
+  canvas!: ElementRef;
 
   @ViewChild('container')
-  container: ElementRef;
+  container!: ElementRef;
 
-  result: Scenario[];
+  result?: Scenario[];
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
@@ -64,11 +64,11 @@ export class StateComponent implements OnInit, OnDestroy {
       this.loadActualScenarios(new ProxyConfig().deserialze(proxyData));
     }, err => {
       console.log('Could not load proxy config. Proxy feature deactivated');
-      this.loadActualScenarios(null);
+      this.loadActualScenarios();
     });
   }
 
-  private loadActualScenarios(proxyConfig: ProxyConfig) {
+  private loadActualScenarios(proxyConfig?: ProxyConfig) {
     this.wiremockService.getScenarios().subscribe(data => {
         const scenarioList = new ScenarioResult().deserialize(data, proxyConfig);
         this.result = scenarioList.scenarios;

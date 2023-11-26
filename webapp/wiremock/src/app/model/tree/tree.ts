@@ -36,10 +36,11 @@ export class Tree {
     yield node;
   }
 
-  insert(parentId: string, value: Item): TreeNode {
+  insert(parentId: string, value: Item): TreeNode | undefined {
     for (const node of this.preOrderTraversal()) {
       if (node.value.getId() === parentId) {
-        const newNode = new TreeNode(value, this.find(parentId).depth + 1, node);
+        // tslint:disable-next-line:no-non-null-assertion
+        const newNode = new TreeNode(value, this.find(parentId)!.depth + 1, node);
         node.children.push(newNode);
         return newNode;
       }

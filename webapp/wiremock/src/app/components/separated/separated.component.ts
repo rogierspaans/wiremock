@@ -1,13 +1,12 @@
 import {Component, HostBinding, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Item} from '../../model/wiremock/item';
 import {ServeEvent} from '../../model/wiremock/serve-event';
-import {UtilService} from '../../services/util.service';
 import {StubMapping} from '../../model/wiremock/stub-mapping';
 import {ResponseDefinition} from '../../model/wiremock/response-definition';
 import {WiremockService} from '../../services/wiremock.service';
 import {debounceTime} from 'rxjs/operators';
 import {LoggedRequest} from '../../model/wiremock/logged-request';
-import * as qs from 'querystring';
+import queryString from 'query-string';
 
 
 @Component({
@@ -19,22 +18,22 @@ export class SeparatedComponent implements OnInit, OnChanges {
 
   @HostBinding('class') classes = 'wmHolyGrailScroll';
 
-  private _activeItem: Item;
+  private _activeItem?: Item;
 
   color: string[] = [ 'bg-info', 'bg-warning', 'bg-danger', 'bg-primary', 'bg-secondary', 'bg-dark' ];
 
-  bodyFileData: string;
-  bodyGroupKey: string;
+  bodyFileData?: string;
+  bodyGroupKey?: string;
 
-  xWwwFormUrlEncodedParams: string;
+  xWwwFormUrlEncodedParams?: string;
 
-  get activeItem(): Item {
+  get activeItem(): Item | undefined {
     return this._activeItem;
   }
 
   @Input()
   set activeItem(value: Item) {
-    if (UtilService.isUndefined(this._activeItem) || this._activeItem.getCode() !== value.getCode()) {
+    if (!this._activeItem || this._activeItem.getCode() !== value.getCode()) {
       this._activeItem = value;
     }
   }
@@ -46,8 +45,8 @@ export class SeparatedComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (UtilService.isDefined(this._activeItem)) {
-      let responseDefinition: ResponseDefinition;
+    if (this._activeItem) {
+      let responseDefinition: ResponseDefinition | undefined;
       if (this._activeItem instanceof StubMapping) {
         responseDefinition = (this._activeItem as StubMapping).response;
         this.bodyGroupKey = 'response';
@@ -55,16 +54,16 @@ export class SeparatedComponent implements OnInit, OnChanges {
         responseDefinition = (this._activeItem as ServeEvent).responseDefinition;
         this.bodyGroupKey = 'responseDefinition';
       } else {
-        responseDefinition = null;
+        responseDefinition = undefined;
       }
 
       // body from file
-      if (UtilService.isDefined(responseDefinition) && UtilService.isDefined(responseDefinition.bodyFileName)) {
+      if (responseDefinition && responseDefinition.bodyFileName) {
         this.wiremockService.getFileBody(responseDefinition.bodyFileName)
           .pipe(debounceTime(500)).subscribe(body => this.bodyFileData = body);
       } else {
-        this.bodyFileData = null;
-        this.bodyGroupKey = null;
+        this.bodyFileData = undefined;
+        this.bodyGroupKey = undefined;
       }
 
       // x-www-form-urlencoded
@@ -73,10 +72,10 @@ export class SeparatedComponent implements OnInit, OnChanges {
     }
   }
 
-  private xWwwFormUrlEncoded(responseDefinition: ResponseDefinition) {
-    let headers = {};
+  private xWwwFormUrlEncoded(responseDefinition?: ResponseDefinition) {
+    let headers: {[key: string]: string} = {};
     let body;
-    if (UtilService.isDefined(responseDefinition)) {
+    if (responseDefinition) {
       headers = responseDefinition.headers;
       body = responseDefinition.body;
     } else if (this._activeItem instanceof LoggedRequest) {
@@ -84,12 +83,13 @@ export class SeparatedComponent implements OnInit, OnChanges {
       body = (this._activeItem as LoggedRequest).body;
     }
 
-    if (UtilService.isDefined(headers) && UtilService.isDefined(headers['Content-Type'])
-      && headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+    if (headers && headers['Content-Type']
+      && headers['Content-Type'] === 'application/x-www-form-urlencoded'
+      && body) {
       // found x-www-form-urlencoded. Try to check body
-      this.xWwwFormUrlEncodedParams = JSON.stringify(qs.parse(body));
+      this.xWwwFormUrlEncodedParams = JSON.stringify(queryString.parse(body));
     } else {
-      this.xWwwFormUrlEncodedParams = null;
+      this.xWwwFormUrlEncodedParams = undefined;
     }
   }
 

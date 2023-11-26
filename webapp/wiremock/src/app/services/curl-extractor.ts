@@ -23,7 +23,7 @@ export class CurlExtractor {
 
   private static extractHeaders(request: LoggedRequest): Header[] {
 
-    const headers = [];
+    const headers: Header[] = [];
     const keys = Object.keys(request.headers);
 
     keys.forEach(key => {
@@ -36,7 +36,7 @@ export class CurlExtractor {
   }
 
 
-  private static checkProperty(property): boolean {
+  private static checkProperty(property: string): boolean {
     switch (property) {
       case 'Postman-Token':
       case 'User-Agent':
@@ -54,11 +54,11 @@ export class CurlExtractor {
 }
 
 export class Curl {
-  private _httpMethod: string;
-  private _url: string;
-  private _body: string;
-  private _verbose: boolean;
-  private _headers: Header[];
+  private _httpMethod = '';
+  private _url = '';
+  private _body?: string;
+  private _verbose = false;
+  private _headers: Header[] = [];
 
   get httpMethod(): string {
     return this._httpMethod;
@@ -76,7 +76,7 @@ export class Curl {
     this._url = value;
   }
 
-  get body(): string {
+  get body(): string | undefined {
     return this._body;
   }
 
@@ -143,11 +143,11 @@ export class Curl {
 }
 
 export class Header {
-  private _key: string;
-  private _value: string;
+  private _key?: string;
+  private _value?: string;
 
 
-  get key(): string {
+  get key(): string | undefined {
     return this._key;
   }
 
@@ -155,7 +155,7 @@ export class Header {
     this._key = value;
   }
 
-  get value(): string {
+  get value(): string | undefined {
     return this._value;
   }
 

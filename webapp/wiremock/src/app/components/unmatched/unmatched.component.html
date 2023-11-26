@@ -1,4 +1,4 @@
-<wm-layout [items]="requestResult?.requests">
+<wm-layout [items]="requestResult ? requestResult.requests : []">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-secondary" [disabled]="!activeItem" (click)="copyRequest(activeItem)">

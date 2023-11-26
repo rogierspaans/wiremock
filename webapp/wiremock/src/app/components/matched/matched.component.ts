@@ -23,7 +23,7 @@ export class MatchedComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  serveEventResult: GetServeEventsResult;
+  serveEventResult?: GetServeEventsResult;
 
   constructor(private wiremockService: WiremockService, private webSocketService: WebSocketService,
               private messageService: MessageService, private autoRefreshService: AutoRefreshService,

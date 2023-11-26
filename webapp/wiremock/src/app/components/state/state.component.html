@@ -1,4 +1,4 @@
-<wm-layout [items]="result">
+<wm-layout [items]="result ? result : []">
   <ng-template #actions let-activeItem>
     <div ngbDropdown class="btn-group" role="group">
       <button id="wmScenarioDrop" type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle>

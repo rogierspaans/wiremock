@@ -30,26 +30,26 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
   @Input()
-  items: Item[];
+  items?: Item[];
 
   @Input()
-  activeItem: Item;
+  activeItem?: Item;
   activeItemChanged = false;
 
   @Output()
   activeItemChange: EventEmitter<Item> = new EventEmitter();
 
-  rootNode: TreeNode;
+  rootNode?: TreeNode;
   private rootItem: Item;
 
-  treeItems: TreeNode[];
-  private previousTree: Tree;
+  treeItems!: TreeNode[];
+  private previousTree?: Tree;
 
   @ViewChild('childrenContainer')
-  childrenContainer: ElementRef;
+  childrenContainer!: ElementRef;
 
   @ViewChildren('listChildren')
-  listChildren: QueryList<ElementRef>;
+  listChildren!: QueryList<ElementRef>;
 
   constructor(private wiremockService: WiremockService,
               private messageService: MessageService) {
@@ -75,7 +75,7 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
   ngOnChanges(changes: SimpleChanges): void {
     // only when we actually change items. No need to change when activeItem changes because this would only
     // include expand and this is done by user.
-    if (UtilService.isDefined(changes.items) && UtilService.isDefined(this.items)) {
+    if (changes['items'] && this.items) {
       // First we sort items by group so that folders are shown first
       TreeHelper.sortItemsByFolderName(this.items);
 

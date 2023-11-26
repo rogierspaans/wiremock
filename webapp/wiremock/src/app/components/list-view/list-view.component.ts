@@ -24,12 +24,12 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
   @Input()
-  items: Item[];
+  items?: Item[];
 
-  filteredItems: Item[];
+  filteredItems?: Item[];
 
   @Input()
-  activeItem: Item;
+  activeItem?: Item;
   activeItemChanged = false;
 
   pageSize = 20;
@@ -40,10 +40,10 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   activeItemChange: EventEmitter<Item> = new EventEmitter();
 
   @ViewChild('childrenContainer')
-  childrenContainer: ElementRef;
+  childrenContainer!: ElementRef;
 
   @ViewChildren('listChildren')
-  listChildren: QueryList<ElementRef>;
+  listChildren!: QueryList<ElementRef>;
 
   constructor(private wiremockService: WiremockService,
               private messageService: MessageService) {
@@ -65,7 +65,7 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
 
     let changed = false;
 
-    if (UtilService.isDefined(changes.items) && UtilService.isDefined(this.items)) {
+    if (changes['items'] && this.items) {
       if (this.items.length > this.pageSize) {
         const maxPages = Math.ceil(this.items.length / this.pageSize);
         if (maxPages < this.page) {
@@ -77,9 +77,9 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
       changed = true;
     }
 
-    if (UtilService.isDefined(this.activeItem) && UtilService.isDefined(this.items)) {
+    if (this.activeItem && this.items) {
       const index = this.items.findIndex((item: Item) => {
-        return item.getId() === this.activeItem.getId();
+          return item.getId() === this.activeItem?.getId();
       }) + 1;
 
       this.page = Math.ceil(index / this.pageSize);
@@ -94,13 +94,17 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   }
 
   private setFilteredItems() {
-    this.filteredItems = this.items.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+    if (this.items) {
+      this.filteredItems = this.items.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+    }
   }
 
   onPageChange(page: number) {
     this.page = page;
     this.setFilteredItems();
-    this.selectActiveItem(this.filteredItems[0]);
+    if (this.filteredItems) {
+      this.selectActiveItem(this.filteredItems[0]);
+    }
   }
 
   enableProxy(item: Item) {

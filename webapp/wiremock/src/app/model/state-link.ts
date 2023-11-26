@@ -7,7 +7,7 @@ export class StateLink {
   private readonly _target: string;
   private readonly _mapping: StubMapping;
 
-  private _link: Link;
+  private _link!: Link;
 
   constructor(source: string, target: string, mapping: StubMapping) {
     this._source = source;

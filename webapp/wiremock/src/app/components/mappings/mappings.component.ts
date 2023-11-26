@@ -13,6 +13,7 @@ import {Subject} from 'rxjs/internal/Subject';
 import {ProxyConfig} from '../../model/wiremock/proxy-config';
 import {Tab, TabSelectionService} from '../../services/tab-selection.service';
 import {AutoRefreshService} from '../../services/auto-refresh.service';
+import { CodeEditorComponent } from '../code-editor/code-editor.component';
 
 @Component({
   selector: 'wm-mappings',
@@ -27,18 +28,18 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
 
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
-  @ViewChild('editor') editor;
+  @ViewChild('editor') editor!: CodeEditorComponent;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  result: ListStubMappingsResult;
+  result?: ListStubMappingsResult;
 
-  activeItemId: string;
+  activeItemId?: string;
 
-  editorText: string;
-  currentMappingText: string;
+  editorText?: string;
+  currentMappingText?: string;
 
-  editMode: State;
+  editMode?: State;
   State = State;
 
   codeOptions = {
@@ -128,11 +129,11 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
       this.loadActualMappings(new ProxyConfig().deserialze(proxyData));
     }, err => {
       console.log('Could not load proxy config. Proxy feature deactivated');
-      this.loadActualMappings(null);
+      this.loadActualMappings();
     });
   }
 
-  private loadActualMappings(proxyConfig: ProxyConfig) {
+  private loadActualMappings(proxyConfig?: ProxyConfig) {
     this.wiremockService.getMappings().subscribe(data => {
         this.result = new ListStubMappingsResult().deserialize(data, proxyConfig);
       },
@@ -153,13 +154,15 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
   }
 
   saveNewMapping() {
-    this.wiremockService.saveNewMapping(this.editorText).subscribe(data => {
-      this.activeItemId = data.getId();
-      this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
-    });
-    this.editMode = State.NORMAL;
+    if (this.editorText) {
+      this.wiremockService.saveNewMapping(this.editorText).subscribe(data => {
+        this.activeItemId = data.getId();
+        this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
+      }, err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      });
+      this.editMode = State.NORMAL;
+    }
   }
 
   editMapping(item: Item) {
@@ -170,13 +173,15 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
   }
 
   saveEditMapping(item: Item) {
-    this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe(data => {
-      this.activeItemId = data.getId();
-      this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
-    }, err => {
-      UtilService.showErrorMessage(this.messageService, err);
-    });
-    this.editMode = State.NORMAL;
+    if (this.editorText) {
+      this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe(data => {
+        this.activeItemId = data.getId();
+        this.messageService.setMessage(new Message('save successful', MessageType.INFO, 2000));
+      }, err => {
+        UtilService.showErrorMessage(this.messageService, err);
+      });
+      this.editMode = State.NORMAL;
+    }
   }
 
   onActiveItemChange(item: Item) {
@@ -239,15 +244,18 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
       MessageType.ERROR, 10000));
   }
 
-  getMappingForHelper(): StubMapping {
-    try {
-      return JSON.parse(this.editorText);
-    } catch (err) {
-      this.showHelperErrorMessage(err);
+  getMappingForHelper(): StubMapping | undefined {
+    if (this.editorText) {
+      try {
+        return JSON.parse(this.editorText);
+      } catch (err) {
+        this.showHelperErrorMessage(err);
+      }
     }
+    return undefined;
   }
 
-  private setMappingForHelper(mapping: StubMapping): void {
+  private setMappingForHelper(mapping?: StubMapping): void {
     if (UtilService.isUndefined(mapping)) {
       return;
     }
@@ -335,8 +343,8 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     }
   }
 
-  editViaKeyboard($event, activeItem) {
-    if (activeItem != null && (!activeItem.isProxy() || activeItem.isProxyEnabled())) {
+  editViaKeyboard($event: Event, activeItem?: Item) {
+    if (activeItem && (!activeItem.isProxy() || activeItem.isProxyEnabled())) {
       if (this.editMode === State.NORMAL) {
         this.editMapping(activeItem);
       }
@@ -346,7 +354,7 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     return false;
   }
 
-  abortViaKeyboard($event) {
+  abortViaKeyboard($event: Event) {
     if (this.editMode === State.EDIT || this.editMode === State.NEW) {
       this.editMode = State.NORMAL;
     }
@@ -355,8 +363,8 @@ export class MappingsComponent implements OnInit, OnChanges, OnDestroy, WebSocke
     return false;
   }
 
-  saveViaKeyboard($event, activeItem) {
-    if (activeItem != null) {
+  saveViaKeyboard($event: Event, activeItem?: Item) {
+    if (activeItem) {
       if (this.editMode === State.NEW) {
         this.saveNewMapping();
       } else if (this.editMode === State.EDIT) {

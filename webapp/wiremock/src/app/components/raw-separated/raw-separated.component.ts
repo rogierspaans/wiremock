@@ -40,7 +40,7 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   activeIdChanged = new EventEmitter<Tab>();
 
   @ContentChild('wm-raw-separated-test')
-  test: ElementRef;
+  test!: ElementRef;
 
   activeId = Tab.RAW;
 

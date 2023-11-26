@@ -21,6 +21,7 @@ import {StateLink} from '../../model/state-link';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import LinkView = dia.LinkView;
 import {Scenario} from '../../model/wiremock/scenario';
+import Graph = dia.Graph;
 
 
 @Component({
@@ -33,26 +34,26 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   private static readonly ANY = '{{ANY}}';
 
   @Input()
-  item: Scenario;
+  item!: Scenario;
 
-  private lastItem: Scenario;
+  private lastItem?: Scenario;
 
   @ViewChild('canvas')
-  canvas: ElementRef;
+  canvas!: ElementRef;
 
   @Input()
   grid = true;
 
-  private graph;
-  private paper: Paper;
+  private graph!: Graph;
+  private paper!: Paper;
 
-  private states: Map<string, Element>;
-  private links: StateLink[];
+  private states = new Map<string, dia.Element>();
+  private links: StateLink[] = [];
 
-  private dragStartPosition = null;
+  private dragStartPosition?: { x: number, y: number } = undefined;
   space = false;
 
-  private paperPos: { x: number, y: number };
+  private paperPos?: { x: number, y: number } = undefined;
 
   constructor(private container: ElementRef, private modalService: NgbModal) {
   }
@@ -68,7 +69,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     if (this.graph) {
       this.graph.clear();
     }
-    this.graph = new joint.dia.Graph();
+    this.graph = new Graph();
 
     this.initPaper();
 
@@ -84,17 +85,21 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     this.selfLinks(this.links);
     this.sameDirectionLinks(this.links);
 
-    if (UtilService.isUndefined(this.lastItem) || this.lastItem.getId() !== this.item.getId()) {
+    if (!this.lastItem || this.lastItem.getId() !== this.item.getId()) {
       // reset position to 0, 0 if scenario changed or nothing was yet open
       this.paperPos = {x: 0, y: 0};
     }
 
-    this.paper.translate(this.paperPos.x, this.paperPos.y);
+    if (this.paperPos) {
+      // tslint:disable-next-line:no-non-null-assertion
+      this.paper.translate(this.paperPos.x, this.paperPos.y);
+    }
+
     this.lastItem = this.item;
   }
 
   private initPaper() {
-    this.paper = new joint.dia.Paper({
+    this.paper = new Paper({
       el: this.canvas.nativeElement,
       model: this.graph,
       height: this.container.nativeElement.offsetHeight,
@@ -103,7 +108,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     });
     this.paper.translate(0, 0);
 
-    this.dragStartPosition = null;
+    this.dragStartPosition = undefined;
 
     this.paper.on('blank:pointerdown', (event, x, y) => {
       if (this.space) {
@@ -112,7 +117,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     });
 
     this.paper.on('cell:pointerup blank:pointerup', (cellView, x, y) => {
-      this.dragStartPosition = null;
+      this.dragStartPosition = undefined;
     });
   }
 
@@ -161,8 +166,15 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   private addLinksToGraph(links: StateLink[], states: Map<string, dia.Element>) {
     links.forEach(data => {
       const link = new joint.shapes.standard.Link();
-      link.source(states.get(data.source));
-      link.target(states.get(data.target));
+      const source = states.get(data.source);
+      const target = states.get(data.target);
+
+      if (!source || !target) {
+        return;
+      }
+
+      link.source(source);
+      link.target(target);
 
       if (data.source === data.target) {
         link.connector('rounded', {
@@ -209,14 +221,14 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
   @HostListener('window:resize', [ '$event' ])
   onResize() {
-    if (UtilService.isDefined(this.paper)) {
+    if (this.paper) {
       this.paper.setDimensions(0, 0);
       this.paper.setDimensions(this.container.nativeElement.offsetWidth, this.container.nativeElement.offsetHeight);
     }
   }
 
   onMove(event: MouseEvent) {
-    if (UtilService.isDefined(this.paper) && UtilService.isDefined(this.dragStartPosition)) {
+    if (this.paper && this.dragStartPosition) {
       this.paperPos = {x: event.offsetX - this.dragStartPosition.x, y: event.offsetY - this.dragStartPosition.y};
       this.paper.translate(this.paperPos.x, this.paperPos.y);
       //  var scale = V(paper.viewport).scale();
@@ -225,13 +237,13 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   @HostListener('document:keyup.space', [ '$event' ])
-  onSpaceUp(event) {
+  onSpaceUp(event: Event) {
     this.space = false;
-    this.dragStartPosition = null;
+    this.dragStartPosition = undefined;
   }
 
   @HostListener('document:keydown.space', [ '$event' ])
-  onSpaceDown(event) {
+  onSpaceDown(event: Event) {
     this.space = true;
   }
 
@@ -243,10 +255,15 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
     links.forEach(data => {
       if (data.target === data.source) {
-        if (UtilService.isUndefined(linkMap.get(data.source))) {
-          linkMap.set(data.source, []);
+        const linkMapEntry = linkMap.get(data.source);
+
+        if (linkMapEntry) {
+          linkMapEntry.push(data);
+        } else {
+          const newLinks = [];
+          newLinks.push(data);
+          linkMap.set(data.source, newLinks);
         }
-        linkMap.get(data.source).push(data);
       }
     });
 
@@ -254,16 +271,20 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
       selfLinks.forEach((data, index) => {
         const linkView = this.paper.findViewByModel(data.link.id) as LinkView;
         const conn = linkView.getConnection();
+        const bbox = conn.bbox();
 
-        // TODO: remove verticies and set again. Needed if this should work with moving elements
-        // const vertices = data.link.vertices();
-        //
-        // vertices.forEach(value =>{
-        //   data.link.removeVertex(0);
-        // });
+        if (bbox) {
 
-        linkView.addVertex(conn.bbox().center().x + xgap * (index + 1), conn.bbox().center().y - ygap / 2 * (index + 1));
-        linkView.addVertex(conn.bbox().center().x + xgap / 2 * (index + 1), conn.bbox().center().y - ygap * (index + 1));
+          // TODO: remove verticies and set again. Needed if this should work with moving elements
+          // const vertices = data.link.vertices();
+          //
+          // vertices.forEach(value =>{
+          //   data.link.removeVertex(0);
+          // });
+
+          linkView.addVertex(bbox.center().x + xgap * (index + 1), bbox.center().y - ygap / 2 * (index + 1));
+          linkView.addVertex(bbox.center().x + xgap / 2 * (index + 1), bbox.center().y - ygap * (index + 1));
+        }
       });
     });
   }
@@ -274,30 +295,37 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
     links.forEach(data => {
       if (data.target !== data.source) {
-        if (UtilService.isDefined(linkMap.get(data.target + data.source))) {
+        const linkMapEntry = linkMap.get(data.target + data.source);
+
+        if (linkMapEntry) {
           // same direction but other way around
-          linkMap.get(data.target + data.source).push(data);
+          linkMapEntry.push(data);
           return;
-        } else if (UtilService.isUndefined(linkMap.get(data.source + data.target))) {
-          linkMap.set(data.source + data.target, []);
+        } else {
+          const newLinks = [];
+          newLinks.push(data);
+          linkMap.set(data.source + data.target, newLinks);
         }
-        linkMap.get(data.source + data.target).push(data);
       }
     });
 
     linkMap.forEach(selfLinks => {
       selfLinks.forEach((data, index) => {
         const linkView = this.paper.findViewByModel(data.link.id) as LinkView;
-        const center = linkView.getConnection().bbox().center();
+        const bbox = linkView.getConnection().bbox();
 
-        // TODO: remove verticies and set again. Needed if this should work with moving elements
-        // const vertices = data.link.vertices();
-        //
-        // vertices.forEach(value =>{
-        //   data.link.removeVertex(0);
-        // });
+        if (bbox) {
+          const center = bbox.center();
 
-        linkView.addVertex(center.x - gap * index, center.y);
+          // TODO: remove verticies and set again. Needed if this should work with moving elements
+          // const vertices = data.link.vertices();
+          //
+          // vertices.forEach(value =>{
+          //   data.link.removeVertex(0);
+          // });
+
+          linkView.addVertex(center.x - gap * index, center.y);
+        }
       });
     });
   }

@@ -6,12 +6,12 @@ import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 })
 export class MessageService {
 
-  private message = new BehaviorSubject<Message>(null);
+  private message = new BehaviorSubject<Message | undefined>(undefined);
 
   constructor() {
   }
 
-  getSubject(): BehaviorSubject<Message> {
+  getSubject(): BehaviorSubject<Message | undefined> {
     return this.message;
   }
 
@@ -22,7 +22,7 @@ export class MessageService {
 
 export class Message {
   message: string;
-  html: string;
+  html?: string;
   type: MessageType;
   duration: number;
 

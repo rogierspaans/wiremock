@@ -10,7 +10,7 @@ import {StubMapping} from '../../model/wiremock/stub-mapping';
 export class StateMappingInfoComponent implements OnInit {
 
   @Input()
-  mapping: StubMapping;
+  mapping?: StubMapping;
 
   constructor(public activeModal: NgbActiveModal) {
   }

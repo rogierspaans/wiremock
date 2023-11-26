@@ -15,23 +15,23 @@ export class TreeNode {
   }
 
   isHidden() {
-    if (UtilService.isDefined(this.parent)) {
+    if (this.parent) {
       return this.parent.isParentHidden();
     }
     return false;
   }
 
-  private isParentHidden() {
+  private isParentHidden(): boolean {
     if (this.collapsed) {
       return true;
-    } else if (UtilService.isDefined(this.parent)) {
+    } else if (this.parent) {
       return this.parent.isParentHidden();
     }
     return false;
   }
 
   expandParents() {
-    if (UtilService.isDefined(this.parent)) {
+    if (this.parent) {
       this.parent.collapsed = false;
       this.parent.expandParents();
     }

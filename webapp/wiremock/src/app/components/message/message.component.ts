@@ -12,17 +12,17 @@ export class MessageComponent implements OnInit {
 
   // @HostBinding('class') classes = 'wmAlert';
 
-  message: Message;
+  message?: Message;
 
-  timeout: number;
+  timeout?: number;
 
   constructor(private messageService: MessageService) {
-    this.message = null;
+    this.message = undefined;
 
     this.messageService.getSubject().subscribe(next => {
       this.message = next;
 
-      if (UtilService.isDefined(next) && UtilService.isDefined(next.duration)) {
+      if (next && next.duration) {
         if (this.timeout) {
           clearTimeout(this.timeout);
         }
@@ -37,6 +37,6 @@ export class MessageComponent implements OnInit {
   }
 
   closeAlert() {
-    this.message = null;
+    this.message = undefined;
   }
 }

@@ -1,4 +1,6 @@
-<wm-layout [items]="result?.mappings" [activeItemId]="activeItemId" (activeItemChange)="onActiveItemChange($event)"
+<wm-layout [items]="result ? result.mappings : []"
+           [activeItemId]="activeItemId"
+           (activeItemChange)="onActiveItemChange($event)"
            [supportsTreeView]="true">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">

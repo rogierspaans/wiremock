@@ -7,17 +7,17 @@ import {ProxyConfig} from './proxy-config';
 
 export class StubMapping extends Proxy implements Item {
 
-  uuid: string;
-  name: string;
-  persistent: boolean;
-  request: RequestPattern;
-  response: ResponseDefinition;
-  priority: number;
-  scenarioName: string;
-  requiredScenarioState: string;
-  newScenarioState: string;
+  uuid!: string;
+  name!: string;
+  persistent!: boolean;
+  request!: RequestPattern;
+  response!: ResponseDefinition;
+  priority!: number;
+  scenarioName!: string;
+  requiredScenarioState!: string;
+  newScenarioState!: string;
 
-  postServeActions: Map<string, any>;
+  postServeActions!: Map<string, any>;
 
   metadata: any;
 
@@ -29,20 +29,22 @@ export class StubMapping extends Proxy implements Item {
     const mapping: StubMapping = new StubMapping();
 
     mapping.request = new RequestPattern();
-    mapping.request.method = 'POST';
+    mapping.request.method = 'GET';
     mapping.request.url = '';
 
     mapping.response = new ResponseDefinition();
     mapping.response.status = 200;
-    mapping.response.body = '';
+    mapping.response.jsonBody = {
+      'some': 'value'
+    };
     mapping.response.headers = {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'application/json'
     };
 
     return mapping;
   }
 
-  deserialize(unchecked: StubMapping, proxyConfig: ProxyConfig): StubMapping {
+  deserialize(unchecked: StubMapping, proxyConfig?: ProxyConfig): StubMapping {
     this.uuid = unchecked.uuid;
     this.name = unchecked.name;
     this.persistent = unchecked.persistent;
@@ -55,7 +57,7 @@ export class StubMapping extends Proxy implements Item {
     this.metadata = unchecked.metadata;
     this.postServeActions = unchecked.postServeActions;
 
-    if (UtilService.isDefined(proxyConfig) && (UtilService.isDefined(this.response.proxyBaseUrl) || proxyConfig.proxyConfig.has(this.uuid))) {
+    if (proxyConfig && (this.response.proxyBaseUrl || proxyConfig.proxyConfig.has(this.uuid))) {
       this.setProxy(true);
       this.setProxyEnabled(!proxyConfig.proxyConfig.has(this.uuid));
     }
@@ -64,19 +66,18 @@ export class StubMapping extends Proxy implements Item {
   }
 
   getTitle(): string {
-    return this.request.url || this.request.urlPattern || this.request.urlPath || this.request.urlPathPattern;
+    return (this.request.url || this.request.urlPattern ||
+      this.request.urlPath || this.request.urlPathPattern) as string;
   }
 
   getSubtitle(): string {
     let soap;
     let soapResult = '';
-    if (UtilService.isDefined(this.request) && UtilService.isDefined(this.request.bodyPatterns) &&
-      UtilService.isDefined(this.request.bodyPatterns)) {
-
-
+    if (this.request && this.request.bodyPatterns && this.request.bodyPatterns) {
       for (const bodyPattern of this.request.bodyPatterns) {
         if (UtilService.isDefined(bodyPattern.matchesXPath) &&
-          UtilService.isDefined(soap = UtilService.getSoapXPathRegex().exec(bodyPattern.matchesXPath))) {
+          UtilService.isDefined(soap = UtilService.getSoapXPathRegex().exec(bodyPattern.matchesXPath))
+          && soap) {
           if (soapResult.length !== 0) {
             soapResult += ', ';
           }

@@ -23,39 +23,6 @@ export class WebSocketService {
       return next.data === key;
     }));
   }
-
-  // This was the initial approach. For some reason it did not work with multiple subscribers. Therefore, replaced with simple solution
-  // ReconnectWebSocket actually still provides the method which could be overwritten.
-
-  // private createSubject(): Subject<any> {
-  //   try {
-  //     const observable = Observable.create((messageEventObserver: Observer<MessageEvent>) => {
-  //       this.socket.onmessage = messageEventObserver.next.bind(messageEventObserver);
-  //
-  //       // Although it is cool we do not want to close the subscriptions. We try to reconnect to the webSocket.
-  //
-  //       // this.socket.onerror = messageEventObserver.error.bind(messageEventObserver);
-  //       // this.socket.onclose = messageEventObserver.complete.bind(messageEventObserver);
-  //       // return socket.close.bind(socket); // return defines what happens when subscriber unsubscribe.
-  //     });
-  //
-  //     const observer = {
-  //       next: (data: any) => {
-  //         if (this.socket.readyState() === WebSocket.OPEN) {
-  //           if (typeof data === 'object') {
-  //             this.socket.send(UtilService.toJson(data));
-  //           } else {
-  //             this.socket.send(data);
-  //           }
-  //         }
-  //       }
-  //     };
-  //     return Subject.create(observer, observable);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  //   // return new Subject<any>();
-  // }
 }
 
 
@@ -64,7 +31,7 @@ let reconnectWebSocket: ReconnectWebSocket;
 export class ReconnectWebSocket {
   subject: Subject<MessageEvent>;
 
-  private webSocket: WebSocket;
+  private webSocket!: WebSocket;
 
 
   constructor() {

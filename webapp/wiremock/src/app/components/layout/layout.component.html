@@ -27,40 +27,37 @@
 </div>
 
 <div id="wmContainer">
-
-  <div id="wmControlContainer">
-    <nav class="navbar navbar-light bg-light">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <fa-icon class="input-group-text" icon="search" ngbTooltip="Search in all items"></fa-icon>
-        </div>
-        <!--<div class="wmFormGroup">-->
-        <div class="wmFormGroupMid">
-          <input #wmSearchInput type="text" class="form-control" [formControl]="search"
-                 placeholder="Enter expression or text here.">
-          <fa-icon id="wmSearchClear" icon="times" class="form-control-clear form-control-feedback"
-                   [class.hidden]="!searchClearVisible" (click)="clearSearch()"></fa-icon>
-        </div>
-        <!--</div>-->
-        <div class="input-group-append">
-          <div class="input-group-text">
-            <div class="custom-control custom-checkbox" ngbTooltip="case sensitive">
-              <input #wmCaseSensitiveSearch type="checkbox" class="custom-control-input" id="wmCaseSensitiveSearch"
-                     [checked]="caseSensitiveSearchEnabled"
-                     (change)="onCaseSensitiveChanged()">
-              <label class="custom-control-label" for="wmCaseSensitiveSearch"
-                     id="wmCaseSensitiveSearchText">{{caseSensitiveSearchEnabled
-                ? 'Ab' : 'ab'}}
-              </label>
-            </div>
+  <div id="wmControlContainer" class="container-fluid">
+    <div class="input-group pt-2">
+      <span class="input-group-text">
+        <fa-icon icon="search" ngbTooltip="Search in all items"></fa-icon>
+      </span>
+      <!--<div class="wmFormGroup">-->
+      <div class="wmFormGroupMid">
+        <input #wmSearchInput type="text" class="form-control" [formControl]="search"
+               placeholder="Enter expression or text here.">
+        <fa-icon id="wmSearchClear" icon="times" class="form-control-clear form-control-feedback"
+                 [class.hidden]="!searchClearVisible" (click)="clearSearch()"></fa-icon>
+      </div>
+      <!--</div>-->
+      <div class="input-group-append">
+        <div class="input-group-text">
+          <div class="custom-control custom-checkbox" ngbTooltip="case sensitive">
+            <input #wmCaseSensitiveSearch type="checkbox" class="custom-control-input" id="wmCaseSensitiveSearch"
+                   [checked]="caseSensitiveSearchEnabled"
+                   (change)="onCaseSensitiveChanged()">
+            <label class="custom-control-label" for="wmCaseSensitiveSearch"
+                   id="wmCaseSensitiveSearchText">{{caseSensitiveSearchEnabled
+              ? 'Ab' : 'ab'}}
+            </label>
           </div>
         </div>
       </div>
-    </nav>
+    </div>
 
-    <nav class="navbar navbar-light bg-light">
+    <div class="pt-2 pb-2">
       <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{$implicit: activeItem}"></ng-container>
-    </nav>
+    </div>
   </div>
 
   <div id="wmContent" class="wmHolyGrailBody">

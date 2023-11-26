@@ -23,7 +23,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  requestResult: FindRequestResult;
+  requestResult!: FindRequestResult;
 
   constructor(private wiremockService: WiremockService, private webSocketService: WebSocketService,
               private messageService: MessageService, private autoRefreshService: AutoRefreshService,
@@ -84,8 +84,8 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.curl = curl;
   }
 
-  private copyMappingTemplateToClipboard(message: string) {
-    if (UtilService.copyToClipboard(message)) {
+  private copyMappingTemplateToClipboard(message?: string) {
+    if (message && UtilService.copyToClipboard(message)) {
       this.messageService.setMessage(new Message('Mapping template copied to clipboard', MessageType.INFO, 3000));
     } else {
       this.messageService.setMessage(new Message('Was not able to copy. Details in log', MessageType.ERROR, 10000));
@@ -97,13 +97,13 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       + '"},"response": {"status": 200,"body": "","headers": {"Content-Type": "text/plain"}}}');
   }
 
-  private createSoapMapping(request: LoggedRequest): string {
+  private createSoapMapping(request: LoggedRequest): string | undefined {
     const method: string = request.method;
     const url: string = request.url;
     const body: string = request.body;
     const result = body.match(UtilService.getSoapRecognizeRegex());
 
-    if (UtilService.isUndefined(result)) {
+    if (!result) {
       return;
     }
 
@@ -116,6 +116,10 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
     }
 
     const soapMethod = body.match(UtilService.getSoapMethodRegex());
+
+    if (!soapMethod) {
+      return;
+    }
 
     const xPath = '/' + String(result[1]) + ':Envelope/' + String(result[2]) + ':Body/'
       + String(soapMethod[1]) + ':' + String(soapMethod[2]);

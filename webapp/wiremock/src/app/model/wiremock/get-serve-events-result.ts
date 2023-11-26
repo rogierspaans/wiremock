@@ -2,9 +2,9 @@ import {ServeEvent} from './serve-event';
 
 export class GetServeEventsResult {
 
-  requests: ServeEvent[];
+  requests!: ServeEvent[];
   meta: any;
-  requestJournalDisabled: boolean;
+  requestJournalDisabled!: boolean;
 
   deserialize(unchecked: GetServeEventsResult, onlyMatched: boolean): GetServeEventsResult {
     this.meta = unchecked.meta;

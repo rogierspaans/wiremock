@@ -1,12 +1,16 @@
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
-  <a class="navbar-brand" href="https://wiremock.org" target="_blank"><img id="wmLogo" [src]="'assets/img/wiremock-concept-icon-01.png'">Wiremock</a>
-  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarSupportedContent"
+  <a class="navbar-brand" href="https://wiremock.org" target="_blank">
+    <img id="wmLogo" [src]="'assets/img/wiremock-concept-icon-01.png'">Wiremock</a>
+  <button #navBarToggler
+          class="navbar-toggler" type="button"
+          (click)="isCollapsed = !isCollapsed"
+          aria-controls="navbarSupportedContent"
           [attr.aria-expanded]="!isCollapsed" aria-label="Toggle navigation">
     <fa-icon icon="bars"></fa-icon>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isCollapsed">
-    <ul class="navbar-nav mr-auto">
+    <ul id='wmNavigation' class="navbar-nav">
       <!--<li class="nav-item active">-->
       <li class="nav-item" routerLinkActive="active">
         <a class="nav-link" routerLink="/mappings">Mappings</a>
@@ -21,9 +25,12 @@
         <a class="nav-link" routerLink="/state">StateMachine</a>
       </li>
     </ul>
-    <span id="wmRecordingIndicator" class="navbar-text text-danger font-weight-bold blinkMe"
-          *ngIf="currentRecordingStatus === RecordingStatus.Recording"><fa-icon icon="dot-circle"></fa-icon> Recording</span>
-    <div ngbDropdown placement="bottom-right" class="nav-item dropdown" display="dynamic">
+    <div id="wmRecordingIndicator" class="navbar-text text-danger font-weight-bold blinkMe d-flex"
+          *ngIf="currentRecordingStatus === RecordingStatus.Recording">
+      <fa-icon icon="dot-circle"></fa-icon>
+      Recording</div>
+    <div id='wmSettingsButton' ngbDropdown [placement]="window.innerWidth < 576 ? 'bottom-left' : 'bottom-right'"
+         class="nav-item dropdown" display="dynamic">
       <a id="wmSettings" class="nav-link dropdown-toggle" ngbDropdownToggle>
         <fa-icon icon="cog"></fa-icon>
         Settings
@@ -49,7 +56,8 @@
           Snapshot
         </button>
         <div class="dropdown-divider"></div>
-        <button type="button" class="dropdown-item" (click)="setAutoRefresh(!autoRefreshEnabled)" ngbTooltip="En/disable reload of mappings/requests which allows to read content more easily when e.g. a test is running">
+        <button type="button" class="dropdown-item" (click)="setAutoRefresh(!autoRefreshEnabled)"
+                ngbTooltip="En/disable reload of mappings/requests which allows to read content more easily when e.g. a test is running">
           <fa-icon icon="sync-alt"></fa-icon>
           {{autoRefreshEnabled ? 'Disable auto refresh' : 'Enable auto refresh'}}
         </button>

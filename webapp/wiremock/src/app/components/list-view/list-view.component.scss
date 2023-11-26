@@ -41,3 +41,14 @@
 ngb-pagination {
   border-bottom: 1px solid $gray-300;
 }
+
+.wmProxyGroup {
+  background-color: #666;
+  color: $body-color;
+
+  .wmProxyDisable {
+    // Fix issues with ng-bootstraps popover, which adds an element to the button group and then css is broken.
+    border-bottom-right-radius: $btn-border-radius !important;
+    border-top-right-radius: $btn-border-radius !important;
+  }
+}

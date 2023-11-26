@@ -3,6 +3,7 @@ import * as vkbeautify from 'vkbeautify';
 import {Item} from '../model/wiremock/item';
 import {Message, MessageService, MessageType} from '../components/message/message.service';
 import {StubMapping} from '../model/wiremock/stub-mapping';
+// @ts-ignore
 import {v4 as uuidv4} from 'uuid';
 
 @Injectable()
@@ -144,7 +145,7 @@ export class UtilService {
     return UtilService.extractQueryParams(uri_dec.substring(paramStart + 1));
   }
 
-  private static extractQueryParams(queryParams) {
+  private static extractQueryParams(queryParams: string) {
     if (UtilService.isUndefined(queryParams)) {
       return [];
     }
@@ -152,17 +153,6 @@ export class UtilService {
     const decodeQueryParams = decodeURIComponent(queryParams);
 
     const result = [];
-
-    // This works but typescript is not aware of entries function yet
-    // if(isDefined(URLSearchParams)){
-    //   const params = new URLSearchParams(decodeQueryParams);
-    //
-    //   for(const pair of params.entries()){
-    //     result.push({key: pair[0], value: pair[1]})
-    //   }
-    //
-    //   return result;
-    // }
 
     const array = decodeQueryParams.split('&');
     let splitKeyValue;
@@ -179,7 +169,7 @@ export class UtilService {
       return items;
     }
 
-    let toSearch: any = null;
+    let toSearch: any;
     let func: any = UtilService.eachRecursiveRegex;
 
     try {
@@ -208,7 +198,7 @@ export class UtilService {
     return typeof obj === 'function';
   }
 
-  public static eachRecursiveRegex(obj, regex): boolean {
+  public static eachRecursiveRegex(obj: any, regex: string): boolean {
     for (const k of Object.keys(obj)) {
       // hasOwnProperty check not needed. We are iterating over properties of object
       if (typeof obj[k] === 'object' && UtilService.isDefined(obj[k])) {
@@ -227,7 +217,7 @@ export class UtilService {
     return false;
   }
 
-  public static eachRecursive(obj, text): boolean {
+  public static eachRecursive(obj: any, text: string): boolean {
     for (const k of Object.keys(obj)) {
       // hasOwnProperty check not needed. We are iterating over properties of object
       if (typeof obj[k] === 'object' && UtilService.isDefined(obj[k])) {
@@ -246,23 +236,28 @@ export class UtilService {
     return false;
   }
 
-  public static prettify(code: string): string {
+  public static prettify(code?: string): string {
+    // some ts-ignore, because if(code) fails with ''.
     if (UtilService.isUndefined(code)) {
       return '';
     }
 
     try {
+      // @ts-ignore
       return vkbeautify.json(code);
     } catch (err) {
       // Try to escape single quote
       try {
+        // @ts-ignore
         const replaced = code.replace(new RegExp(/\\'/, 'g'), '%replaceMyQuote%');
         const pretty = vkbeautify.json(replaced);
         return pretty.replace(new RegExp(/%replaceMyQuote%/, 'g'), '\'');
       } catch (err2) {
         try {
+          // @ts-ignore
           return vkbeautify.xml(code);
         } catch (err3) {
+          // @ts-ignore
           return code;
         }
       }
@@ -299,9 +294,9 @@ export class UtilService {
   constructor() {
   }
 
-  static getActiveItem(items: Item[], activeItemId: string): Item {
-    if (this.isDefined(items) || items.length > 0) {
-      if (this.isDefined(activeItemId)) {
+  static getActiveItem(items?: Item[], activeItemId?: string): Item | undefined {
+    if (items && items.length > 0) {
+      if (activeItemId) {
         for (let i = 0; i < items.length; i++) {
           if (items[i].getId() === activeItemId) {
             return items[i];
@@ -310,12 +305,12 @@ export class UtilService {
       }
       return items[0];
     } else {
-      return null;
+      return undefined;
     }
   }
 
-  public static scrollIntoView(container: ElementRef, children: QueryList<ElementRef>, activeItem: Item) {
-    if (this.isDefined(activeItem) && this.isDefined(activeItem.getId())) {
+  public static scrollIntoView(container: ElementRef, children: QueryList<ElementRef>, activeItem?: Item) {
+    if (activeItem && activeItem.getId()) {
       setTimeout(() => {
         children.forEach(item => {
           if (item.nativeElement.id === activeItem.getId()) {

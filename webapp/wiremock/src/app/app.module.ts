@@ -48,7 +48,6 @@ import {LayoutComponent} from './components/layout/layout.component';
 import {HttpClientModule} from '@angular/common/http';
 import {WiremockService} from './services/wiremock.service';
 import {CodeEntryComponent} from './components/code-entry/code-entry.component';
-import {HighlightJsDirective} from './directives/highlight-js.directive';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RawSeparatedComponent} from './components/raw-separated/raw-separated.component';
 import {RawDirective} from './components/raw-separated/raw.directive';
@@ -73,6 +72,7 @@ import {CurlPreviewComponent} from './components/curl-preview/curl-preview.compo
 import { MappingTestComponent } from './components/mapping-test/mapping-test.component';
 import {TestDirective} from './components/raw-separated/test.directive';
 import { TreeViewComponent } from './components/tree-view/tree-view.component';
+import { HIGHLIGHT_OPTIONS, HighlightModule } from 'ngx-highlightjs';
 
 @NgModule({
   declarations: [
@@ -84,7 +84,6 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     UnmatchedComponent,
     LayoutComponent,
     CodeEntryComponent,
-    HighlightJsDirective,
     RawSeparatedComponent,
     RawDirective,
     SeparatedDirective,
@@ -122,8 +121,24 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     NgbTooltipModule,
     NgbPopoverModule,
     NgbPaginationModule,
+    HighlightModule
   ],
-  providers: [ WiremockService, WebSocketService, MessageService, SearchService, NgbModal ],
+  providers: [
+    WiremockService, WebSocketService, MessageService, SearchService, NgbModal,
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        lineNumbersLoader: () => import('ngx-highlightjs/line-numbers'), // Optional, only if you want the line numbers
+        languages: {
+          //  'html', 'json', 'xml', 'http'
+          json: () => import('highlight.js/lib/languages/json'),
+          xml: () => import('highlight.js/lib/languages/xml'),
+          http: () => import('highlight.js/lib/languages/http')
+        },
+      }
+    }
+  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {
