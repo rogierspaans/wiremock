@@ -17,7 +17,7 @@ export class StubMapping extends Proxy implements Item {
   requiredScenarioState: string;
   newScenarioState: string;
 
-  postServeActions: Map<String, any>;
+  postServeActions: Map<string, any>;
 
   metadata: any;
 

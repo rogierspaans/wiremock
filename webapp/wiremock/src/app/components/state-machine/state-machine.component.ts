@@ -46,7 +46,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
   private graph;
   private paper: Paper;
 
-  private states: Map<String, Element>;
+  private states: Map<string, Element>;
   private links: StateLink[];
 
   private dragStartPosition = null;
@@ -72,7 +72,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
     this.initPaper();
 
-    this.states = new Map<String, Element>();
+    this.states = new Map<string, Element>();
     this.links = [];
 
     this.searchForStates(this.states);
@@ -116,7 +116,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  private searchForStates(states: Map<String, dia.Element>) {
+  private searchForStates(states: Map<string, dia.Element>) {
     this.item.possibleStates.forEach(stateName => {
       if (stateName === 'Started') {
         if (this.item.state === 'Started') {
@@ -134,7 +134,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  private addLinks(links: StateLink[], states: Map<String, dia.Element>) {
+  private addLinks(links: StateLink[], states: Map<string, dia.Element>) {
     this.item.mappings.forEach(mapping => {
       if (UtilService.isDefined(mapping.requiredScenarioState) && UtilService.isDefined(mapping.newScenarioState)) {
         // A -> B
@@ -152,13 +152,13 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  private addStatesToGraph(states: Map<String, dia.Element>) {
+  private addStatesToGraph(states: Map<string, dia.Element>) {
     states.forEach((state, stateName) => {
       state.addTo(this.graph);
     });
   }
 
-  private addLinksToGraph(links: StateLink[], states: Map<String, dia.Element>) {
+  private addLinksToGraph(links: StateLink[], states: Map<string, dia.Element>) {
     links.forEach(data => {
       const link = new joint.shapes.standard.Link();
       link.source(states.get(data.source));
@@ -239,7 +239,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
     const xgap = 20;
     const ygap = 20;
-    const linkMap = new Map<String, StateLink[]>();
+    const linkMap = new Map<string, StateLink[]>();
 
     links.forEach(data => {
       if (data.target === data.source) {
@@ -270,7 +270,7 @@ export class StateMachineComponent implements OnInit, OnChanges, AfterViewInit {
 
   private sameDirectionLinks(links: StateLink[]) {
     const gap = 20;
-    const linkMap = new Map<String, StateLink[]>();
+    const linkMap = new Map<string, StateLink[]>();
 
     links.forEach(data => {
       if (data.target !== data.source) {

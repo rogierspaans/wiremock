@@ -15,7 +15,7 @@ export class ResponseDefinition {
   fault: any;
   transformers: any;
   transformerParameters: any;
-  fromConfiguredStub: Boolean;
+  fromConfiguredStub: boolean;
 
   deserialize(unchecked: ResponseDefinition): ResponseDefinition {
     return unchecked;
