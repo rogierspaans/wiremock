@@ -7,7 +7,6 @@ import {HomeComponent} from './components/home/home.component';
 import {MappingsComponent} from './components/mappings/mappings.component';
 import {
   NgbAlertModule,
-  NgbButtonsModule,
   NgbCollapseModule, NgbDropdownModule,
   NgbModal,
   NgbModalModule,
@@ -118,7 +117,6 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     NgbNavModule,
     NgbCollapseModule,
     NgbModalModule,
-    NgbButtonsModule,
     NgbDropdownModule,
     NgbAlertModule,
     NgbTooltipModule,
@@ -126,8 +124,7 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     NgbPaginationModule,
   ],
   providers: [ WiremockService, WebSocketService, MessageService, SearchService, NgbModal ],
-  bootstrap: [ AppComponent ],
-  entryComponents: [ DialogRecordingComponent, StateMappingInfoComponent, CurlPreviewComponent, MappingTestComponent ]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule {
 
