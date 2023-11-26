@@ -8,19 +8,24 @@ import { debounceTime } from 'rxjs/operators';
 import { LoggedRequest } from '../../model/wiremock/logged-request';
 import queryString from 'query-string';
 
-
 @Component({
   selector: 'wm-separated',
   templateUrl: './separated.component.html',
-  styleUrls: [ './separated.component.scss' ],
+  styleUrls: ['./separated.component.scss'],
 })
 export class SeparatedComponent implements OnChanges {
-
   @HostBinding('class') classes = 'wmHolyGrailScroll';
 
   private _activeItem?: Item;
 
-  color: string[] = [ 'bg-info', 'bg-warning', 'bg-danger', 'bg-primary', 'bg-secondary', 'bg-dark' ];
+  color: string[] = [
+    'bg-info',
+    'bg-warning',
+    'bg-danger',
+    'bg-primary',
+    'bg-secondary',
+    'bg-dark',
+  ];
 
   bodyFileData?: string;
   bodyGroupKey?: string;
@@ -38,8 +43,7 @@ export class SeparatedComponent implements OnChanges {
     }
   }
 
-  constructor(private wiremockService: WiremockService) {
-  }
+  constructor(private wiremockService: WiremockService) {}
 
   ngOnChanges(): void {
     if (this._activeItem) {
@@ -48,7 +52,8 @@ export class SeparatedComponent implements OnChanges {
         responseDefinition = (this._activeItem as StubMapping).response;
         this.bodyGroupKey = 'response';
       } else if (this._activeItem instanceof ServeEvent) {
-        responseDefinition = (this._activeItem as ServeEvent).responseDefinition;
+        responseDefinition = (this._activeItem as ServeEvent)
+          .responseDefinition;
         this.bodyGroupKey = 'responseDefinition';
       } else {
         responseDefinition = undefined;
@@ -56,8 +61,10 @@ export class SeparatedComponent implements OnChanges {
 
       // body from file
       if (responseDefinition && responseDefinition.bodyFileName) {
-        this.wiremockService.getFileBody(responseDefinition.bodyFileName)
-          .pipe(debounceTime(500)).subscribe(body => this.bodyFileData = body);
+        this.wiremockService
+          .getFileBody(responseDefinition.bodyFileName)
+          .pipe(debounceTime(500))
+          .subscribe(body => (this.bodyFileData = body));
       } else {
         this.bodyFileData = undefined;
         this.bodyGroupKey = undefined;
@@ -65,7 +72,6 @@ export class SeparatedComponent implements OnChanges {
 
       // x-www-form-urlencoded
       this.xWwwFormUrlEncoded(responseDefinition);
-
     }
   }
 
@@ -80,9 +86,12 @@ export class SeparatedComponent implements OnChanges {
       body = (this._activeItem as LoggedRequest).body;
     }
 
-    if (headers && headers['Content-Type']
-      && headers['Content-Type'] === 'application/x-www-form-urlencoded'
-      && body) {
+    if (
+      headers &&
+      headers['Content-Type'] &&
+      headers['Content-Type'] === 'application/x-www-form-urlencoded' &&
+      body
+    ) {
       // found x-www-form-urlencoded. Try to check body
       this.xWwwFormUrlEncodedParams = JSON.stringify(queryString.parse(body));
     } else {
@@ -102,5 +111,4 @@ export class SeparatedComponent implements OnChanges {
   asServeEvent(item: Item): ServeEvent {
     return <ServeEvent>item;
   }
-
 }

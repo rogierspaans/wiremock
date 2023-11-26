@@ -1,5 +1,5 @@
-import {StubMapping} from './stub-mapping';
-import {UtilService} from '../../services/util.service';
+import { StubMapping } from './stub-mapping';
+import { UtilService } from '../../services/util.service';
 
 export class SnapshotRecordResult {
   mappings: StubMapping[] = [];
@@ -19,7 +19,6 @@ export class SnapshotRecordResult {
     return this;
   }
 
-
   getIds(): string[] {
     if (this.ids) {
       return this.ids;
@@ -35,5 +34,4 @@ export class SnapshotRecordResult {
 
     return result;
   }
-
 }

@@ -5,7 +5,7 @@ import { WiremockService } from './wiremock.service';
 describe('WiremockService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [WiremockService]
+      providers: [WiremockService],
     });
   });
 

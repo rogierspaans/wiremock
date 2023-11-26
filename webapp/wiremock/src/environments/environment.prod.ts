@@ -15,5 +15,5 @@ export const environment = {
   },
   wiremockUrl: '/',
   url: '/__admin/',
-  resourcesUrl: '/__admin/webapp/'
+  resourcesUrl: '/__admin/webapp/',
 };

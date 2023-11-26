@@ -8,10 +8,17 @@ export class ListStubMappingsResult {
   mappings: StubMapping[] = [];
 
   public static hasItems(value: ListStubMappingsResult): boolean {
-    return UtilService.isDefined(value) && UtilService.isDefined(value.mappings) && value.mappings.length > 0;
+    return (
+      UtilService.isDefined(value) &&
+      UtilService.isDefined(value.mappings) &&
+      value.mappings.length > 0
+    );
   }
 
-  deserialize(unchecked: ListStubMappingsResult, proxyConfig?: ProxyConfig): ListStubMappingsResult {
+  deserialize(
+    unchecked: ListStubMappingsResult,
+    proxyConfig?: ProxyConfig
+  ): ListStubMappingsResult {
     this.meta = unchecked.meta;
     this.mappings = [];
     unchecked.mappings.forEach(mapping => {

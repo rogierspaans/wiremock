@@ -1,10 +1,21 @@
-import { Component, HostBinding, Input, OnChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostBinding,
+  Input,
+  OnChanges,
+  ViewChild,
+} from '@angular/core';
 import { StubMapping } from '../../model/wiremock/stub-mapping';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import mimeDb from 'mime-db';
 import { WiremockService } from '../../services/wiremock.service';
-import { HttpErrorResponse, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpEventType,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Item } from '../../model/wiremock/item';
 import { ServeEvent } from '../../model/wiremock/serve-event';
 import { BehaviorSubject } from 'rxjs';
@@ -13,11 +24,9 @@ import { CodeEditorComponent } from '../code-editor/code-editor.component';
 @Component({
   selector: 'wm-mapping-test',
   templateUrl: './mapping-test.component.html',
-  styleUrls: [ './mapping-test.component.scss' ],
+  styleUrls: ['./mapping-test.component.scss'],
 })
 export class MappingTestComponent implements OnChanges {
-
-
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
   codeOptions = {
@@ -40,7 +49,8 @@ export class MappingTestComponent implements OnChanges {
     showGutter: true,
     displayIndentGuides: true,
     fontSize: 14,
-    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamily:
+      'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     showLineNumbers: true,
     // ..
     wrap: true,
@@ -67,7 +77,8 @@ export class MappingTestComponent implements OnChanges {
     showGutter: true,
     displayIndentGuides: true,
     fontSize: 14,
-    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamily:
+      'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     showLineNumbers: true,
     // ..
     wrap: true,
@@ -94,8 +105,23 @@ export class MappingTestComponent implements OnChanges {
 
   $headerValueChanges = new BehaviorSubject('');
 
-  supportedMethods = [ 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'COPY', 'HEAD', 'OPTIONS', 'LINK', 'UNLINK',
-    'PURGE', 'LOCK', 'UNLOCK', 'PROPFIND', 'VIEW' ];
+  supportedMethods = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'COPY',
+    'HEAD',
+    'OPTIONS',
+    'LINK',
+    'UNLINK',
+    'PURGE',
+    'LOCK',
+    'UNLOCK',
+    'PROPFIND',
+    'VIEW',
+  ];
 
   private static contentTypeToLanguage(cT: string) {
     // text/plain;charset=UTF-8
@@ -111,8 +137,7 @@ export class MappingTestComponent implements OnChanges {
     return result;
   }
 
-  constructor(private wiremockService: WiremockService) {
-  }
+  constructor(private wiremockService: WiremockService) {}
 
   ngOnChanges(): void {
     if (!this.mapping) {
@@ -130,10 +155,7 @@ export class MappingTestComponent implements OnChanges {
     this.responseIsMapping = false;
 
     this.$headerValueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-      )
+      .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(nextCT => {
         this.language = MappingTestComponent.contentTypeToLanguage(nextCT);
       });
@@ -143,8 +165,12 @@ export class MappingTestComponent implements OnChanges {
 
   private getUrl() {
     if (this.mapping && this.mapping.request) {
-      return this.mapping.request.url ?? this.mapping.request.urlPath ??
-        this.mapping.request.urlPattern ?? this.mapping.request.urlPathPattern;
+      return (
+        this.mapping.request.url ??
+        this.mapping.request.urlPath ??
+        this.mapping.request.urlPattern ??
+        this.mapping.request.urlPathPattern
+      );
     } else {
       return '';
     }
@@ -153,9 +179,12 @@ export class MappingTestComponent implements OnChanges {
   private guessRequestContentType() {
     let result = 'application/json';
 
-    let cT = { 'default': 'application/json' };
+    let cT = { default: 'application/json' };
     if (this.mapping && this.mapping.request && this.mapping.request.headers) {
-      cT = this.mapping.request.headers['Content-Type'] ?? this.mapping.request.headers['content-type'] ?? cT;
+      cT =
+        this.mapping.request.headers['Content-Type'] ??
+        this.mapping.request.headers['content-type'] ??
+        cT;
     }
 
     for (const value of Object.values(cT)) {
@@ -187,11 +216,14 @@ export class MappingTestComponent implements OnChanges {
 
     const method = this.method || 'GET';
 
-    this.wiremockService.test(this.url.value, method, body, headers).subscribe(resp => {
-      this.handleResponse(resp);
-    }, (error: Error) => {
-      this.handleErrorResponse(error);
-    });
+    this.wiremockService.test(this.url.value, method, body, headers).subscribe(
+      resp => {
+        this.handleResponse(resp);
+      },
+      (error: Error) => {
+        this.handleErrorResponse(error);
+      }
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -211,7 +243,7 @@ export class MappingTestComponent implements OnChanges {
         data.headers = this.parseHeaders(resp.headers);
         this.checkIfIsMapping(data.headers);
         this.responseLanguage = MappingTestComponent.contentTypeToLanguage(
-          data.headers['Content-Type'] ?? data.headers['content-type'] ?? 'json',
+          data.headers['Content-Type'] ?? data.headers['content-type'] ?? 'json'
         );
 
         this.responseBody = resp.body ?? '';
@@ -242,7 +274,7 @@ export class MappingTestComponent implements OnChanges {
       data.headers = this.parseHeaders(error.headers);
 
       this.responseLanguage = MappingTestComponent.contentTypeToLanguage(
-        data.headers['Content-Type'] ?? data.headers['content-type'] ?? 'json',
+        data.headers['Content-Type'] ?? data.headers['content-type'] ?? 'json'
       );
       this.checkIfIsMapping(data.headers);
 

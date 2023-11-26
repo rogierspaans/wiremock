@@ -1,29 +1,43 @@
 <div id="wmListView" class="wmHolyGrailBody">
   <div *ngIf="supportsTreeView" class="wmHolyGrailBody column mt-1">
-    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs" [animation]="false">
+    <ul
+      ngbNav
+      #nav="ngbNav"
+      [(activeId)]="activeTab"
+      class="nav-tabs"
+      [animation]="false">
       <li [ngbNavItem]="0">
         <a ngbNavLink class="wmNavLink">
           <fa-icon icon="folder"></fa-icon>
-          Folder</a>
+          Folder</a
+        >
         <ng-template ngbNavContent>
-          <wm-tree-view [items]="filteredItems" [activeItem]="activeItem"
-                        (activeItemChange)="onActiveItemChange($event)"></wm-tree-view>
+          <wm-tree-view
+            [items]="filteredItems"
+            [activeItem]="activeItem"
+            (activeItemChange)="onActiveItemChange($event)"></wm-tree-view>
         </ng-template>
       </li>
       <li [ngbNavItem]="1">
         <a ngbNavLink class="wmNavLink">
           <fa-icon icon="list"></fa-icon>
-          List</a>
+          List</a
+        >
         <ng-template ngbNavContent>
-          <wm-list-view [items]="filteredItems" [activeItem]="activeItem"
-                        (activeItemChange)="onActiveItemChange($event)"></wm-list-view>
+          <wm-list-view
+            [items]="filteredItems"
+            [activeItem]="activeItem"
+            (activeItemChange)="onActiveItemChange($event)"></wm-list-view>
         </ng-template>
       </li>
     </ul>
     <div id="wmTabContent" [ngbNavOutlet]="nav"></div>
   </div>
-  <wm-list-view *ngIf="!supportsTreeView" [items]="filteredItems" [activeItem]="activeItem"
-                (activeItemChange)="onActiveItemChange($event)"></wm-list-view>
+  <wm-list-view
+    *ngIf="!supportsTreeView"
+    [items]="filteredItems"
+    [activeItem]="activeItem"
+    (activeItemChange)="onActiveItemChange($event)"></wm-list-view>
 </div>
 
 <div id="wmContainer">
@@ -34,32 +48,49 @@
       </span>
       <!--<div class="wmFormGroup">-->
       <div class="wmFormGroupMid">
-        <input #wmSearchInput type="text" class="form-control" [formControl]="search"
-               placeholder="Enter expression or text here.">
-        <fa-icon id="wmSearchClear" icon="times" class="form-control-clear form-control-feedback"
-                 [class.hidden]="!searchClearVisible" (click)="clearSearch()"></fa-icon>
+        <input
+          #wmSearchInput
+          type="text"
+          class="form-control"
+          [formControl]="search"
+          placeholder="Enter expression or text here." />
+        <fa-icon
+          id="wmSearchClear"
+          icon="times"
+          class="form-control-clear form-control-feedback"
+          [class.hidden]="!searchClearVisible"
+          (click)="clearSearch()"></fa-icon>
       </div>
       <!--</div>-->
       <span id="wmCaseSensitiveSearchWrapper" class="input-group-text">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="wmCaseSensitiveSearch"
-                 [checked]="caseSensitiveSearchEnabled"
-                 (change)="onCaseSensitiveChanged()">
-          <label class="form-check-label" for="wmCaseSensitiveSearch" ngbTooltip="case sensitive">
-            {{caseSensitiveSearchEnabled ? 'Ab' : 'ab'}}
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="wmCaseSensitiveSearch"
+            [checked]="caseSensitiveSearchEnabled"
+            (change)="onCaseSensitiveChanged()" />
+          <label
+            class="form-check-label"
+            for="wmCaseSensitiveSearch"
+            ngbTooltip="case sensitive">
+            {{ caseSensitiveSearchEnabled ? 'Ab' : 'ab' }}
           </label>
         </div>
       </span>
     </div>
 
     <div class="pt-2 pb-2">
-      <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{$implicit: activeItem}"></ng-container>
+      <ng-container
+        [ngTemplateOutlet]="actions"
+        [ngTemplateOutletContext]="{ $implicit: activeItem }"></ng-container>
     </div>
   </div>
 
   <div id="wmContent" class="wmHolyGrailBody">
-    <ng-container [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: activeItem}"></ng-container>
+    <ng-container
+      [ngTemplateOutlet]="content"
+      [ngTemplateOutletContext]="{ $implicit: activeItem }"></ng-container>
   </div>
 </div>
-
-

@@ -8,9 +8,8 @@ describe('RawSeparatedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RawSeparatedComponent ]
-    })
-    .compileComponents();
+      declarations: [RawSeparatedComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

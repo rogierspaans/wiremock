@@ -1,4 +1,4 @@
-@import "../../../variables";
+@import '../../../variables';
 
 #wmListView {
   width: 30%;
@@ -10,7 +10,8 @@
   background-color: $light-bg-subtle;
 }
 
-#wmContainer, #wmControlContainer {
+#wmContainer,
+#wmControlContainer {
   display: flex;
   flex-direction: column;
 }
@@ -29,7 +30,7 @@
   padding: 5px 10px;
 }
 
-#wmCaseSensitiveSearchWrapper{
+#wmCaseSensitiveSearchWrapper {
   padding-top: 0;
   padding-bottom: 0;
 }

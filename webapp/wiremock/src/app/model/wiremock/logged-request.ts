@@ -4,7 +4,6 @@ import { Proxy } from './proxy';
 import moment from 'moment';
 
 export class LoggedRequest extends Proxy implements Item {
-
   url!: string;
   absoluteUrl!: string;
   clientIp!: string;
@@ -32,7 +31,10 @@ export class LoggedRequest extends Proxy implements Item {
 
   getSubtitle(): string {
     let soap;
-    if (UtilService.isDefined(this.body) && (soap = UtilService.getSoapMethodRegex().exec(this.body))) {
+    if (
+      UtilService.isDefined(this.body) &&
+      (soap = UtilService.getSoapMethodRegex().exec(this.body))
+    ) {
       return soap[2];
     }
     return 'method=' + this.method;

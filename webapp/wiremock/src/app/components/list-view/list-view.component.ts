@@ -20,10 +20,9 @@ import { MessageService } from '../message/message.service';
 @Component({
   selector: 'wm-list-view',
   templateUrl: './list-view.component.html',
-  styleUrls: [ './list-view.component.scss' ],
+  styleUrls: ['./list-view.component.scss'],
 })
 export class ListViewComponent implements OnChanges, AfterViewChecked {
-
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
   @Input()
@@ -48,9 +47,10 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
   @ViewChildren('listChildren')
   listChildren!: QueryList<ElementRef>;
 
-  constructor(private wiremockService: WiremockService,
-              private messageService: MessageService) {
-  }
+  constructor(
+    private wiremockService: WiremockService,
+    private messageService: MessageService
+  ) {}
 
   selectActiveItem(item: Item) {
     if (this.activeItem === item) {
@@ -61,7 +61,6 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
     let changed = false;
 
     if (changes['items'] && this.items) {
@@ -77,9 +76,10 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
     }
 
     if (this.activeItem && this.items) {
-      const index = this.items.findIndex((item: Item) => {
-        return item.getId() === this.activeItem?.getId();
-      }) + 1;
+      const index =
+        this.items.findIndex((item: Item) => {
+          return item.getId() === this.activeItem?.getId();
+        }) + 1;
 
       this.page = Math.ceil(index / this.pageSize);
 
@@ -94,7 +94,10 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
 
   private setFilteredItems() {
     if (this.items) {
-      this.filteredItems = this.items.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+      this.filteredItems = this.items.slice(
+        (this.page - 1) * this.pageSize,
+        this.page * this.pageSize
+      );
     }
   }
 
@@ -132,7 +135,11 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
     if (this.activeItemChanged) {
       this.activeItemChanged = false;
       // only once after something changed.
-      UtilService.scrollIntoView(this.childrenContainer, this.listChildren, this.activeItem);
+      UtilService.scrollIntoView(
+        this.childrenContainer,
+        this.listChildren,
+        this.activeItem
+      );
     }
   }
 }

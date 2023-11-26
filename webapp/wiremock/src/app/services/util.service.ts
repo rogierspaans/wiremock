@@ -1,13 +1,16 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
 import * as vkbeautify from 'vkbeautify';
 import { Item } from '../model/wiremock/item';
-import { Message, MessageService, MessageType } from '../components/message/message.service';
+import {
+  Message,
+  MessageService,
+  MessageType,
+} from '../components/message/message.service';
 import { StubMapping } from '../model/wiremock/stub-mapping';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UtilService {
-
   public static WIREMOCK_GUI_KEY = 'wiremock-gui';
   public static DIR_KEY = 'folder';
 
@@ -37,7 +40,6 @@ export class UtilService {
     // Avoid flash of white box if rendered for any reason.
     textArea.style.background = 'transparent';
 
-
     textArea.value = text;
 
     document.body.appendChild(textArea);
@@ -49,7 +51,9 @@ export class UtilService {
       if (successful) {
         return true;
       } else {
-        console.error('Was not able to copy. No exception was thrown. Result=' + successful);
+        console.error(
+          'Was not able to copy. No exception was thrown. Result=' + successful
+        );
       }
     } catch (err) {
       console.error(err);
@@ -61,20 +65,42 @@ export class UtilService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static showErrorMessage(messageService: MessageService, err: any): void {
+  public static showErrorMessage(
+    messageService: MessageService,
+    err: any
+  ): void {
     if (UtilService.isDefined(err)) {
-      let message = err.statusText + '\nstatus=' + err.status + '\nmessage:\n' + err.message;
-      if (UtilService.isDefined(err.error) && err.error instanceof ProgressEvent) {
+      let message =
+        err.statusText +
+        '\nstatus=' +
+        err.status +
+        '\nmessage:\n' +
+        err.message;
+      if (
+        UtilService.isDefined(err.error) &&
+        err.error instanceof ProgressEvent
+      ) {
         if (err.status === 0) {
-          message = 'Wiremock not started?\n------------------------------\n' + message;
+          message =
+            'Wiremock not started?\n------------------------------\n' + message;
         }
-        messageService.setMessage(new Message(message, MessageType.ERROR, 10000));
+        messageService.setMessage(
+          new Message(message, MessageType.ERROR, 10000)
+        );
       } else {
-        messageService.setMessage(new Message(err.statusText + ': status=' + err.status + ', message=',
-          MessageType.ERROR, 10000, err.message));
+        messageService.setMessage(
+          new Message(
+            err.statusText + ': status=' + err.status + ', message=',
+            MessageType.ERROR,
+            10000,
+            err.message
+          )
+        );
       }
     } else {
-      messageService.setMessage(new Message('Ups! Unknown error :(', MessageType.ERROR, 10000));
+      messageService.setMessage(
+        new Message('Ups! Unknown error :(', MessageType.ERROR, 10000)
+      );
     }
   }
 
@@ -100,11 +126,19 @@ export class UtilService {
   }
 
   public static isGuiDefined(value: StubMapping): boolean {
-    return UtilService.isDefined(value.metadata) && UtilService.isDefined(value.metadata[UtilService.WIREMOCK_GUI_KEY]);
+    return (
+      UtilService.isDefined(value.metadata) &&
+      UtilService.isDefined(value.metadata[UtilService.WIREMOCK_GUI_KEY])
+    );
   }
 
   public static isFolderDefined(value: StubMapping): boolean {
-    return UtilService.isGuiDefined(value) && UtilService.isDefined(value.metadata[UtilService.WIREMOCK_GUI_KEY][UtilService.DIR_KEY]);
+    return (
+      UtilService.isGuiDefined(value) &&
+      UtilService.isDefined(
+        value.metadata[UtilService.WIREMOCK_GUI_KEY][UtilService.DIR_KEY]
+      )
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,7 +147,7 @@ export class UtilService {
   }
 
   public static isBlank(value: string): boolean {
-    return (UtilService.isUndefined(value) || value.length === 0);
+    return UtilService.isUndefined(value) || value.length === 0;
   }
 
   public static isNotBlank(value: string): boolean {
@@ -167,7 +201,11 @@ export class UtilService {
     return result;
   }
 
-  public static deepSearch(items: Item[], search: string, caseSensitive: boolean): Item[] {
+  public static deepSearch(
+    items: Item[],
+    search: string,
+    caseSensitive: boolean
+  ): Item[] {
     if (UtilService.isBlank(search)) {
       return items;
     }
@@ -259,9 +297,12 @@ export class UtilService {
     } catch (err) {
       // Try to escape single quote
       try {
-        const replaced = code.replace(new RegExp(/\\'/, 'g'), '%replaceMyQuote%');
+        const replaced = code.replace(
+          new RegExp(/\\'/, 'g'),
+          '%replaceMyQuote%'
+        );
         const pretty = vkbeautify.json(replaced);
-        return pretty.replace(new RegExp(/%replaceMyQuote%/, 'g'), '\'');
+        return pretty.replace(new RegExp(/%replaceMyQuote%/, 'g'), "'");
       } catch (err2) {
         try {
           return vkbeautify.xml(code);
@@ -290,8 +331,8 @@ export class UtilService {
     if (!obj.__proto__.__transient__) {
       // create transient layer
       obj.__proto__ = {
-        '__proto__': obj.__proto__,
-        '__tansient__': true,
+        __proto__: obj.__proto__,
+        __tansient__: true,
       };
     }
     obj.__proto__[key] = value;
@@ -301,10 +342,12 @@ export class UtilService {
     return uuidv4();
   }
 
-  constructor() {
-  }
+  constructor() {}
 
-  static getActiveItem(items?: Item[], activeItemId?: string): Item | undefined {
+  static getActiveItem(
+    items?: Item[],
+    activeItemId?: string
+  ): Item | undefined {
     if (items && items.length > 0) {
       if (activeItemId) {
         for (let i = 0; i < items.length; i++) {
@@ -319,17 +362,28 @@ export class UtilService {
     }
   }
 
-  public static scrollIntoView(container: ElementRef, children: QueryList<ElementRef>, activeItem?: Item) {
+  public static scrollIntoView(
+    container: ElementRef,
+    children: QueryList<ElementRef>,
+    activeItem?: Item
+  ) {
     if (activeItem && activeItem.getId()) {
       setTimeout(() => {
         children.forEach(item => {
           if (item.nativeElement.id === activeItem.getId()) {
             const rectElem = item.nativeElement.getBoundingClientRect();
-            const rectContainer = container.nativeElement.getBoundingClientRect();
+            const rectContainer =
+              container.nativeElement.getBoundingClientRect();
             if (rectElem.bottom > rectContainer.bottom) {
-              item.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+              item.nativeElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end',
+              });
             } else if (rectElem.top < rectContainer.top) {
-              item.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              item.nativeElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              });
             }
           }
         });

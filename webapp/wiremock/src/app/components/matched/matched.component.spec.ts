@@ -8,9 +8,8 @@ describe('MatchedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MatchedComponent ]
-    })
-    .compileComponents();
+      declarations: [MatchedComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

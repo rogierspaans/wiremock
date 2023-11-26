@@ -1,13 +1,15 @@
 import { ServeEvent } from './serve-event';
 
 export class GetServeEventsResult {
-
   requests!: ServeEvent[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta: any;
   requestJournalDisabled!: boolean;
 
-  deserialize(unchecked: GetServeEventsResult, onlyMatched: boolean): GetServeEventsResult {
+  deserialize(
+    unchecked: GetServeEventsResult,
+    onlyMatched: boolean
+  ): GetServeEventsResult {
     this.meta = unchecked.meta;
     this.requests = [];
     unchecked.requests.forEach(request => {

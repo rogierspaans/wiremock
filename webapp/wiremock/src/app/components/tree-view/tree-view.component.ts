@@ -25,10 +25,9 @@ import { TreeHelper } from './tree-helper';
 @Component({
   selector: 'wm-tree-view',
   templateUrl: './tree-view.component.html',
-  styleUrls: [ './tree-view.component.scss' ],
+  styleUrls: ['./tree-view.component.scss'],
 })
 export class TreeViewComponent implements OnChanges, AfterViewChecked {
-
   @HostBinding('class') classes = 'wmHolyGrailBody column';
 
   @Input()
@@ -53,8 +52,10 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
   @ViewChildren('listChildren')
   listChildren!: QueryList<ElementRef>;
 
-  constructor(private wiremockService: WiremockService,
-              private messageService: MessageService) {
+  constructor(
+    private wiremockService: WiremockService,
+    private messageService: MessageService
+  ) {
     this.rootItem = new Root();
   }
 
@@ -92,7 +93,9 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
       this.previousTree = newTree;
 
       // We actually set a list of tree items to render top-down. Everything is Angular and CSS magic.
-      this.treeItems = TreeHelper.sortTreeFoldersFirstAndMapToList(this.previousTree);
+      this.treeItems = TreeHelper.sortTreeFoldersFirstAndMapToList(
+        this.previousTree
+      );
       this.activeItemChanged = true;
     }
   }
@@ -101,25 +104,33 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
     if (this.activeItemChanged) {
       this.activeItemChanged = false;
       // only once after something changed.
-      UtilService.scrollIntoView(this.childrenContainer, this.listChildren, this.activeItem);
+      UtilService.scrollIntoView(
+        this.childrenContainer,
+        this.listChildren,
+        this.activeItem
+      );
     }
   }
 
   enableProxy(item: Item) {
-    this.wiremockService.enableProxy(item.getId()).subscribe(() => {
+    this.wiremockService.enableProxy(item.getId()).subscribe(
+      () => {
         // do nothing
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      }
+    );
   }
 
   disableProxy(item: Item) {
-    this.wiremockService.disableProxy(item.getId()).subscribe(() => {
+    this.wiremockService.disableProxy(item.getId()).subscribe(
+      () => {
         // do nothing
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      }
+    );
   }
 }

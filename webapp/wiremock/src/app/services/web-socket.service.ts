@@ -9,7 +9,6 @@ import { filter } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class WebSocketService {
-
   private socket: ReconnectWebSocket;
 
   constructor() {
@@ -17,14 +16,14 @@ export class WebSocketService {
     this.socket.socketReconnect();
   }
 
-
   public observe(key: string): Observable<MessageEvent> {
-    return this.socket.subject.pipe(filter(next => {
-      return next.data === key;
-    }));
+    return this.socket.subject.pipe(
+      filter(next => {
+        return next.data === key;
+      })
+    );
   }
 }
-
 
 let reconnectWebSocket: ReconnectWebSocket;
 
@@ -32,7 +31,6 @@ export class ReconnectWebSocket {
   subject: Subject<MessageEvent>;
 
   private webSocket!: WebSocket;
-
 
   constructor() {
     // We need the var because of overwritten method this would be the actual WebSocket
@@ -74,11 +72,9 @@ export class ReconnectWebSocket {
     reconnectWebSocket.subject.next(ev);
   }
 
-  onerror(): void {
-  }
+  onerror(): void {}
 
-  onclose(): void {
-  }
+  onclose(): void {}
 
   readyState(): number {
     return this.webSocket.readyState;

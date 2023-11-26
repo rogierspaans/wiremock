@@ -2,14 +2,29 @@
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
       <div ngbDropdown class="btn-group" role="group">
-        <button type="button" class="btn btn-secondary" [disabled]="!activeItem" (click)="copyCurl(activeItem)">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="!activeItem"
+          (click)="copyCurl(activeItem)">
           <fa-icon icon="copy"></fa-icon>
           Copy cURL
         </button>
-        <div class="btn-group" ngbDropdown role="group" placement="bottom-right">
-          <button class="btn btn-secondary dropdown-toggle-split" ngbDropdownToggle [disabled]="!activeItem"></button>
+        <div
+          class="btn-group"
+          ngbDropdown
+          role="group"
+          placement="bottom-right">
+          <button
+            class="btn btn-secondary dropdown-toggle-split"
+            ngbDropdownToggle
+            [disabled]="!activeItem"></button>
           <div ngbDropdownMenu class="dropdown-menu">
-            <button type="button" class="dropdown-item" [disabled]="!activeItem" (click)="editCurl(activeItem)">
+            <button
+              type="button"
+              class="dropdown-item"
+              [disabled]="!activeItem"
+              (click)="editCurl(activeItem)">
               <fa-icon icon="pencil-alt"></fa-icon>
               Edit cURL
             </button>
@@ -27,13 +42,16 @@
     <wm-raw-separated [separatedDisabled]="!activeItem">
       <wm-raw-separated-raw>
         <ng-container>
-          <wm-code-entry [code]="activeItem?.getCode()" [language]="'json'"></wm-code-entry>
+          <wm-code-entry
+            [code]="activeItem?.getCode()"
+            [language]="'json'"></wm-code-entry>
         </ng-container>
       </wm-raw-separated-raw>
       <wm-raw-separated-separated>
-        <wm-separated *ngIf="activeItem" [activeItem]="activeItem"></wm-separated>
+        <wm-separated
+          *ngIf="activeItem"
+          [activeItem]="activeItem"></wm-separated>
       </wm-raw-separated-separated>
     </wm-raw-separated>
   </ng-template>
-
 </wm-layout>

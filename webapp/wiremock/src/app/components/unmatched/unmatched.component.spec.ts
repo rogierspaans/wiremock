@@ -8,9 +8,8 @@ describe('UnmatchedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UnmatchedComponent ]
-    })
-    .compileComponents();
+      declarations: [UnmatchedComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

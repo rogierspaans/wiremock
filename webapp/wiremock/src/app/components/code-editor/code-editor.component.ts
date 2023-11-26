@@ -1,29 +1,34 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  Component, ElementRef,
+  Component,
+  ElementRef,
   EventEmitter,
-  Input, NgZone,
-  OnChanges, OnDestroy,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
   OnInit,
   Output,
-  SimpleChanges, ViewChild
+  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import {UtilService} from '../../services/util.service';
-import {Subject} from 'rxjs';
+import { UtilService } from '../../services/util.service';
+import { Subject } from 'rxjs';
 import * as ace from 'ace-builds';
-import { takeUntil} from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Ace } from 'ace-builds';
 import Editor = Ace.Editor;
 
 @Component({
   selector: 'wm-code-editor',
   templateUrl: './code-editor.component.html',
-  styleUrls: [ './code-editor.component.scss' ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./code-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
-
+export class CodeEditorComponent
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
+{
   public static DEFAULT_OPTIONS = {
     selectionStyle: 'text',
     highlightActiveLine: true,
@@ -45,12 +50,13 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
     showGutter: true,
     displayIndentGuides: true,
     fontSize: 14,
-    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamily:
+      'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     showLineNumbers: true,
     // ..
     // firstLineNumber: 1
     wrap: true,
-    enableMultiselect: true
+    enableMultiselect: true,
     // maxLines: 100
     // minLines: 10
   };
@@ -88,21 +94,18 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   @Output()
   valueChange = new EventEmitter<string>();
 
-  constructor(private zone: NgZone) {
-  }
+  constructor(private zone: NgZone) {}
 
   ngOnInit() {
     // debounce fast changes which occur in copy / paste scenarios and make ace crash if value is changed during paste scenario.
-    this.editorChanges.pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(value => {
-        this._code = value;
-        this.valueChange.emit(this._code);
-      });
+    this.editorChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
+      this._code = value;
+      this.valueChange.emit(this._code);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.editor) {
-
       if (changes['options']) {
         this.zone.runOutsideAngular(() => {
           this.setOptions();
@@ -151,10 +154,12 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
       this.editor.setOptions(this.options);
       if (this.options.readOnly) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.editor.renderer as any).$cursorLayer.element.style.display = 'none';
+        (this.editor.renderer as any).$cursorLayer.element.style.display =
+          'none';
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.editor.renderer as any).$cursorLayer.element.style.display = 'block';
+        (this.editor.renderer as any).$cursorLayer.element.style.display =
+          'block';
       }
     }
   }

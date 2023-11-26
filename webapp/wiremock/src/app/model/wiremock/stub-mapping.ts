@@ -6,7 +6,6 @@ import { Proxy } from './proxy';
 import { ProxyConfig } from './proxy-config';
 
 export class StubMapping extends Proxy implements Item {
-
   uuid!: string;
   name!: string;
   persistent!: boolean;
@@ -37,7 +36,7 @@ export class StubMapping extends Proxy implements Item {
     mapping.response = new ResponseDefinition();
     mapping.response.status = 200;
     mapping.response.jsonBody = {
-      'some': 'value',
+      some: 'value',
     };
     mapping.response.headers = {
       'Content-Type': 'application/json',
@@ -59,7 +58,10 @@ export class StubMapping extends Proxy implements Item {
     this.metadata = unchecked.metadata;
     this.postServeActions = unchecked.postServeActions;
 
-    if (proxyConfig && (this.response.proxyBaseUrl || proxyConfig.proxyConfig.has(this.uuid))) {
+    if (
+      proxyConfig &&
+      (this.response.proxyBaseUrl || proxyConfig.proxyConfig.has(this.uuid))
+    ) {
       this.setProxy(true);
       this.setProxyEnabled(!proxyConfig.proxyConfig.has(this.uuid));
     }
@@ -68,18 +70,30 @@ export class StubMapping extends Proxy implements Item {
   }
 
   getTitle(): string {
-    return (this.request.url || this.request.urlPattern ||
-      this.request.urlPath || this.request.urlPathPattern) as string;
+    return (this.request.url ||
+      this.request.urlPattern ||
+      this.request.urlPath ||
+      this.request.urlPathPattern) as string;
   }
 
   getSubtitle(): string {
     let soap;
     let soapResult = '';
-    if (this.request && this.request.bodyPatterns && this.request.bodyPatterns) {
+    if (
+      this.request &&
+      this.request.bodyPatterns &&
+      this.request.bodyPatterns
+    ) {
       for (const bodyPattern of this.request.bodyPatterns) {
-        if (UtilService.isDefined(bodyPattern.matchesXPath) &&
-          UtilService.isDefined(soap = UtilService.getSoapXPathRegex().exec(bodyPattern.matchesXPath))
-          && soap) {
+        if (
+          UtilService.isDefined(bodyPattern.matchesXPath) &&
+          UtilService.isDefined(
+            (soap = UtilService.getSoapXPathRegex().exec(
+              bodyPattern.matchesXPath
+            ))
+          ) &&
+          soap
+        ) {
           if (soapResult.length !== 0) {
             soapResult += ', ';
           }

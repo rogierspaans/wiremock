@@ -1,18 +1,22 @@
-<div #childrenContainer *ngIf="(rootNode?.children?.length || 0) > 0" class="wmHolyGrailScroll wmListView">
+<div
+  #childrenContainer
+  *ngIf="(rootNode?.children?.length || 0) > 0"
+  class="wmHolyGrailScroll wmListView">
   <div class="wmListScrollWrapper">
     <ul class="list-group wmListGroup">
-
       <ng-container *ngFor="let node of treeItems">
-
-        <li #listChildren
-            [id]="node.value.getId()"
-            class="list-group-item wmListItem"
-            [class.active]="node.value === activeItem"
-            [class.folder]="!node.isLeaf()"
-            [ngClass]="['depth-' + node.depth]"
-            (click)="selectActiveItem(node)"
-            *ngIf="node !== rootNode && !node.isHidden()">
-          <div [ngClass]="['line','line-' + (i)]" *ngFor="let d of [].constructor(node.depth); let i = index"></div>
+        <li
+          #listChildren
+          [id]="node.value.getId()"
+          class="list-group-item wmListItem"
+          [class.active]="node.value === activeItem"
+          [class.folder]="!node.isLeaf()"
+          [ngClass]="['depth-' + node.depth]"
+          (click)="selectActiveItem(node)"
+          *ngIf="node !== rootNode && !node.isHidden()">
+          <div
+            [ngClass]="['line', 'line-' + i]"
+            *ngFor="let d of [].constructor(node.depth); let i = index"></div>
           <div *ngIf="!node.isLeaf()" class="chevron">
             <fa-icon icon="chevron-right" *ngIf="node.collapsed"></fa-icon>
             <fa-icon icon="chevron-down" *ngIf="!node.collapsed"></fa-icon>
@@ -21,28 +25,46 @@
             <fa-icon icon="folder"></fa-icon>
           </div>
           <div class="wmListItemTextContainer">
-            <div class="wmListItemTitle">{{node.value.getTitle()}}</div>
-            <div class="wmListItemSubtitle">{{node.value.getSubtitle()}}</div>
+            <div class="wmListItemTitle">{{ node.value.getTitle() }}</div>
+            <div class="wmListItemSubtitle">{{ node.value.getSubtitle() }}</div>
           </div>
           <div *ngIf="node.value.isProxy()">
             <div class="btn-group wmProxyGroup" role="group">
-              <input type="radio" class="btn-check" name="wmProxy" id="wmProxyEnable" autocomplete="off"
-                     [checked]="node.value.isProxyEnabled()"
-                     (click)="enableProxy(node.value)">
-              <label class="btn btn-outline-info wmProxyEnable" for="wmProxyEnable"
-                     popoverTitle="Proxying"
-                     ngbPopover="Restore proxying and forward requests to specified url"
-                     triggers="mouseenter:mouseleave"
-                     placement="bottom-right">I</label>
+              <input
+                type="radio"
+                class="btn-check"
+                name="wmProxy"
+                id="wmProxyEnable"
+                autocomplete="off"
+                [checked]="node.value.isProxyEnabled()"
+                (click)="enableProxy(node.value)" />
+              <label
+                class="btn btn-outline-info wmProxyEnable"
+                for="wmProxyEnable"
+                popoverTitle="Proxying"
+                ngbPopover="Restore proxying and forward requests to specified url"
+                triggers="mouseenter:mouseleave"
+                placement="bottom-right"
+                >I</label
+              >
 
-              <input type="radio" class="btn-check" name="wmProxy" id="wmProxyDisable" autocomplete="off"
-                     [checked]="!node.value.isProxyEnabled()"
-                     (click)="disableProxy(node.value)">
-              <label class="btn btn-outline-info wmProxyDisable" for="wmProxyDisable"
-                     popoverTitle="Proxying"
-                     ngbPopover="Disable proxying and use mapping response"
-                     triggers="mouseenter:mouseleave"
-                     placement="bottom-right">0</label>
+              <input
+                type="radio"
+                class="btn-check"
+                name="wmProxy"
+                id="wmProxyDisable"
+                autocomplete="off"
+                [checked]="!node.value.isProxyEnabled()"
+                (click)="disableProxy(node.value)" />
+              <label
+                class="btn btn-outline-info wmProxyDisable"
+                for="wmProxyDisable"
+                popoverTitle="Proxying"
+                ngbPopover="Disable proxying and use mapping response"
+                triggers="mouseenter:mouseleave"
+                placement="bottom-right"
+                >0</label
+              >
             </div>
           </div>
         </li>

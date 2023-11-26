@@ -1,5 +1,5 @@
-import {StubMapping} from './wiremock/stub-mapping';
-import {dia} from 'jointjs';
+import { StubMapping } from './wiremock/stub-mapping';
+import { dia } from 'jointjs';
 import Link = dia.Link;
 
 export class StateLink {
@@ -26,7 +26,6 @@ export class StateLink {
   get mapping(): StubMapping {
     return this._mapping;
   }
-
 
   get link(): Link {
     return this._link;

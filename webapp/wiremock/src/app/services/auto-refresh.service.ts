@@ -1,16 +1,14 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AutoRefreshService {
-
   private autoRefresh: BehaviorSubject<boolean> = new BehaviorSubject(true);
   autoRefresh$ = this.autoRefresh.asObservable();
 
-  constructor() {
-  }
+  constructor() {}
 
   public setAutoRefresh(value: boolean): void {
     this.autoRefresh.next(value);

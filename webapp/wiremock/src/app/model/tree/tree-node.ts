@@ -1,9 +1,13 @@
-import {Item} from '../wiremock/item';
+import { Item } from '../wiremock/item';
 
 export class TreeNode {
-  constructor(public value: Item, public depth: number, public parent?: TreeNode,
-              public children: TreeNode[] = [], public collapsed = false) {
-  }
+  constructor(
+    public value: Item,
+    public depth: number,
+    public parent?: TreeNode,
+    public children: TreeNode[] = [],
+    public collapsed = false
+  ) {}
 
   isLeaf() {
     return this.children.length === 0;

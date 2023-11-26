@@ -1,8 +1,7 @@
-import {LoggedRequest} from '../model/wiremock/logged-request';
-import {ServeEvent} from '../model/wiremock/serve-event';
+import { LoggedRequest } from '../model/wiremock/logged-request';
+import { ServeEvent } from '../model/wiremock/serve-event';
 
 export class CurlExtractor {
-
   public static copyCurl(request: LoggedRequest | ServeEvent): string {
     return CurlExtractor.extractCurl(request).toString();
   }
@@ -22,7 +21,6 @@ export class CurlExtractor {
   }
 
   private static extractHeaders(request: LoggedRequest): Header[] {
-
     const headers: Header[] = [];
     const keys = Object.keys(request.headers);
 
@@ -34,7 +32,6 @@ export class CurlExtractor {
     });
     return headers;
   }
-
 
   private static checkProperty(property: string): boolean {
     switch (property) {
@@ -118,11 +115,11 @@ export class Curl {
   }
 
   private urlToString(): string {
-    return '\'' + this.url + '\'';
+    return "'" + this.url + "'";
   }
 
   private bodyToString(): string {
-    return '-d \'' + this.body + '\'';
+    return "-d '" + this.body + "'";
   }
 
   private verboseToString(): string {
@@ -133,7 +130,7 @@ export class Curl {
     let headerString = '';
     const headers = this.headers;
     headers.forEach((header, i) => {
-      headerString += '-H \'' + header.key + ': ' + header.value + '\'';
+      headerString += "-H '" + header.key + ': ' + header.value + "'";
       if (i !== this.headers.length - 1) {
         headerString += ' \\\n';
       }
@@ -145,7 +142,6 @@ export class Curl {
 export class Header {
   private _key?: string;
   private _value?: string;
-
 
   get key(): string | undefined {
     return this._key;

@@ -8,9 +8,8 @@ describe('StateMachineComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StateMachineComponent ]
-    })
-    .compileComponents();
+      declarations: [StateMachineComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

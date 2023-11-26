@@ -1,4 +1,11 @@
-import { Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnChanges,
+  ViewChild,
+} from '@angular/core';
 import * as joint from 'jointjs';
 import { dia } from 'jointjs';
 import dagre from 'dagre';
@@ -13,14 +20,12 @@ import Element = dia.Element;
 import LinkView = dia.LinkView;
 import Graph = dia.Graph;
 
-
 @Component({
   selector: 'wm-state-machine',
   templateUrl: './state-machine.component.html',
-  styleUrls: [ './state-machine.component.scss' ],
+  styleUrls: ['./state-machine.component.scss'],
 })
 export class StateMachineComponent implements OnChanges {
-
   private static readonly ANY = '{{ANY}}';
 
   @Input()
@@ -40,16 +45,21 @@ export class StateMachineComponent implements OnChanges {
   private states = new Map<string, dia.Element>();
   private links: StateLink[] = [];
 
-  private dragStartPosition?: { x: number, y: number } = undefined;
+  private dragStartPosition?: { x: number; y: number } = undefined;
   space = false;
 
-  private paperPos?: { x: number, y: number } = undefined;
+  private paperPos?: { x: number; y: number } = undefined;
 
-  constructor(private container: ElementRef, private modalService: NgbModal) {
-  }
+  constructor(
+    private container: ElementRef,
+    private modalService: NgbModal
+  ) {}
 
   ngOnChanges(): void {
-    if (UtilService.isUndefined(this.item) || UtilService.isUndefined(this.item.mappings)) {
+    if (
+      UtilService.isUndefined(this.item) ||
+      UtilService.isUndefined(this.item.mappings)
+    ) {
       return;
     }
 
@@ -128,29 +138,56 @@ export class StateMachineComponent implements OnChanges {
 
   private addLinks(links: StateLink[], states: Map<string, dia.Element>) {
     this.item.mappings.forEach(mapping => {
-      if (UtilService.isDefined(mapping.requiredScenarioState) && UtilService.isDefined(mapping.newScenarioState)) {
+      if (
+        UtilService.isDefined(mapping.requiredScenarioState) &&
+        UtilService.isDefined(mapping.newScenarioState)
+      ) {
         // A -> B
-        links.push(new StateLink(mapping.requiredScenarioState, mapping.newScenarioState, mapping));
+        links.push(
+          new StateLink(
+            mapping.requiredScenarioState,
+            mapping.newScenarioState,
+            mapping
+          )
+        );
       } else if (UtilService.isDefined(mapping.newScenarioState)) {
         // any -> B
         if (UtilService.isUndefined(states.get(StateMachineComponent.ANY))) {
-          states.set(StateMachineComponent.ANY, StateMachineItems.createAnyState());
+          states.set(
+            StateMachineComponent.ANY,
+            StateMachineItems.createAnyState()
+          );
         }
-        links.push(new StateLink(StateMachineComponent.ANY, mapping.newScenarioState, mapping));
+        links.push(
+          new StateLink(
+            StateMachineComponent.ANY,
+            mapping.newScenarioState,
+            mapping
+          )
+        );
       } else if (UtilService.isDefined(mapping.requiredScenarioState)) {
         // A -> A
-        links.push(new StateLink(mapping.requiredScenarioState, mapping.requiredScenarioState, mapping));
+        links.push(
+          new StateLink(
+            mapping.requiredScenarioState,
+            mapping.requiredScenarioState,
+            mapping
+          )
+        );
       }
     });
   }
 
   private addStatesToGraph(states: Map<string, dia.Element>) {
-    states.forEach((state) => {
+    states.forEach(state => {
       state.addTo(this.graph);
     });
   }
 
-  private addLinksToGraph(links: StateLink[], states: Map<string, dia.Element>) {
+  private addLinksToGraph(
+    links: StateLink[],
+    states: Map<string, dia.Element>
+  ) {
     links.forEach(data => {
       const link = new joint.shapes.standard.Link();
       const source = states.get(data.source);
@@ -184,9 +221,10 @@ export class StateMachineComponent implements OnChanges {
 
       link.addTo(this.graph);
       const linkView = link.findView(this.paper);
-      linkView.addTools(StateMachineItems.createInfoButton(this.modalService, data.mapping));
+      linkView.addTools(
+        StateMachineItems.createInfoButton(this.modalService, data.mapping)
+      );
     });
-
   }
 
   private doLayout() {
@@ -203,36 +241,41 @@ export class StateMachineComponent implements OnChanges {
     });
   }
 
-  @HostListener('window:resize', [ '$event' ])
+  @HostListener('window:resize', ['$event'])
   onResize() {
     if (this.paper) {
       this.paper.setDimensions(0, 0);
-      this.paper.setDimensions(this.container.nativeElement.offsetWidth, this.container.nativeElement.offsetHeight);
+      this.paper.setDimensions(
+        this.container.nativeElement.offsetWidth,
+        this.container.nativeElement.offsetHeight
+      );
     }
   }
 
   onMove(event: MouseEvent) {
     if (this.paper && this.dragStartPosition) {
-      this.paperPos = { x: event.offsetX - this.dragStartPosition.x, y: event.offsetY - this.dragStartPosition.y };
+      this.paperPos = {
+        x: event.offsetX - this.dragStartPosition.x,
+        y: event.offsetY - this.dragStartPosition.y,
+      };
       this.paper.translate(this.paperPos.x, this.paperPos.y);
       //  var scale = V(paper.viewport).scale();
       // dragStartPosition = { x: x * scale.sx, y: y * scale.sy};
     }
   }
 
-  @HostListener('document:keyup.space', [ '$event' ])
+  @HostListener('document:keyup.space', ['$event'])
   onSpaceUp() {
     this.space = false;
     this.dragStartPosition = undefined;
   }
 
-  @HostListener('document:keydown.space', [ '$event' ])
+  @HostListener('document:keydown.space', ['$event'])
   onSpaceDown() {
     this.space = true;
   }
 
   private selfLinks(links: StateLink[]) {
-
     const xgap = 20;
     const ygap = 20;
     const linkMap = new Map<string, StateLink[]>();
@@ -258,7 +301,6 @@ export class StateMachineComponent implements OnChanges {
         const bbox = conn.bbox();
 
         if (bbox) {
-
           // TODO: remove verticies and set again. Needed if this should work with moving elements
           // const vertices = data.link.vertices();
           //
@@ -266,8 +308,14 @@ export class StateMachineComponent implements OnChanges {
           //   data.link.removeVertex(0);
           // });
 
-          linkView.addVertex(bbox.center().x + xgap * (index + 1), bbox.center().y - ygap / 2 * (index + 1));
-          linkView.addVertex(bbox.center().x + xgap / 2 * (index + 1), bbox.center().y - ygap * (index + 1));
+          linkView.addVertex(
+            bbox.center().x + xgap * (index + 1),
+            bbox.center().y - (ygap / 2) * (index + 1)
+          );
+          linkView.addVertex(
+            bbox.center().x + (xgap / 2) * (index + 1),
+            bbox.center().y - ygap * (index + 1)
+          );
         }
       });
     });

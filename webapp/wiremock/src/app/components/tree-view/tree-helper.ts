@@ -1,10 +1,9 @@
-import {Item} from '../../model/wiremock/item';
-import {Tree} from '../../model/tree/tree';
-import {Folder} from '../../model/tree/folder';
-import {TreeNode} from '../../model/tree/tree-node';
+import { Item } from '../../model/wiremock/item';
+import { Tree } from '../../model/tree/tree';
+import { Folder } from '../../model/tree/folder';
+import { TreeNode } from '../../model/tree/tree-node';
 
 export class TreeHelper {
-
   /**
    * Sort items by folder name. Items with folder definition before items without folder definition.
    * Otherwise folders are sorted alphabetical.
@@ -17,7 +16,12 @@ export class TreeHelper {
       const aFolder = a.getFolderName();
       const bFolder = b.getFolderName();
 
-      if (a.hasFolderDefinition() && b.hasFolderDefinition() && aFolder && bFolder) {
+      if (
+        a.hasFolderDefinition() &&
+        b.hasFolderDefinition() &&
+        aFolder &&
+        bFolder
+      ) {
         if (aFolder < bFolder) {
           return -1;
         }
@@ -44,11 +48,19 @@ export class TreeHelper {
    * @param rootNode
    *        root node in case item is not part of any folder
    */
-  public static insertIntoTree(tree: Tree, items: Item[], rootNode: TreeNode): void {
+  public static insertIntoTree(
+    tree: Tree,
+    items: Item[],
+    rootNode: TreeNode
+  ): void {
     items.forEach(value => {
       const folderName = value.getFolderName();
       if (value.hasFolderDefinition() && folderName) {
-        const folderNode = this.createFoldersAndGetFolderNode(folderName, tree, rootNode);
+        const folderNode = this.createFoldersAndGetFolderNode(
+          folderName,
+          tree,
+          rootNode
+        );
         tree.insertByNode(folderNode, value);
       } else {
         // not part of any folder. So just add to root item.
@@ -69,7 +81,11 @@ export class TreeHelper {
    * @return the actual folder for the provided folderText.
    * @private
    */
-  private static createFoldersAndGetFolderNode(folderText: string, tree: Tree, rootNode: TreeNode): TreeNode {
+  private static createFoldersAndGetFolderNode(
+    folderText: string,
+    tree: Tree,
+    rootNode: TreeNode
+  ): TreeNode {
     const folders = folderText.split('/').filter(i => i);
 
     let folderParentNode: TreeNode = rootNode;
@@ -83,7 +99,10 @@ export class TreeHelper {
       let folder = tree.find(folderId);
       if (!folder) {
         // folder does not exist yet. Create it
-        folder = tree.insertByNode(folderParentNode, new Folder(folderId, groupName));
+        folder = tree.insertByNode(
+          folderParentNode,
+          new Folder(folderId, groupName)
+        );
       }
       // collapse all folders
       folder.collapsed = true;
@@ -102,7 +121,11 @@ export class TreeHelper {
    * @param activeItem
    *        Also open folders based on active item.
    */
-  public static openFolders(newTree: Tree, oldTree?: Tree, activeItem?: Item): void {
+  public static openFolders(
+    newTree: Tree,
+    oldTree?: Tree,
+    activeItem?: Item
+  ): void {
     // open folders again
     if (oldTree) {
       for (const node of oldTree.preOrderTraversal()) {

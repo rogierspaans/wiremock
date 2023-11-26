@@ -1,35 +1,64 @@
-<ngb-pagination *ngIf="filteredItems?.length || 0 > 0" [collectionSize]="items?.length || 0" [pageSize]="pageSize" [size]="'sm'"
-                [page]="page"
-                (pageChange)="onPageChange($event)"></ngb-pagination>
-<div #childrenContainer *ngIf="filteredItems?.length || 0 > 0" class="wmHolyGrailScroll wmListView">
+<ngb-pagination
+  *ngIf="filteredItems?.length || 0 > 0"
+  [collectionSize]="items?.length || 0"
+  [pageSize]="pageSize"
+  [size]="'sm'"
+  [page]="page"
+  (pageChange)="onPageChange($event)"></ngb-pagination>
+<div
+  #childrenContainer
+  *ngIf="filteredItems?.length || 0 > 0"
+  class="wmHolyGrailScroll wmListView">
   <div class="wmListScrollWrapper">
     <ul class="list-group wmListGroup">
-      <li #listChildren [id]="item.getId()" class="list-group-item wmListItem" *ngFor="let item of filteredItems"
-          [class.active]="item === activeItem"
-          (click)="selectActiveItem(item)">
+      <li
+        #listChildren
+        [id]="item.getId()"
+        class="list-group-item wmListItem"
+        *ngFor="let item of filteredItems"
+        [class.active]="item === activeItem"
+        (click)="selectActiveItem(item)">
         <div class="wmListItemTextContainer">
-          <div class="wmListItemTitle">{{item.getTitle()}}</div>
-          <div class="wmListItemSubtitle">{{item.getSubtitle()}}</div>
+          <div class="wmListItemTitle">{{ item.getTitle() }}</div>
+          <div class="wmListItemSubtitle">{{ item.getSubtitle() }}</div>
         </div>
         <div *ngIf="item.isProxy()">
           <div class="btn-group wmProxyGroup" role="group">
-            <input type="radio" class="btn-check" name="wmProxy" id="wmProxyEnable" autocomplete="off"
-                   [checked]="item.isProxyEnabled()"
-                   (click)="enableProxy(item)">
-            <label class="btn btn-outline-info wmProxyEnable" for="wmProxyEnable"
-                   popoverTitle="Proxying"
-                   ngbPopover="Restore proxying and forward requests to specified url"
-                   triggers="mouseenter:mouseleave"
-                   placement="bottom-right">I</label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="wmProxy"
+              id="wmProxyEnable"
+              autocomplete="off"
+              [checked]="item.isProxyEnabled()"
+              (click)="enableProxy(item)" />
+            <label
+              class="btn btn-outline-info wmProxyEnable"
+              for="wmProxyEnable"
+              popoverTitle="Proxying"
+              ngbPopover="Restore proxying and forward requests to specified url"
+              triggers="mouseenter:mouseleave"
+              placement="bottom-right"
+              >I</label
+            >
 
-            <input type="radio" class="btn-check" name="wmProxy" id="wmProxyDisable" autocomplete="off"
-                   [checked]="!item.isProxyEnabled()"
-                   (click)="disableProxy(item)">
-            <label class="btn btn-outline-info wmProxyDisable" for="wmProxyDisable"
-                   popoverTitle="Proxying"
-                   ngbPopover="Disable proxying and use mapping response"
-                   triggers="mouseenter:mouseleave"
-                   placement="bottom-right">0</label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="wmProxy"
+              id="wmProxyDisable"
+              autocomplete="off"
+              [checked]="!item.isProxyEnabled()"
+              (click)="disableProxy(item)" />
+            <label
+              class="btn btn-outline-info wmProxyDisable"
+              for="wmProxyDisable"
+              popoverTitle="Proxying"
+              ngbPopover="Disable proxying and use mapping response"
+              triggers="mouseenter:mouseleave"
+              placement="bottom-right"
+              >0</label
+            >
           </div>
         </div>
       </li>

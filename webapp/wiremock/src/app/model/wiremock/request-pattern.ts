@@ -1,5 +1,4 @@
 export class RequestPattern {
-
   url?: string;
   urlPattern?: string;
   urlPath?: string;

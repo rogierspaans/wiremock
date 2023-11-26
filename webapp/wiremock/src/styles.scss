@@ -1,20 +1,22 @@
-@import "bootstrapCustom";
+@import 'bootstrapCustom';
 
 .tab-pane {
-  display: flex!important;
+  display: flex !important;
   flex: 1;
 }
 
 .wmTabs > .nav {
   margin: 0;
-  padding: .5rem 1.25rem 0;
+  padding: 0.5rem 1.25rem 0;
 }
 
 .hidden {
   display: none !important;
 }
 
-.wmFormGroupLeft, .wmFormGroupMid, .wmFormGroupRight {
+.wmFormGroupLeft,
+.wmFormGroupMid,
+.wmFormGroupRight {
   position: relative;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
@@ -26,14 +28,16 @@
   }
 }
 
-.wmFormGroupRight, .wmFormGroupMid {
+.wmFormGroupRight,
+.wmFormGroupMid {
   > .form-control {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
 }
 
-.wmFormGroupLeft, .wmFormGroupMid {
+.wmFormGroupLeft,
+.wmFormGroupMid {
   > .form-control {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -60,7 +64,8 @@
   //height: auto;
   padding: 0.5em;
   font-size: 14px;
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
   border: 0;
   white-space: pre-wrap;
   word-break: break-all;
@@ -74,7 +79,9 @@ body {
   flex-direction: column;
 }
 
-.wmHolyGrailBody, .wmTabs > .tab-content, .wmTabs > .tab-content > .tab-pane {
+.wmHolyGrailBody,
+.wmTabs > .tab-content,
+.wmTabs > .tab-content > .tab-pane {
   display: flex;
   flex: 1;
   &.column {
@@ -185,7 +192,6 @@ body {
   min-height: 70%;
 }
 
-
 // Ace-Editor
 .ace_search_form {
   display: flex;
@@ -196,13 +202,12 @@ body {
 }
 
 .ace_searchbtn {
-  display: flex!important;
+  display: flex !important;
   align-items: center;
 }
 
 // Firefox specific
 
 .modal-dialog {
- height: calc(100% - 2*1.75rem);
+  height: calc(100% - 2 * 1.75rem);
 }
-

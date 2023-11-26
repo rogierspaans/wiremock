@@ -5,11 +5,14 @@ import { AutoRefreshService } from './auto-refresh.service';
 describe('AutoRefreshService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AutoRefreshService]
+      providers: [AutoRefreshService],
     });
   });
 
-  it('should be created', inject([AutoRefreshService], (service: AutoRefreshService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('should be created', inject(
+    [AutoRefreshService],
+    (service: AutoRefreshService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 });

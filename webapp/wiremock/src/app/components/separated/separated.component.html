@@ -1,20 +1,25 @@
 <div class="p-1" *ngIf="activeItem">
   <div class="card text-black bg-success mb-3">
-    <div class="card-header">
-      General
-    </div>
+    <div class="card-header">General</div>
     <div class="card-body bg-light text-dark">
       <table class="table table-sm mb-0">
         <tbody>
           <tr *ngIf="isServeEvent(activeItem)">
             <td class="wmTableColumnKey">stubMapping</td>
             <td>
-              <a [routerLink]="['/mappings']" [queryParams]="{active: asServeEvent(activeItem).stubMapping.uuid}" class="wmStubMappingLink">{{asServeEvent(activeItem).stubMapping.uuid}}</a>
+              <a
+                [routerLink]="['/mappings']"
+                [queryParams]="{
+                  active: asServeEvent(activeItem).stubMapping.uuid
+                }"
+                class="wmStubMappingLink"
+                >{{ asServeEvent(activeItem).stubMapping.uuid }}</a
+              >
             </td>
           </tr>
           <ng-container *ngFor="let property of activeItem | keys | isNoObject">
             <tr *ngIf="!isObject(property.value)">
-              <td class="wmTableColumnKey">{{property.key}}</td>
+              <td class="wmTableColumnKey">{{ property.key }}</td>
               <td class="wmTableColumnValue">
                 <wm-code-entry [code]="property.value"></wm-code-entry>
               </td>
@@ -25,29 +30,32 @@
     </div>
   </div>
 
-
-  <ng-container *ngFor="let property of activeItem | keys | isObject; let i = index">
-
-    <div *ngIf="isObject(property.value)" class="card {{color[i]}} text-black mb-3">
+  <ng-container
+    *ngFor="let property of activeItem | keys | isObject; let i = index">
+    <div
+      *ngIf="isObject(property.value)"
+      class="card {{ color[i] }} text-black mb-3">
       <div class="card-header">
-        {{property.key | capitalizeFirst}}
+        {{ property.key | capitalizeFirst }}
       </div>
       <div class="card-body bg-light text-dark">
         <table class="table table-sm mb-0">
           <tbody>
             <ng-container *ngFor="let subProperty of property.value | keys">
               <tr *ngIf="!isObject(subProperty.value)">
-                <td class="wmTableColumnKey">{{subProperty.key}}</td>
+                <td class="wmTableColumnKey">{{ subProperty.key }}</td>
                 <!--<td>{{subProperty.value}}</td>-->
                 <td class="wmTableColumnValue">
                   <wm-code-entry [code]="subProperty.value"></wm-code-entry>
                 </td>
               </tr>
               <tr *ngIf="isObject(subProperty.value)">
-                <td class="wmTableColumnKey">{{subProperty.key}}</td>
+                <td class="wmTableColumnKey">{{ subProperty.key }}</td>
                 <!--<td>{{subProperty.value | prettify}}</td>-->
                 <td class="wmTableColumnValue">
-                  <wm-code-entry [code]="subProperty.value | prettify" [language]="'json'"></wm-code-entry>
+                  <wm-code-entry
+                    [code]="subProperty.value | prettify"
+                    [language]="'json'"></wm-code-entry>
                 </td>
               </tr>
             </ng-container>
@@ -66,18 +74,17 @@
 
   <ng-container *ngIf="xWwwFormUrlEncodedParams">
     <div class="card bg-light text-white mb-3">
-      <div class="card-header text-dark">
-        x-www-form-urlencoded
-      </div>
+      <div class="card-header text-dark">x-www-form-urlencoded</div>
       <div class="card-body bg-light text-dark">
         <table class="table table-sm mb-0">
           <tbody>
-          <tr>
-            <td class="wmTableColumnKey">body</td>
-            <td>
-              <wm-code-entry [code]="xWwwFormUrlEncodedParams"></wm-code-entry>
-            </td>
-          </tr>
+            <tr>
+              <td class="wmTableColumnKey">body</td>
+              <td>
+                <wm-code-entry
+                  [code]="xWwwFormUrlEncodedParams"></wm-code-entry>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

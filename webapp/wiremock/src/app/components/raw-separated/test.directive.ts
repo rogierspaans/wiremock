@@ -5,10 +5,7 @@ import { Directive, HostBinding } from '@angular/core';
   selector: 'wm-raw-separated-test',
 })
 export class TestDirective {
-
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
-  constructor() {
-  }
-
+  constructor() {}
 }

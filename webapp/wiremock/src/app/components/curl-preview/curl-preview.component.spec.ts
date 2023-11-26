@@ -8,9 +8,8 @@ describe('CurlPreviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CurlPreviewComponent ]
-    })
-    .compileComponents();
+      declarations: [CurlPreviewComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

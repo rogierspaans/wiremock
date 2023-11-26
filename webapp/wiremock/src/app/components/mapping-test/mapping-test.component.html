@@ -1,44 +1,57 @@
 <div class="wmContainer wmHolyGrailBody p-1">
   <div class="card text-black bg-info mb-2">
-    <div class="card-header">
-      Request
-    </div>
+    <div class="card-header">Request</div>
     <div class="card-body bg-light text-dark">
       <form class="wmHolyGrailBody column">
         <div class="input-group mb-2">
           <span class="input-group-text http-method-wrapper">
             <div ngbDropdown class="btn-group" role="group">
-              <button class="btn btn-secondary dropdown-toggle http-method" type="button"
-                      ngbDropdownToggle aria-expanded="false">
-                {{method}}
+              <button
+                class="btn btn-secondary dropdown-toggle http-method"
+                type="button"
+                ngbDropdownToggle
+                aria-expanded="false">
+                {{ method }}
               </button>
               <div ngbDropdownMenu class="dropdown-menu">
-                <button *ngFor="let m of supportedMethods"
-                        type="button" class="dropdown-item" (click)="setMethod($event)">{{m}}</button>
+                <button
+                  *ngFor="let m of supportedMethods"
+                  type="button"
+                  class="dropdown-item"
+                  (click)="setMethod($event)">
+                  {{ m }}
+                </button>
               </div>
             </div>
           </span>
           <span class="input-group-text">Url</span>
-          <input [formControl]="url" type="url" class="form-control" id="play-url">
+          <input
+            [formControl]="url"
+            type="url"
+            class="form-control"
+            id="play-url" />
         </div>
         <div class="form-group mb-2">
           <label for="header" class="form-label">Headers</label>
           <div class="wmEditorContainer">
-            <wm-code-editor #headerContent
-                            id="header"
-                            [code]="headerCode"
-                            [language]="'json'" [options]="codeOptions"
-                            (valueChange)="headerValueChange($event)"
-            ></wm-code-editor>
+            <wm-code-editor
+              #headerContent
+              id="header"
+              [code]="headerCode"
+              [language]="'json'"
+              [options]="codeOptions"
+              (valueChange)="headerValueChange($event)"></wm-code-editor>
           </div>
         </div>
         <div class="form-group mb-2">
           <label for="body" class="form-label">Body</label>
           <div class="wmEditorContainer">
-            <wm-code-editor #bodyContent
-                            id="body"
-                            [code]="''"
-                            [language]="language" [options]="codeOptions"></wm-code-editor>
+            <wm-code-editor
+              #bodyContent
+              id="body"
+              [code]="''"
+              [language]="language"
+              [options]="codeOptions"></wm-code-editor>
           </div>
         </div>
         <button type="submit" class="btn btn-primary" (click)="run()">
@@ -49,33 +62,46 @@
     </div>
   </div>
   <div class="card text-black bg-primary mb-1" *ngIf="response">
-    <div class="card-header">
-      Response
-    </div>
+    <div class="card-header">Response</div>
     <div class="card-body bg-light text-dark">
       <form class="wmHolyGrailBody column">
         <div class="wmMatchContainer">
-          <h4><span class="badge"
-                    [class.bg-success]="responseIsMapping"
-                    [class.bg-danger]="!responseIsMapping">{{responseIsMapping ? 'Matches' : 'No Match'}}
-            <fa-icon class="wmMatches" [icon]="responseIsMapping ? 'check' : 'times'"></fa-icon></span></h4>
+          <h4>
+            <span
+              class="badge"
+              [class.bg-success]="responseIsMapping"
+              [class.bg-danger]="!responseIsMapping"
+              >{{ responseIsMapping ? 'Matches' : 'No Match' }}
+              <fa-icon
+                class="wmMatches"
+                [icon]="responseIsMapping ? 'check' : 'times'"></fa-icon
+            ></span>
+          </h4>
           <h4 *ngIf="!responseIsMapping && responseMappingId">
-            <a [routerLink]="['/mappings']" [queryParams]="{active: responseMappingId}"
-               class="wmMappingId wmStubMappingLink">{{responseMappingId}}</a>
+            <a
+              [routerLink]="['/mappings']"
+              [queryParams]="{ active: responseMappingId }"
+              class="wmMappingId wmStubMappingLink"
+              >{{ responseMappingId }}</a
+            >
           </h4>
         </div>
         <div class="form-group mb-2">
           <div class="wmEditorContainer wmEditorResponseContainer">
-            <wm-code-editor [code]="response"
-                            [language]="'json'" [options]="codeReadOnlyOptions"></wm-code-editor>
+            <wm-code-editor
+              [code]="response"
+              [language]="'json'"
+              [options]="codeReadOnlyOptions"></wm-code-editor>
           </div>
         </div>
 
         <div class="form-group">
           <label for="body">Body</label>
           <div class="wmEditorContainer wmEditorResponseContainer">
-            <wm-code-editor [code]="responseBody"
-                            [language]="responseLanguage" [options]="codeReadOnlyOptions"></wm-code-editor>
+            <wm-code-editor
+              [code]="responseBody"
+              [language]="responseLanguage"
+              [options]="codeReadOnlyOptions"></wm-code-editor>
           </div>
         </div>
       </form>

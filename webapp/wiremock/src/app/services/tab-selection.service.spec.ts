@@ -5,11 +5,14 @@ import { TabSelectionService } from './tab-selection.service';
 describe('TabSelectionService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TabSelectionService]
+      providers: [TabSelectionService],
     });
   });
 
-  it('should be created', inject([TabSelectionService], (service: TabSelectionService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('should be created', inject(
+    [TabSelectionService],
+    (service: TabSelectionService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 });

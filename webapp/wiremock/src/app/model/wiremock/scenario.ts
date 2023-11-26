@@ -1,6 +1,6 @@
-import {StubMapping} from './stub-mapping';
-import {Item} from './item';
-import {ProxyConfig} from './proxy-config';
+import { StubMapping } from './stub-mapping';
+import { Item } from './item';
+import { ProxyConfig } from './proxy-config';
 
 export class Scenario implements Item {
   private _id!: string;
@@ -45,7 +45,9 @@ export class Scenario implements Item {
 
     this._mappings = [];
     unchecked.mappings.forEach(uncheckedMapping => {
-      this._mappings.push(new StubMapping().deserialize(uncheckedMapping, proxyConfig));
+      this._mappings.push(
+        new StubMapping().deserialize(uncheckedMapping, proxyConfig)
+      );
     });
 
     return this;
@@ -60,7 +62,12 @@ export class Scenario implements Item {
   }
 
   getSubtitle(): string {
-    return this._mappings.length + ' mappings, ' + this._possibleStates.length + 'states';
+    return (
+      this._mappings.length +
+      ' mappings, ' +
+      this._possibleStates.length +
+      'states'
+    );
   }
 
   getTitle(): string {

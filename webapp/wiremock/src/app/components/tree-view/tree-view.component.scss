@@ -1,4 +1,4 @@
-@import "../../../variables";
+@import '../../../variables';
 
 .wmListItem {
   border-radius: 0;
@@ -16,7 +16,7 @@
   cursor: pointer;
 }
 
-.wmListItem:not(.active,.folder):hover {
+.wmListItem:not(.active, .folder):hover {
   background-color: rgba(255, 135, 0, 0.21);
 }
 

@@ -5,10 +5,8 @@ import { UtilService } from '../services/util.service';
   name: 'keys',
 })
 export class KeysPipe implements PipeTransform {
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transform(value: any): any {
-
     const result: KeyValue[] = [];
 
     if (UtilService.isUndefined(value)) {
@@ -16,8 +14,11 @@ export class KeysPipe implements PipeTransform {
     }
 
     for (const key in value) {
-      if (Object.prototype.hasOwnProperty.call(value, key) && !key.startsWith('_') && value[key]) {
-
+      if (
+        Object.prototype.hasOwnProperty.call(value, key) &&
+        !key.startsWith('_') &&
+        value[key]
+      ) {
         result.push(new KeyValue(key, value[key]));
       }
     }

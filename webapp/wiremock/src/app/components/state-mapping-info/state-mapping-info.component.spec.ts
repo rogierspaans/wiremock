@@ -8,9 +8,8 @@ describe('StateMappingInfoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StateMappingInfoComponent ]
-    })
-    .compileComponents();
+      declarations: [StateMappingInfoComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

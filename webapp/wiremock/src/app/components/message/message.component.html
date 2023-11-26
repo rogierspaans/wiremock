@@ -1,6 +1,13 @@
 <div id="wmAlertContainer" *ngIf="message">
-  <ngb-alert class="wmAlert" [dismissible]="true" [type]="message.type" (close)="closeAlert()">
-    <span *ngIf="!message.html" class="wmAlertText">{{message.message}}</span>
-    <span *ngIf="message.html" class="wmAlertText" [innerHtml]="message.html"></span>
+  <ngb-alert
+    class="wmAlert"
+    [dismissible]="true"
+    [type]="message.type"
+    (close)="closeAlert()">
+    <span *ngIf="!message.html" class="wmAlertText">{{ message.message }}</span>
+    <span
+      *ngIf="message.html"
+      class="wmAlertText"
+      [innerHtml]="message.html"></span>
   </ngb-alert>
 </div>

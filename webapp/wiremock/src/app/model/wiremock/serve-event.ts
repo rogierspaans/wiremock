@@ -1,10 +1,10 @@
-import {StubMapping} from './stub-mapping';
-import {ResponseDefinition} from './response-definition';
-import {Item} from './item';
-import {LoggedRequest} from './logged-request';
-import {LoggedResponse} from './logged-response';
-import {UtilService} from '../../services/util.service';
-import {Proxy} from './proxy';
+import { StubMapping } from './stub-mapping';
+import { ResponseDefinition } from './response-definition';
+import { Item } from './item';
+import { LoggedRequest } from './logged-request';
+import { LoggedResponse } from './logged-response';
+import { UtilService } from '../../services/util.service';
+import { Proxy } from './proxy';
 
 export class ServeEvent extends Proxy implements Item {
   id!: string;

@@ -5,10 +5,7 @@ import { Directive, HostBinding } from '@angular/core';
   selector: 'wm-raw-separated-separated',
 })
 export class SeparatedDirective {
-
   @HostBinding('class') classes = 'wmHolyGrailBody';
 
-  constructor() {
-  }
-
+  constructor() {}
 }
