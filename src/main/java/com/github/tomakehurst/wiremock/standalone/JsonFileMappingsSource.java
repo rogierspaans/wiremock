@@ -24,8 +24,8 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.github.tomakehurst.wiremock.stubbing.StubMappingCollection;
 import com.github.tomakehurst.wiremock.stubbing.StubMappings;
 import java.util.HashMap;
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -151,8 +151,8 @@ public class JsonFileMappingsSource implements MappingsSource {
     }
 
     return metadata.containsKey(WIREMOCK_GUI_KEY)
-      && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) != null
-      && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) instanceof String;
+        && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) != null
+        && metadata.getMap(WIREMOCK_GUI_KEY).get(DIR_KEY) instanceof String;
   }
 
   private String getFolderDefinition(final StubMapping mapping) {

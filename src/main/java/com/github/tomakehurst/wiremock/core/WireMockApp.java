@@ -193,12 +193,11 @@ public class WireMockApp implements StubServer, Admin {
     Map<String, PostServeAction> postServeActions = extensions.ofType(PostServeAction.class);
 
     Map<String, ServeEventListener> concatenatedMap =
-      new HashMap<>(extensions.ofType(ServeEventListener.class));
+        new HashMap<>(extensions.ofType(ServeEventListener.class));
     concatenatedMap.put("wiremock-gui", new GuiServeEventListener());
 
     Map<String, ServeEventListener> serveEventListeners =
-      Collections.unmodifiableMap(concatenatedMap);
-
+        Collections.unmodifiableMap(concatenatedMap);
 
     BrowserProxySettings browserProxySettings = options.browserProxySettings();
 
