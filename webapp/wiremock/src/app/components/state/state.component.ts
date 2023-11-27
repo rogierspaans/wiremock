@@ -1,37 +1,27 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 
-import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { WiremockService } from '../../services/wiremock.service';
-import { WebSocketService } from '../../services/web-socket.service';
-import {
-  Message,
-  MessageService,
-  MessageType,
-} from '../message/message.service';
-import { TabSelectionService } from '../../services/tab-selection.service';
-import { AutoRefreshService } from '../../services/auto-refresh.service';
-import { UtilService } from '../../services/util.service';
-import { Scenario } from '../../model/wiremock/scenario';
-import { ScenarioResult } from '../../model/wiremock/scenario-result';
-import { ProxyConfig } from '../../model/wiremock/proxy-config';
+import { debounceTime, filter, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { WiremockService } from "../../services/wiremock.service";
+import { WebSocketService } from "../../services/web-socket.service";
+import { Message, MessageService, MessageType } from "../message/message.service";
+import { TabSelectionService } from "../../services/tab-selection.service";
+import { AutoRefreshService } from "../../services/auto-refresh.service";
+import { UtilService } from "../../services/util.service";
+import { Scenario } from "../../model/wiremock/scenario";
+import { ScenarioResult } from "../../model/wiremock/scenario-result";
+import { ProxyConfig } from "../../model/wiremock/proxy-config";
 
 @Component({
-  selector: 'wm-state',
-  templateUrl: './state.component.html',
-  styleUrls: ['./state.component.scss'],
+  selector: "wm-state",
+  templateUrl: "./state.component.html",
+  styleUrls: ["./state.component.scss"],
 })
 export class StateComponent implements OnInit, OnDestroy {
-  @ViewChild('canvas')
+  @ViewChild("canvas")
   canvas!: ElementRef;
 
-  @ViewChild('container')
+  @ViewChild("container")
   container!: ElementRef;
 
   result?: Scenario[];
@@ -48,7 +38,7 @@ export class StateComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.webSocketService
-      .observe('mappings')
+      .observe("mappings")
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
@@ -59,7 +49,7 @@ export class StateComponent implements OnInit, OnDestroy {
       });
 
     this.webSocketService
-      .observe('scenario')
+      .observe("scenario")
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
@@ -78,7 +68,7 @@ export class StateComponent implements OnInit, OnDestroy {
         this.loadActualScenarios(new ProxyConfig().deserialze(proxyData));
       },
       error: () => {
-        console.log('Could not load proxy config. Proxy feature deactivated');
+        console.log("Could not load proxy config. Proxy feature deactivated");
         this.loadActualScenarios();
       },
     });
@@ -87,10 +77,7 @@ export class StateComponent implements OnInit, OnDestroy {
   private loadActualScenarios(proxyConfig?: ProxyConfig) {
     this.wiremockService.getScenarios().subscribe({
       next: data => {
-        const scenarioList = new ScenarioResult().deserialize(
-          data,
-          proxyConfig
-        );
+        const scenarioList = new ScenarioResult().deserialize(data, proxyConfig);
         this.result = scenarioList.scenarios;
       },
       error: err => {
@@ -107,13 +94,7 @@ export class StateComponent implements OnInit, OnDestroy {
   resetAllScenarios() {
     this.wiremockService.resetScenarios().subscribe({
       next: () => {
-        this.messageService.setMessage(
-          new Message(
-            'Reset of all scenarios successful',
-            MessageType.INFO,
-            3000
-          )
-        );
+        this.messageService.setMessage(new Message("Reset of all scenarios successful", MessageType.INFO, 3000));
       },
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);

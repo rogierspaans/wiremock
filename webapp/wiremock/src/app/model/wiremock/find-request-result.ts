@@ -1,4 +1,4 @@
-import { LoggedRequest } from './logged-request';
+import { LoggedRequest } from "./logged-request";
 
 export class FindRequestResult {
   requests!: LoggedRequest[];

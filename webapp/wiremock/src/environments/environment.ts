@@ -5,11 +5,11 @@
 export const environment = {
   production: true,
   getWebSocket: function (): WebSocket {
-    return new WebSocket('ws://localhost:8089/__admin/events');
+    return new WebSocket("ws://localhost:8089/__admin/events");
   },
-  wiremockUrl: '/',
-  url: '/__admin/',
-  resourcesUrl: '/__admin/webapp/',
+  wiremockUrl: "/",
+  url: "/__admin/",
+  resourcesUrl: "/__admin/webapp/",
 };
 
 // export const environment = {

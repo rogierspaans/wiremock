@@ -11,24 +11,24 @@ import {
   SimpleChanges,
   ViewChild,
   ViewChildren,
-} from '@angular/core';
-import { Item } from '../../model/wiremock/item';
-import { UtilService } from '../../services/util.service';
-import { WiremockService } from '../../services/wiremock.service';
-import { MessageService } from '../message/message.service';
-import { Tree } from '../../model/tree/tree';
-import { Root } from '../../model/tree/root';
-import { TreeNode } from '../../model/tree/tree-node';
-import { Folder } from '../../model/tree/folder';
-import { TreeHelper } from './tree-helper';
+} from "@angular/core";
+import { Item } from "../../model/wiremock/item";
+import { UtilService } from "../../services/util.service";
+import { WiremockService } from "../../services/wiremock.service";
+import { MessageService } from "../message/message.service";
+import { Tree } from "../../model/tree/tree";
+import { Root } from "../../model/tree/root";
+import { TreeNode } from "../../model/tree/tree-node";
+import { Folder } from "../../model/tree/folder";
+import { TreeHelper } from "./tree-helper";
 
 @Component({
-  selector: 'wm-tree-view',
-  templateUrl: './tree-view.component.html',
-  styleUrls: ['./tree-view.component.scss'],
+  selector: "wm-tree-view",
+  templateUrl: "./tree-view.component.html",
+  styleUrls: ["./tree-view.component.scss"],
 })
 export class TreeViewComponent implements OnChanges, AfterViewChecked {
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
   @Input()
   items?: Item[];
@@ -46,10 +46,10 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
   treeItems!: TreeNode[];
   private previousTree?: Tree;
 
-  @ViewChild('childrenContainer')
+  @ViewChild("childrenContainer")
   childrenContainer!: ElementRef;
 
-  @ViewChildren('listChildren')
+  @ViewChildren("listChildren")
   listChildren!: QueryList<ElementRef>;
 
   constructor(
@@ -75,7 +75,7 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
   ngOnChanges(changes: SimpleChanges): void {
     // only when we actually change items. No need to change when activeItem changes because this would only
     // include expand and this is done by user.
-    if (changes['items'] && this.items) {
+    if (changes["items"] && this.items) {
       // First we sort items by group so that folders are shown first
       TreeHelper.sortItemsByFolderName(this.items);
 
@@ -93,9 +93,7 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
       this.previousTree = newTree;
 
       // We actually set a list of tree items to render top-down. Everything is Angular and CSS magic.
-      this.treeItems = TreeHelper.sortTreeFoldersFirstAndMapToList(
-        this.previousTree
-      );
+      this.treeItems = TreeHelper.sortTreeFoldersFirstAndMapToList(this.previousTree);
       this.activeItemChanged = true;
     }
   }
@@ -104,11 +102,7 @@ export class TreeViewComponent implements OnChanges, AfterViewChecked {
     if (this.activeItemChanged) {
       this.activeItemChanged = false;
       // only once after something changed.
-      UtilService.scrollIntoView(
-        this.childrenContainer,
-        this.listChildren,
-        this.activeItem
-      );
+      UtilService.scrollIntoView(this.childrenContainer, this.listChildren, this.activeItem);
     }
   }
 

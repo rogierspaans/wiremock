@@ -1,7 +1,4 @@
-<div
-  #childrenContainer
-  *ngIf="(rootNode?.children?.length || 0) > 0"
-  class="wmHolyGrailScroll wmListView">
+<div #childrenContainer *ngIf="(rootNode?.children?.length || 0) > 0" class="wmHolyGrailScroll wmListView">
   <div class="wmListScrollWrapper">
     <ul class="list-group wmListGroup">
       <ng-container *ngFor="let node of treeItems">
@@ -14,9 +11,7 @@
           [ngClass]="['depth-' + node.depth]"
           (click)="selectActiveItem(node)"
           *ngIf="node !== rootNode && !node.isHidden()">
-          <div
-            [ngClass]="['line', 'line-' + i]"
-            *ngFor="let d of [].constructor(node.depth); let i = index"></div>
+          <div [ngClass]="['line', 'line-' + i]" *ngFor="let d of [].constructor(node.depth); let i = index"></div>
           <div *ngIf="!node.isLeaf()" class="chevron">
             <fa-icon icon="chevron-right" *ngIf="node.collapsed"></fa-icon>
             <fa-icon icon="chevron-down" *ngIf="!node.collapsed"></fa-icon>

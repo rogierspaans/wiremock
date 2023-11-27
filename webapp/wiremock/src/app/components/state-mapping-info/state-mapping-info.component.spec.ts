@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { StateMappingInfoComponent } from './state-mapping-info.component';
+import { StateMappingInfoComponent } from "./state-mapping-info.component";
 
-describe('StateMappingInfoComponent', () => {
+describe("StateMappingInfoComponent", () => {
   let component: StateMappingInfoComponent;
   let fixture: ComponentFixture<StateMappingInfoComponent>;
 
@@ -18,7 +18,7 @@ describe('StateMappingInfoComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

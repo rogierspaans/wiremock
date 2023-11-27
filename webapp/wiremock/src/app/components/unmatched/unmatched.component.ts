@@ -1,28 +1,24 @@
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { UtilService } from '../../services/util.service';
-import { WiremockService } from '../../services/wiremock.service';
-import { WebSocketService } from '../../services/web-socket.service';
-import {
-  Message,
-  MessageService,
-  MessageType,
-} from '../message/message.service';
-import { FindRequestResult } from '../../model/wiremock/find-request-result';
-import { LoggedRequest } from '../../model/wiremock/logged-request';
-import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/internal/Subject';
-import { CurlExtractor } from '../../services/curl-extractor';
-import { AutoRefreshService } from '../../services/auto-refresh.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CurlPreviewComponent } from '../curl-preview/curl-preview.component';
+import { Component, HostBinding, OnDestroy, OnInit } from "@angular/core";
+import { UtilService } from "../../services/util.service";
+import { WiremockService } from "../../services/wiremock.service";
+import { WebSocketService } from "../../services/web-socket.service";
+import { Message, MessageService, MessageType } from "../message/message.service";
+import { FindRequestResult } from "../../model/wiremock/find-request-result";
+import { LoggedRequest } from "../../model/wiremock/logged-request";
+import { debounceTime, filter, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs/internal/Subject";
+import { CurlExtractor } from "../../services/curl-extractor";
+import { AutoRefreshService } from "../../services/auto-refresh.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { CurlPreviewComponent } from "../curl-preview/curl-preview.component";
 
 @Component({
-  selector: 'wm-unmatched',
-  templateUrl: './unmatched.component.html',
-  styleUrls: ['./unmatched.component.scss'],
+  selector: "wm-unmatched",
+  templateUrl: "./unmatched.component.html",
+  styleUrls: ["./unmatched.component.scss"],
 })
 export class UnmatchedComponent implements OnInit, OnDestroy {
-  @HostBinding('class') classes = 'wmHolyGrailBody';
+  @HostBinding("class") classes = "wmHolyGrailBody";
 
   private ngUnsubscribe: Subject<boolean> = new Subject();
 
@@ -38,7 +34,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.webSocketService
-      .observe('unmatched')
+      .observe("unmatched")
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
@@ -63,15 +59,10 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
   }
 
   isSoapRequest(request: LoggedRequest): boolean {
-    if (
-      UtilService.isUndefined(request) ||
-      UtilService.isUndefined(request.body)
-    ) {
+    if (UtilService.isUndefined(request) || UtilService.isUndefined(request.body)) {
       return false;
     }
-    return UtilService.isDefined(
-      request.body.match(UtilService.getSoapRecognizeRegex())
-    );
+    return UtilService.isDefined(request.body.match(UtilService.getSoapRecognizeRegex()));
   }
 
   copyRequest(request: LoggedRequest) {
@@ -86,46 +77,26 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
 
   copyCurl(request: LoggedRequest) {
     if (UtilService.copyToClipboard(CurlExtractor.copyCurl(request))) {
-      this.messageService.setMessage(
-        new Message('Curl copied to clipboard', MessageType.INFO, 3000)
-      );
+      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO, 3000));
     } else {
-      this.messageService.setMessage(
-        new Message(
-          'Was not able to copy. Details in log',
-          MessageType.ERROR,
-          10000
-        )
-      );
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
     }
   }
 
   editCurl(request: LoggedRequest) {
     const curl = CurlExtractor.extractCurl(request);
     const modalRef = this.modalService.open(CurlPreviewComponent, {
-      size: 'lg',
-      windowClass: 'modal-h70',
+      size: "lg",
+      windowClass: "modal-h70",
     });
     modalRef.componentInstance.curl = curl;
   }
 
   private copyMappingTemplateToClipboard(message?: string) {
     if (message && UtilService.copyToClipboard(message)) {
-      this.messageService.setMessage(
-        new Message(
-          'Mapping template copied to clipboard',
-          MessageType.INFO,
-          3000
-        )
-      );
+      this.messageService.setMessage(new Message("Mapping template copied to clipboard", MessageType.INFO, 3000));
     } else {
-      this.messageService.setMessage(
-        new Message(
-          'Was not able to copy. Details in log',
-          MessageType.ERROR,
-          10000
-        )
-      );
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
     }
   }
 
@@ -164,21 +135,21 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
     }
 
     const xPath =
-      '/' +
+      "/" +
       String(result[1]) +
-      ':Envelope/' +
+      ":Envelope/" +
       String(result[2]) +
-      ':Body/' +
+      ":Body/" +
       String(soapMethod[1]) +
-      ':' +
+      ":" +
       String(soapMethod[2]);
 
-    let printedNamespaces = '';
+    let printedNamespaces = "";
 
     let first = true;
     for (const key of Object.keys(nameSpaces)) {
       if (!first) {
-        printedNamespaces += ',';
+        printedNamespaces += ",";
       } else {
         first = false;
       }

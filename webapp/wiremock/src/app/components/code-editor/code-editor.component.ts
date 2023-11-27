@@ -12,30 +12,28 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
-} from '@angular/core';
-import { UtilService } from '../../services/util.service';
-import { Subject } from 'rxjs';
-import * as ace from 'ace-builds';
-import { takeUntil } from 'rxjs/operators';
-import { Ace } from 'ace-builds';
+} from "@angular/core";
+import { UtilService } from "../../services/util.service";
+import { Subject } from "rxjs";
+import * as ace from "ace-builds";
+import { takeUntil } from "rxjs/operators";
+import { Ace } from "ace-builds";
 import Editor = Ace.Editor;
 
 @Component({
-  selector: 'wm-code-editor',
-  templateUrl: './code-editor.component.html',
-  styleUrls: ['./code-editor.component.scss'],
+  selector: "wm-code-editor",
+  templateUrl: "./code-editor.component.html",
+  styleUrls: ["./code-editor.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CodeEditorComponent
-  implements OnInit, OnChanges, AfterViewInit, OnDestroy
-{
+export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   public static DEFAULT_OPTIONS = {
-    selectionStyle: 'text',
+    selectionStyle: "text",
     highlightActiveLine: true,
     highlightSelectedWord: true,
     readOnly: false,
-    cursorStyle: 'ace',
-    mergeUndoDeltas: 'true',
+    cursorStyle: "ace",
+    mergeUndoDeltas: "true",
     behavioursEnabled: true,
     wrapBehavioursEnabled: true,
     autoScrollEditorIntoView: true, // we need that
@@ -50,8 +48,7 @@ export class CodeEditorComponent
     showGutter: true,
     displayIndentGuides: true,
     fontSize: 14,
-    fontFamily:
-      'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     showLineNumbers: true,
     // ..
     // firstLineNumber: 1
@@ -61,7 +58,7 @@ export class CodeEditorComponent
     // minLines: 10
   };
 
-  @ViewChild('editorCanvas')
+  @ViewChild("editorCanvas")
   editorCanvas!: ElementRef;
 
   private editor?: Editor;
@@ -76,10 +73,10 @@ export class CodeEditorComponent
   set code(value: string | undefined) {
     if (this._code !== value) {
       if (UtilService.isUndefined(value)) {
-        this._code = '';
+        this._code = "";
       } else {
         // prettify with cast to string. Due to javascript type in-safety
-        this._code = UtilService.prettify(value) + '';
+        this._code = UtilService.prettify(value) + "";
       }
       this.setEditorValue();
     }
@@ -106,16 +103,16 @@ export class CodeEditorComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.editor) {
-      if (changes['options']) {
+      if (changes["options"]) {
         this.zone.runOutsideAngular(() => {
           this.setOptions();
         });
       }
 
-      if (changes['language']) {
+      if (changes["language"]) {
         this.zone.runOutsideAngular(() => {
           if (this.editor) {
-            this.editor.session.setMode('ace/mode/' + this.language);
+            this.editor.session.setMode("ace/mode/" + this.language);
           }
         });
       }
@@ -154,12 +151,10 @@ export class CodeEditorComponent
       this.editor.setOptions(this.options);
       if (this.options.readOnly) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.editor.renderer as any).$cursorLayer.element.style.display =
-          'none';
+        (this.editor.renderer as any).$cursorLayer.element.style.display = "none";
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.editor.renderer as any).$cursorLayer.element.style.display =
-          'block';
+        (this.editor.renderer as any).$cursorLayer.element.style.display = "block";
       }
     }
   }
@@ -167,13 +162,13 @@ export class CodeEditorComponent
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
       this.editor = ace.edit(this.editorCanvas.nativeElement);
-      this.editor.setTheme('ace/theme/monokai');
-      this.editor.container.style.lineHeight = '1.5';
+      this.editor.setTheme("ace/theme/monokai");
+      this.editor.container.style.lineHeight = "1.5";
       this.setOptions();
-      this.editor.session.setMode('ace/mode/' + this.language);
+      this.editor.session.setMode("ace/mode/" + this.language);
       this.setEditorValue();
 
-      this.editor.session.on('change', () => {
+      this.editor.session.on("change", () => {
         // param would be delta but I do not need it
         // delta.start, delta.end, delta.lines, delta.action
         this.zone.run(() => {

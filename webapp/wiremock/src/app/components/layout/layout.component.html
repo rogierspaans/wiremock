@@ -1,11 +1,6 @@
 <div id="wmListView" class="wmHolyGrailBody">
   <div *ngIf="supportsTreeView" class="wmHolyGrailBody column mt-1">
-    <ul
-      ngbNav
-      #nav="ngbNav"
-      [(activeId)]="activeTab"
-      class="nav-tabs"
-      [animation]="false">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs" [animation]="false">
       <li [ngbNavItem]="0">
         <a ngbNavLink class="wmNavLink">
           <fa-icon icon="folder"></fa-icon>
@@ -71,26 +66,19 @@
             id="wmCaseSensitiveSearch"
             [checked]="caseSensitiveSearchEnabled"
             (change)="onCaseSensitiveChanged()" />
-          <label
-            class="form-check-label"
-            for="wmCaseSensitiveSearch"
-            ngbTooltip="case sensitive">
-            {{ caseSensitiveSearchEnabled ? 'Ab' : 'ab' }}
+          <label class="form-check-label" for="wmCaseSensitiveSearch" ngbTooltip="case sensitive">
+            {{ caseSensitiveSearchEnabled ? "Ab" : "ab" }}
           </label>
         </div>
       </span>
     </div>
 
     <div class="pt-2 pb-2">
-      <ng-container
-        [ngTemplateOutlet]="actions"
-        [ngTemplateOutletContext]="{ $implicit: activeItem }"></ng-container>
+      <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: activeItem }"></ng-container>
     </div>
   </div>
 
   <div id="wmContent" class="wmHolyGrailBody">
-    <ng-container
-      [ngTemplateOutlet]="content"
-      [ngTemplateOutletContext]="{ $implicit: activeItem }"></ng-container>
+    <ng-container [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{ $implicit: activeItem }"></ng-container>
   </div>
 </div>

@@ -25,11 +25,7 @@
             </div>
           </span>
           <span class="input-group-text">Url</span>
-          <input
-            [formControl]="url"
-            type="url"
-            class="form-control"
-            id="play-url" />
+          <input [formControl]="url" type="url" class="form-control" id="play-url" />
         </div>
         <div class="form-group mb-2">
           <label for="header" class="form-label">Headers</label>
@@ -67,14 +63,9 @@
       <form class="wmHolyGrailBody column">
         <div class="wmMatchContainer">
           <h4>
-            <span
-              class="badge"
-              [class.bg-success]="responseIsMapping"
-              [class.bg-danger]="!responseIsMapping"
-              >{{ responseIsMapping ? 'Matches' : 'No Match' }}
-              <fa-icon
-                class="wmMatches"
-                [icon]="responseIsMapping ? 'check' : 'times'"></fa-icon
+            <span class="badge" [class.bg-success]="responseIsMapping" [class.bg-danger]="!responseIsMapping"
+              >{{ responseIsMapping ? "Matches" : "No Match" }}
+              <fa-icon class="wmMatches" [icon]="responseIsMapping ? 'check' : 'times'"></fa-icon
             ></span>
           </h4>
           <h4 *ngIf="!responseIsMapping && responseMappingId">
@@ -88,10 +79,7 @@
         </div>
         <div class="form-group mb-2">
           <div class="wmEditorContainer wmEditorResponseContainer">
-            <wm-code-editor
-              [code]="response"
-              [language]="'json'"
-              [options]="codeReadOnlyOptions"></wm-code-editor>
+            <wm-code-editor [code]="response" [language]="'json'" [options]="codeReadOnlyOptions"></wm-code-editor>
           </div>
         </div>
 

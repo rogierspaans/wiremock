@@ -1,4 +1,4 @@
-import { Item } from '../wiremock/item';
+import { Item } from "../wiremock/item";
 
 export class Folder implements Item {
   constructor(
@@ -7,7 +7,7 @@ export class Folder implements Item {
   ) {}
 
   getCode(): string {
-    return '';
+    return "";
   }
 
   getId(): string {
@@ -15,7 +15,7 @@ export class Folder implements Item {
   }
 
   getSubtitle(): string {
-    return '';
+    return "";
   }
 
   getTitle(): string {

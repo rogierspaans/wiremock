@@ -1,11 +1,11 @@
-import { Item } from '../wiremock/item';
-import { UtilService } from '../../services/util.service';
+import { Item } from "../wiremock/item";
+import { UtilService } from "../../services/util.service";
 
 export class Root implements Item {
   constructor(private id = UtilService.generateUUID()) {}
 
   getCode(): string {
-    return '';
+    return "";
   }
 
   getId(): string {
@@ -13,11 +13,11 @@ export class Root implements Item {
   }
 
   getSubtitle(): string {
-    return '';
+    return "";
   }
 
   getTitle(): string {
-    return '<Root>';
+    return "<Root>";
   }
 
   isProxy(): boolean {

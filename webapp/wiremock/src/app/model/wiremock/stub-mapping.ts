@@ -1,9 +1,9 @@
-import { RequestPattern } from './request-pattern';
-import { ResponseDefinition } from './response-definition';
-import { Item } from './item';
-import { UtilService } from '../../services/util.service';
-import { Proxy } from './proxy';
-import { ProxyConfig } from './proxy-config';
+import { RequestPattern } from "./request-pattern";
+import { ResponseDefinition } from "./response-definition";
+import { Item } from "./item";
+import { UtilService } from "../../services/util.service";
+import { Proxy } from "./proxy";
+import { ProxyConfig } from "./proxy-config";
 
 export class StubMapping extends Proxy implements Item {
   uuid!: string;
@@ -30,16 +30,16 @@ export class StubMapping extends Proxy implements Item {
     const mapping: StubMapping = new StubMapping();
 
     mapping.request = new RequestPattern();
-    mapping.request.method = 'GET';
-    mapping.request.url = '';
+    mapping.request.method = "GET";
+    mapping.request.url = "";
 
     mapping.response = new ResponseDefinition();
     mapping.response.status = 200;
     mapping.response.jsonBody = {
-      some: 'value',
+      some: "value",
     };
     mapping.response.headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     return mapping;
@@ -58,10 +58,7 @@ export class StubMapping extends Proxy implements Item {
     this.metadata = unchecked.metadata;
     this.postServeActions = unchecked.postServeActions;
 
-    if (
-      proxyConfig &&
-      (this.response.proxyBaseUrl || proxyConfig.proxyConfig.has(this.uuid))
-    ) {
+    if (proxyConfig && (this.response.proxyBaseUrl || proxyConfig.proxyConfig.has(this.uuid))) {
       this.setProxy(true);
       this.setProxyEnabled(!proxyConfig.proxyConfig.has(this.uuid));
     }
@@ -78,36 +75,28 @@ export class StubMapping extends Proxy implements Item {
 
   getSubtitle(): string {
     let soap;
-    let soapResult = '';
-    if (
-      this.request &&
-      this.request.bodyPatterns &&
-      this.request.bodyPatterns
-    ) {
+    let soapResult = "";
+    if (this.request && this.request.bodyPatterns && this.request.bodyPatterns) {
       for (const bodyPattern of this.request.bodyPatterns) {
         if (
           UtilService.isDefined(bodyPattern.matchesXPath) &&
-          UtilService.isDefined(
-            (soap = UtilService.getSoapXPathRegex().exec(
-              bodyPattern.matchesXPath
-            ))
-          ) &&
+          UtilService.isDefined((soap = UtilService.getSoapXPathRegex().exec(bodyPattern.matchesXPath))) &&
           soap
         ) {
           if (soapResult.length !== 0) {
-            soapResult += ', ';
+            soapResult += ", ";
           }
           soapResult += soap[2];
         }
       }
     }
-    let result = '';
+    let result = "";
     if (soapResult.length > 0) {
       result = soapResult;
     } else {
-      result = 'method=' + this.request.method;
+      result = "method=" + this.request.method;
     }
-    return result + ', status=' + this.response.status;
+    return result + ", status=" + this.response.status;
   }
 
   getId(): string {

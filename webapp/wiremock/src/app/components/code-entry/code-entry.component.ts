@@ -1,13 +1,13 @@
-import { Component, HostBinding, Input } from '@angular/core';
-import { UtilService } from '../../services/util.service';
+import { Component, HostBinding, Input } from "@angular/core";
+import { UtilService } from "../../services/util.service";
 
 @Component({
-  selector: 'wm-code-entry',
-  templateUrl: './code-entry.component.html',
-  styleUrls: [ './code-entry.component.scss' ],
+  selector: "wm-code-entry",
+  templateUrl: "./code-entry.component.html",
+  styleUrls: ["./code-entry.component.scss"],
 })
 export class CodeEntryComponent {
-  @HostBinding('class') classes = 'wmHolyGrailBody';
+  @HostBinding("class") classes = "wmHolyGrailBody";
 
   _code?: string;
   @Input()
@@ -22,6 +22,5 @@ export class CodeEntryComponent {
   @Input()
   language?: string;
 
-  constructor() {
-  }
+  constructor() {}
 }

@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { MappingTestComponent } from './mapping-test.component';
+import { MappingTestComponent } from "./mapping-test.component";
 
-describe('MappingTestComponent', () => {
+describe("MappingTestComponent", () => {
   let component: MappingTestComponent;
   let fixture: ComponentFixture<MappingTestComponent>;
 
@@ -18,7 +18,7 @@ describe('MappingTestComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

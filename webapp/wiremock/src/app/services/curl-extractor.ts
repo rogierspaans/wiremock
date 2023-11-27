@@ -1,5 +1,5 @@
-import { LoggedRequest } from '../model/wiremock/logged-request';
-import { ServeEvent } from '../model/wiremock/serve-event';
+import { LoggedRequest } from "../model/wiremock/logged-request";
+import { ServeEvent } from "../model/wiremock/serve-event";
 
 export class CurlExtractor {
   public static copyCurl(request: LoggedRequest | ServeEvent): string {
@@ -35,15 +35,15 @@ export class CurlExtractor {
 
   private static checkProperty(property: string): boolean {
     switch (property) {
-      case 'Postman-Token':
-      case 'User-Agent':
-      case 'Connection':
-      case 'Cookie':
-      case 'Referer':
-      case 'Accept-Encoding':
-      case 'Accept-Language':
-      case 'Cache-Control':
-      case 'Host':
+      case "Postman-Token":
+      case "User-Agent":
+      case "Connection":
+      case "Cookie":
+      case "Referer":
+      case "Accept-Encoding":
+      case "Accept-Language":
+      case "Cache-Control":
+      case "Host":
         return false;
     }
     return true;
@@ -51,8 +51,8 @@ export class CurlExtractor {
 }
 
 export class Curl {
-  private _httpMethod = '';
-  private _url = '';
+  private _httpMethod = "";
+  private _url = "";
   private _body?: string;
   private _verbose = false;
   private _headers: Header[] = [];
@@ -98,12 +98,12 @@ export class Curl {
   }
 
   public toString(): string {
-    let curlString = 'curl ';
-    curlString += this.httpMethodToString() + ' \\\n';
-    curlString += this.urlToString() + ' \\\n';
-    curlString += this.bodyToString() + ' \\\n';
+    let curlString = "curl ";
+    curlString += this.httpMethodToString() + " \\\n";
+    curlString += this.urlToString() + " \\\n";
+    curlString += this.bodyToString() + " \\\n";
     if (this.verbose) {
-      curlString += this.verboseToString() + ' \\\n';
+      curlString += this.verboseToString() + " \\\n";
     }
     curlString += this.headersToString();
 
@@ -111,7 +111,7 @@ export class Curl {
   }
 
   private httpMethodToString(): string {
-    return '-X ' + this.httpMethod;
+    return "-X " + this.httpMethod;
   }
 
   private urlToString(): string {
@@ -123,16 +123,16 @@ export class Curl {
   }
 
   private verboseToString(): string {
-    return '-v';
+    return "-v";
   }
 
   private headersToString(): string {
-    let headerString = '';
+    let headerString = "";
     const headers = this.headers;
     headers.forEach((header, i) => {
-      headerString += "-H '" + header.key + ': ' + header.value + "'";
+      headerString += "-H '" + header.key + ": " + header.value + "'";
       if (i !== this.headers.length - 1) {
-        headerString += ' \\\n';
+        headerString += " \\\n";
       }
     });
     return headerString;

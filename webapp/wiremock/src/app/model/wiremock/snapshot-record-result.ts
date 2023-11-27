@@ -1,5 +1,5 @@
-import { StubMapping } from './stub-mapping';
-import { UtilService } from '../../services/util.service';
+import { StubMapping } from "./stub-mapping";
+import { UtilService } from "../../services/util.service";
 
 export class SnapshotRecordResult {
   mappings: StubMapping[] = [];

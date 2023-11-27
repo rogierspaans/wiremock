@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/internal/Subject';
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs/internal/Subject";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class TabSelectionService {
   private tab: Subject<Tab> = new Subject();
@@ -16,7 +16,7 @@ export class TabSelectionService {
 }
 
 export enum Tab {
-  RAW = 'tab-raw',
-  SEPARATED = 'tab-separated',
-  TEST = 'tab-test',
+  RAW = "tab-raw",
+  SEPARATED = "tab-separated",
+  TEST = "tab-test",
 }

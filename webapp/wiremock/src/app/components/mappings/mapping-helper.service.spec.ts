@@ -1,18 +1,15 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed, inject } from "@angular/core/testing";
 
-import { MappingHelperService } from './mapping-helper.service';
+import { MappingHelperService } from "./mapping-helper.service";
 
-describe('MappingHelperService', () => {
+describe("MappingHelperService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [MappingHelperService],
     });
   });
 
-  it('should be created', inject(
-    [MappingHelperService],
-    (service: MappingHelperService) => {
-      expect(service).toBeTruthy();
-    }
-  ));
+  it("should be created", inject([MappingHelperService], (service: MappingHelperService) => {
+    expect(service).toBeTruthy();
+  }));
 });

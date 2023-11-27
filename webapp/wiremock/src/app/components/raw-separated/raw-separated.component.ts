@@ -9,20 +9,20 @@ import {
   OnInit,
   Output,
   ViewEncapsulation,
-} from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
-import { UtilService } from '../../services/util.service';
-import { Tab, TabSelectionService } from '../../services/tab-selection.service';
-import { Subject } from 'rxjs/internal/Subject';
+} from "@angular/core";
+import { takeUntil } from "rxjs/operators";
+import { UtilService } from "../../services/util.service";
+import { Tab, TabSelectionService } from "../../services/tab-selection.service";
+import { Subject } from "rxjs/internal/Subject";
 
 @Component({
-  selector: 'wm-raw-separated',
-  templateUrl: './raw-separated.component.html',
-  styleUrls: ['./raw-separated.component.scss'],
+  selector: "wm-raw-separated",
+  templateUrl: "./raw-separated.component.html",
+  styleUrls: ["./raw-separated.component.scss"],
   encapsulation: ViewEncapsulation.None,
 })
 export class RawSeparatedComponent implements OnInit, OnDestroy {
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
   private ngUnsubscribe: Subject<boolean> = new Subject();
 
@@ -41,7 +41,7 @@ export class RawSeparatedComponent implements OnInit, OnDestroy {
   @Output()
   activeIdChanged = new EventEmitter<Tab>();
 
-  @ContentChild('wm-raw-separated-test')
+  @ContentChild("wm-raw-separated-test")
   test!: ElementRef;
 
   activeId = Tab.RAW;
@@ -53,14 +53,12 @@ export class RawSeparatedComponent implements OnInit, OnDestroy {
   constructor(private tabSelectionService: TabSelectionService) {}
 
   ngOnInit() {
-    this.tabSelectionService.tab$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(tabToSelect => {
-        if (UtilService.isDefined(tabToSelect)) {
-          this.activeId = tabToSelect;
-          this.activeIdChanged.emit(tabToSelect);
-        }
-      });
+    this.tabSelectionService.tab$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tabToSelect => {
+      if (UtilService.isDefined(tabToSelect)) {
+        this.activeId = tabToSelect;
+        this.activeIdChanged.emit(tabToSelect);
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,25 +1,21 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Curl } from '../../services/curl-extractor';
-import { CodeEditorComponent } from '../code-editor/code-editor.component';
-import { UtilService } from '../../services/util.service';
-import {
-  Message,
-  MessageService,
-  MessageType,
-} from '../message/message.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import { Curl } from "../../services/curl-extractor";
+import { CodeEditorComponent } from "../code-editor/code-editor.component";
+import { UtilService } from "../../services/util.service";
+import { Message, MessageService, MessageType } from "../message/message.service";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'wm-curl-preview',
-  templateUrl: './curl-preview.component.html',
-  styleUrls: ['./curl-preview.component.scss'],
+  selector: "wm-curl-preview",
+  templateUrl: "./curl-preview.component.html",
+  styleUrls: ["./curl-preview.component.scss"],
 })
 export class CurlPreviewComponent implements AfterViewInit {
-  @ViewChild('editor')
+  @ViewChild("editor")
   private codeEditor!: CodeEditorComponent;
 
   private _curl?: Curl;
-  curlString = '';
+  curlString = "";
 
   private visible = false;
 
@@ -42,28 +38,16 @@ export class CurlPreviewComponent implements AfterViewInit {
     const code = this.codeEditor.getCode();
 
     if (code && UtilService.copyToClipboard(code)) {
-      this.messageService.setMessage(
-        new Message('Curl copied to clipboard', MessageType.INFO, 3000)
-      );
+      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO, 3000));
     } else {
-      this.messageService.setMessage(
-        new Message(
-          'Was not able to copy. Details in log',
-          MessageType.ERROR,
-          10000
-        )
-      );
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
     }
   }
 
   ngAfterViewInit(): void {
     const offsetParent = this.elementRef.nativeElement.offsetParent;
 
-    if (
-      !this.visible &&
-      UtilService.isDefined(offsetParent) &&
-      offsetParent.offsetParent !== document.body
-    ) {
+    if (!this.visible && UtilService.isDefined(offsetParent) && offsetParent.offsetParent !== document.body) {
       this.visible = true;
       this.codeEditor.resize();
     }

@@ -1,39 +1,32 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  OnChanges,
-  ViewChild,
-} from '@angular/core';
-import * as joint from 'jointjs';
-import { dia } from 'jointjs';
-import dagre from 'dagre';
-import graphlib from 'graphlib';
-import { StateMachineItems } from './state-machine-items';
-import { UtilService } from '../../services/util.service';
-import { StateLink } from '../../model/state-link';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Scenario } from '../../model/wiremock/scenario';
+import { Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from "@angular/core";
+import * as joint from "jointjs";
+import { dia } from "jointjs";
+import dagre from "dagre";
+import graphlib from "graphlib";
+import { StateMachineItems } from "./state-machine-items";
+import { UtilService } from "../../services/util.service";
+import { StateLink } from "../../model/state-link";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Scenario } from "../../model/wiremock/scenario";
 import Paper = dia.Paper;
 import Element = dia.Element;
 import LinkView = dia.LinkView;
 import Graph = dia.Graph;
 
 @Component({
-  selector: 'wm-state-machine',
-  templateUrl: './state-machine.component.html',
-  styleUrls: ['./state-machine.component.scss'],
+  selector: "wm-state-machine",
+  templateUrl: "./state-machine.component.html",
+  styleUrls: ["./state-machine.component.scss"],
 })
 export class StateMachineComponent implements OnChanges {
-  private static readonly ANY = '{{ANY}}';
+  private static readonly ANY = "{{ANY}}";
 
   @Input()
   item!: Scenario;
 
   private lastItem?: Scenario;
 
-  @ViewChild('canvas')
+  @ViewChild("canvas")
   canvas!: ElementRef;
 
   @Input()
@@ -56,10 +49,7 @@ export class StateMachineComponent implements OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    if (
-      UtilService.isUndefined(this.item) ||
-      UtilService.isUndefined(this.item.mappings)
-    ) {
+    if (UtilService.isUndefined(this.item) || UtilService.isUndefined(this.item.mappings)) {
       return;
     }
 
@@ -107,21 +97,21 @@ export class StateMachineComponent implements OnChanges {
 
     this.dragStartPosition = undefined;
 
-    this.paper.on('blank:pointerdown', (_event, x, y) => {
+    this.paper.on("blank:pointerdown", (_event, x, y) => {
       if (this.space) {
         this.dragStartPosition = { x: x, y: y };
       }
     });
 
-    this.paper.on('cell:pointerup blank:pointerup', () => {
+    this.paper.on("cell:pointerup blank:pointerup", () => {
       this.dragStartPosition = undefined;
     });
   }
 
   private searchForStates(states: Map<string, dia.Element>) {
     this.item.possibleStates.forEach(stateName => {
-      if (stateName === 'Started') {
-        if (this.item.state === 'Started') {
+      if (stateName === "Started") {
+        if (this.item.state === "Started") {
           states.set(stateName, StateMachineItems.createActiveStartState());
         } else {
           states.set(stateName, StateMachineItems.createStartState());
@@ -138,42 +128,18 @@ export class StateMachineComponent implements OnChanges {
 
   private addLinks(links: StateLink[], states: Map<string, dia.Element>) {
     this.item.mappings.forEach(mapping => {
-      if (
-        UtilService.isDefined(mapping.requiredScenarioState) &&
-        UtilService.isDefined(mapping.newScenarioState)
-      ) {
+      if (UtilService.isDefined(mapping.requiredScenarioState) && UtilService.isDefined(mapping.newScenarioState)) {
         // A -> B
-        links.push(
-          new StateLink(
-            mapping.requiredScenarioState,
-            mapping.newScenarioState,
-            mapping
-          )
-        );
+        links.push(new StateLink(mapping.requiredScenarioState, mapping.newScenarioState, mapping));
       } else if (UtilService.isDefined(mapping.newScenarioState)) {
         // any -> B
         if (UtilService.isUndefined(states.get(StateMachineComponent.ANY))) {
-          states.set(
-            StateMachineComponent.ANY,
-            StateMachineItems.createAnyState()
-          );
+          states.set(StateMachineComponent.ANY, StateMachineItems.createAnyState());
         }
-        links.push(
-          new StateLink(
-            StateMachineComponent.ANY,
-            mapping.newScenarioState,
-            mapping
-          )
-        );
+        links.push(new StateLink(StateMachineComponent.ANY, mapping.newScenarioState, mapping));
       } else if (UtilService.isDefined(mapping.requiredScenarioState)) {
         // A -> A
-        links.push(
-          new StateLink(
-            mapping.requiredScenarioState,
-            mapping.requiredScenarioState,
-            mapping
-          )
-        );
+        links.push(new StateLink(mapping.requiredScenarioState, mapping.requiredScenarioState, mapping));
       }
     });
   }
@@ -184,10 +150,7 @@ export class StateMachineComponent implements OnChanges {
     });
   }
 
-  private addLinksToGraph(
-    links: StateLink[],
-    states: Map<string, dia.Element>
-  ) {
+  private addLinksToGraph(links: StateLink[], states: Map<string, dia.Element>) {
     links.forEach(data => {
       const link = new joint.shapes.standard.Link();
       const source = states.get(data.source);
@@ -201,17 +164,17 @@ export class StateMachineComponent implements OnChanges {
       link.target(target);
 
       if (data.source === data.target) {
-        link.connector('rounded', {
+        link.connector("rounded", {
           radius: 20,
         });
-        link.router('manhattan', {
+        link.router("manhattan", {
           step: 10,
           padding: 15,
           maxAllowedDirectionChange: 0,
         });
       } else {
-        link.connector('rounded');
-        link.router('normal', {
+        link.connector("rounded");
+        link.router("normal", {
           step: 30,
           padding: 30,
         });
@@ -221,9 +184,7 @@ export class StateMachineComponent implements OnChanges {
 
       link.addTo(this.graph);
       const linkView = link.findView(this.paper);
-      linkView.addTools(
-        StateMachineItems.createInfoButton(this.modalService, data.mapping)
-      );
+      linkView.addTools(StateMachineItems.createInfoButton(this.modalService, data.mapping));
     });
   }
 
@@ -235,20 +196,17 @@ export class StateMachineComponent implements OnChanges {
       edgeSep: 100,
       rankSep: 100,
       clusterPadding: 50,
-      rankDir: 'TB',
+      rankDir: "TB",
       marginX: 100,
       marginY: 50,
     });
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener("window:resize", ["$event"])
   onResize() {
     if (this.paper) {
       this.paper.setDimensions(0, 0);
-      this.paper.setDimensions(
-        this.container.nativeElement.offsetWidth,
-        this.container.nativeElement.offsetHeight
-      );
+      this.paper.setDimensions(this.container.nativeElement.offsetWidth, this.container.nativeElement.offsetHeight);
     }
   }
 
@@ -264,13 +222,13 @@ export class StateMachineComponent implements OnChanges {
     }
   }
 
-  @HostListener('document:keyup.space', ['$event'])
+  @HostListener("document:keyup.space", ["$event"])
   onSpaceUp() {
     this.space = false;
     this.dragStartPosition = undefined;
   }
 
-  @HostListener('document:keydown.space', ['$event'])
+  @HostListener("document:keydown.space", ["$event"])
   onSpaceDown() {
     this.space = true;
   }
@@ -308,14 +266,8 @@ export class StateMachineComponent implements OnChanges {
           //   data.link.removeVertex(0);
           // });
 
-          linkView.addVertex(
-            bbox.center().x + xgap * (index + 1),
-            bbox.center().y - (ygap / 2) * (index + 1)
-          );
-          linkView.addVertex(
-            bbox.center().x + (xgap / 2) * (index + 1),
-            bbox.center().y - ygap * (index + 1)
-          );
+          linkView.addVertex(bbox.center().x + xgap * (index + 1), bbox.center().y - (ygap / 2) * (index + 1));
+          linkView.addVertex(bbox.center().x + (xgap / 2) * (index + 1), bbox.center().y - ygap * (index + 1));
         }
       });
     });

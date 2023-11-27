@@ -11,16 +11,6 @@
   <input #url class="form-control" type="text" placeholder="Target url" />
 </div>
 <div class="modal-footer">
-  <button
-    type="button"
-    class="btn btn-primary"
-    (click)="activeModal.close(url.value)">
-    Start
-  </button>
-  <button
-    type="button"
-    class="btn btn-outline-dark"
-    (click)="activeModal.dismiss('cancel')">
-    Cancel
-  </button>
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(url.value)">Start</button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('cancel')">Cancel</button>
 </div>

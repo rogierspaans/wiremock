@@ -8,10 +8,7 @@
     (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
-  <wm-code-editor
-    #editor
-    [code]="curlString"
-    [language]="'ini'"></wm-code-editor>
+  <wm-code-editor #editor [code]="curlString" [language]="'ini'"></wm-code-editor>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="copyCurl()">

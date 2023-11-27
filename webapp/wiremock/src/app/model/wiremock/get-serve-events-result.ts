@@ -1,4 +1,4 @@
-import { ServeEvent } from './serve-event';
+import { ServeEvent } from "./serve-event";
 
 export class GetServeEventsResult {
   requests!: ServeEvent[];
@@ -6,10 +6,7 @@ export class GetServeEventsResult {
   meta: any;
   requestJournalDisabled!: boolean;
 
-  deserialize(
-    unchecked: GetServeEventsResult,
-    onlyMatched: boolean
-  ): GetServeEventsResult {
+  deserialize(unchecked: GetServeEventsResult, onlyMatched: boolean): GetServeEventsResult {
     this.meta = unchecked.meta;
     this.requests = [];
     unchecked.requests.forEach(request => {

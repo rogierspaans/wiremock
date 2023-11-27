@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { Message, MessageService } from './message.service';
+import { Component } from "@angular/core";
+import { Message, MessageService } from "./message.service";
 
 @Component({
   // selector: 'wm-message',
-  selector: 'wm-message',
-  templateUrl: './message.component.html',
-  styleUrls: [ './message.component.scss' ],
+  selector: "wm-message",
+  templateUrl: "./message.component.html",
+  styleUrls: ["./message.component.scss"],
 })
 export class MessageComponent {
   // @HostBinding('class') classes = 'wmAlert';

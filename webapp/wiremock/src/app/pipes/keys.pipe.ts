@@ -1,8 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { UtilService } from '../services/util.service';
+import { Pipe, PipeTransform } from "@angular/core";
+import { UtilService } from "../services/util.service";
 
 @Pipe({
-  name: 'keys',
+  name: "keys",
 })
 export class KeysPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,11 +14,7 @@ export class KeysPipe implements PipeTransform {
     }
 
     for (const key in value) {
-      if (
-        Object.prototype.hasOwnProperty.call(value, key) &&
-        !key.startsWith('_') &&
-        value[key]
-      ) {
+      if (Object.prototype.hasOwnProperty.call(value, key) && !key.startsWith("_") && value[key]) {
         result.push(new KeyValue(key, value[key]));
       }
     }

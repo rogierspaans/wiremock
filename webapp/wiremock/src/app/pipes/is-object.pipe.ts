@@ -1,9 +1,9 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { KeyValue } from './keys.pipe';
-import { UtilService } from '../services/util.service';
+import { Pipe, PipeTransform } from "@angular/core";
+import { KeyValue } from "./keys.pipe";
+import { UtilService } from "../services/util.service";
 
 @Pipe({
-  name: 'isObject',
+  name: "isObject",
 })
 export class IsObjectPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,7 @@ export class IsObjectPipe implements PipeTransform {
     }
 
     for (let i = 0; i < value.length; i++) {
-      if (typeof value[i].value === 'object') {
+      if (typeof value[i].value === "object") {
         result.push(value[i]);
       }
     }

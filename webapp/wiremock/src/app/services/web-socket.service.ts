@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { UtilService } from './util.service';
-import { Observable } from 'rxjs/internal/Observable';
-import { Subject } from 'rxjs/internal/Subject';
-import { filter } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { UtilService } from "./util.service";
+import { Observable } from "rxjs/internal/Observable";
+import { Subject } from "rxjs/internal/Subject";
+import { filter } from "rxjs/operators";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class WebSocketService {
   private socket: ReconnectWebSocket;

@@ -1,42 +1,32 @@
-import {
-  Component,
-  HostBinding,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { WiremockService } from '../../services/wiremock.service';
-import { ListStubMappingsResult } from '../../model/wiremock/list-stub-mappings-result';
-import { UtilService } from '../../services/util.service';
-import { StubMapping } from '../../model/wiremock/stub-mapping';
-import { WebSocketService } from '../../services/web-socket.service';
-import { WebSocketListener } from '../../interfaces/web-socket-listener';
-import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-import { MappingHelperService } from './mapping-helper.service';
-import {
-  Message,
-  MessageService,
-  MessageType,
-} from '../message/message.service';
-import { Item } from '../../model/wiremock/item';
-import { Subject } from 'rxjs/internal/Subject';
-import { ProxyConfig } from '../../model/wiremock/proxy-config';
-import { Tab, TabSelectionService } from '../../services/tab-selection.service';
-import { AutoRefreshService } from '../../services/auto-refresh.service';
-import { CodeEditorComponent } from '../code-editor/code-editor.component';
+import { Component, HostBinding, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { WiremockService } from "../../services/wiremock.service";
+import { ListStubMappingsResult } from "../../model/wiremock/list-stub-mappings-result";
+import { UtilService } from "../../services/util.service";
+import { StubMapping } from "../../model/wiremock/stub-mapping";
+import { WebSocketService } from "../../services/web-socket.service";
+import { WebSocketListener } from "../../interfaces/web-socket-listener";
+import { debounceTime, filter, takeUntil } from "rxjs/operators";
+import { MappingHelperService } from "./mapping-helper.service";
+import { Message, MessageService, MessageType } from "../message/message.service";
+import { Item } from "../../model/wiremock/item";
+import { Subject } from "rxjs/internal/Subject";
+import { ProxyConfig } from "../../model/wiremock/proxy-config";
+import { Tab, TabSelectionService } from "../../services/tab-selection.service";
+import { AutoRefreshService } from "../../services/auto-refresh.service";
+import { CodeEditorComponent } from "../code-editor/code-editor.component";
 
 @Component({
-  selector: 'wm-mappings',
-  templateUrl: './mappings.component.html',
-  styleUrls: ['./mappings.component.scss'],
+  selector: "wm-mappings",
+  templateUrl: "./mappings.component.html",
+  styleUrls: ["./mappings.component.scss"],
 })
 export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
-  private static COPY_FAILURE = 'Was not able to copy. Details in log';
-  private static ACTION_FAILURE_PREFIX = 'Action not possible: ';
+  private static COPY_FAILURE = "Was not able to copy. Details in log";
+  private static ACTION_FAILURE_PREFIX = "Action not possible: ";
 
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
-  @ViewChild('editor') editor!: CodeEditorComponent;
+  @ViewChild("editor") editor!: CodeEditorComponent;
 
   private ngUnsubscribe: Subject<boolean> = new Subject();
 
@@ -51,12 +41,12 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   State = State;
 
   codeOptions = {
-    selectionStyle: 'text',
+    selectionStyle: "text",
     highlightActiveLine: true,
     highlightSelectedWord: true,
     readOnly: false,
-    cursorStyle: 'ace',
-    mergeUndoDeltas: 'true',
+    cursorStyle: "ace",
+    mergeUndoDeltas: "true",
     behavioursEnabled: true,
     wrapBehavioursEnabled: true,
     copyWithEmptySelection: true,
@@ -70,8 +60,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     showGutter: true,
     displayIndentGuides: true,
     fontSize: 14,
-    fontFamily:
-      'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     showLineNumbers: true,
     // ..
     wrap: true,
@@ -79,12 +68,12 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   };
 
   codeReadOnlyOptions = {
-    selectionStyle: 'text',
+    selectionStyle: "text",
     highlightActiveLine: true, // readOnly
     highlightSelectedWord: true,
     readOnly: true, // readOnly
-    cursorStyle: 'ace',
-    mergeUndoDeltas: 'true',
+    cursorStyle: "ace",
+    mergeUndoDeltas: "true",
     behavioursEnabled: true,
     wrapBehavioursEnabled: true,
     copyWithEmptySelection: true,
@@ -98,8 +87,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     showGutter: true,
     displayIndentGuides: true,
     fontSize: 14,
-    fontFamily:
-      'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     showLineNumbers: true,
     // ..
     wrap: true,
@@ -122,7 +110,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   ngOnInit() {
     this.webSocketService
-      .observe('mappings')
+      .observe("mappings")
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
@@ -142,7 +130,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
         this.loadActualMappings(new ProxyConfig().deserialze(proxyData));
       },
       error: () => {
-        console.log('Could not load proxy config. Proxy feature deactivated');
+        console.log("Could not load proxy config. Proxy feature deactivated");
         this.loadActualMappings();
       },
     });
@@ -151,10 +139,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   private loadActualMappings(proxyConfig?: ProxyConfig) {
     this.wiremockService.getMappings().subscribe({
       next: data => {
-        this.result = new ListStubMappingsResult().deserialize(
-          data,
-          proxyConfig
-        );
+        this.result = new ListStubMappingsResult().deserialize(data, proxyConfig);
       },
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);
@@ -170,9 +155,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     this.currentMappingText = this.editorText;
     this.editMode = State.NEW;
     this.tabSelectionService.selectTab(Tab.RAW);
-    this.editorText = UtilService.prettify(
-      UtilService.itemModelStringify(StubMapping.createEmpty())
-    );
+    this.editorText = UtilService.prettify(UtilService.itemModelStringify(StubMapping.createEmpty()));
   }
 
   saveNewMapping() {
@@ -180,9 +163,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       this.wiremockService.saveNewMapping(this.editorText).subscribe({
         next: data => {
           this.activeItemId = data.getId();
-          this.messageService.setMessage(
-            new Message('save successful', MessageType.INFO, 2000)
-          );
+          this.messageService.setMessage(new Message("save successful", MessageType.INFO, 2000));
         },
         error: err => {
           UtilService.showErrorMessage(this.messageService, err);
@@ -201,19 +182,15 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   saveEditMapping(item: Item) {
     if (this.editorText) {
-      this.wiremockService
-        .saveMapping(item.getId(), this.editorText)
-        .subscribe({
-          next: data => {
-            this.activeItemId = data.getId();
-            this.messageService.setMessage(
-              new Message('save successful', MessageType.INFO, 2000)
-            );
-          },
-          error: err => {
-            UtilService.showErrorMessage(this.messageService, err);
-          },
-        });
+      this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe({
+        next: data => {
+          this.activeItemId = data.getId();
+          this.messageService.setMessage(new Message("save successful", MessageType.INFO, 2000));
+        },
+        error: err => {
+          UtilService.showErrorMessage(this.messageService, err);
+        },
+      });
       this.editMode = State.NORMAL;
     }
   }
@@ -222,7 +199,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     if (item) {
       this.editorText = item.getCode();
     } else {
-      this.editorText = '';
+      this.editorText = "";
     }
     this.editMode = State.NORMAL;
   }
@@ -263,9 +240,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   removeAllMappings() {
     this.wiremockService.deleteAllMappings().subscribe({
       next: () => {
-        this.messageService.setMessage(
-          new Message('All mappings removed', MessageType.INFO, 3000)
-        );
+        this.messageService.setMessage(new Message("All mappings removed", MessageType.INFO, 3000));
       },
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);
@@ -276,13 +251,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   resetAllScenarios() {
     this.wiremockService.resetScenarios().subscribe({
       next: () => {
-        this.messageService.setMessage(
-          new Message(
-            'Reset of all scenarios successful',
-            MessageType.INFO,
-            3000
-          )
-        );
+        this.messageService.setMessage(new Message("Reset of all scenarios successful", MessageType.INFO, 3000));
       },
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);
@@ -299,13 +268,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   private showHelperErrorMessage(err: any) {
     this.messageService.setMessage(
       new Message(
-        err.name +
-          ': message=' +
-          err.message +
-          ', lineNumber=' +
-          err.lineNumber +
-          ', columnNumber=' +
-          err.columnNumber,
+        err.name + ": message=" + err.message + ", lineNumber=" + err.lineNumber + ", columnNumber=" + err.columnNumber,
         MessageType.ERROR,
         10000
       )
@@ -328,94 +291,60 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       return;
     }
     try {
-      this.editorText = UtilService.prettify(
-        UtilService.itemModelStringify(mapping)
-      );
+      this.editorText = UtilService.prettify(UtilService.itemModelStringify(mapping));
     } catch (err) {
       this.showHelperErrorMessage(err);
     }
   }
 
   helpersAddFolder(): void {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddFolder(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddFolder(this.getMappingForHelper()));
   }
 
   helpersAddDelay(): void {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddDelay(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddDelay(this.getMappingForHelper()));
   }
 
   helpersAddPriority(): void {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddPriority(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddPriority(this.getMappingForHelper()));
   }
 
   helpersAddHeaderRequest(): void {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddHeaderRequest(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddHeaderRequest(this.getMappingForHelper()));
   }
 
   helpersAddHeaderResponse(): void {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddHeaderResponse(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddHeaderResponse(this.getMappingForHelper()));
   }
 
   helpersAddScenario() {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddScenario(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddScenario(this.getMappingForHelper()));
   }
 
   helpersToJsonBody() {
     try {
-      this.setMappingForHelper(
-        MappingHelperService.helperToJsonBody(this.getMappingForHelper())
-      );
+      this.setMappingForHelper(MappingHelperService.helperToJsonBody(this.getMappingForHelper()));
     } catch (err) {
       this.messageService.setMessage(
-        new Message(
-          MappingsComponent.ACTION_FAILURE_PREFIX + 'Probably no json',
-          MessageType.ERROR,
-          10000
-        )
+        new Message(MappingsComponent.ACTION_FAILURE_PREFIX + "Probably no json", MessageType.ERROR, 10000)
       );
     }
   }
 
   helpersAddProxyUrl() {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddProxyBaseUrl(this.getMappingForHelper())
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddProxyBaseUrl(this.getMappingForHelper()));
   }
 
   helpersAddRemoveProxyPathPrefix() {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddRemoveProxyPathPrefix(
-        this.getMappingForHelper()
-      )
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddRemoveProxyPathPrefix(this.getMappingForHelper()));
   }
 
   helpersAddProxyHeader() {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddAdditionalProxyRequestHeaders(
-        this.getMappingForHelper()
-      )
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddAdditionalProxyRequestHeaders(this.getMappingForHelper()));
   }
 
   helpersAddTransformer() {
-    this.setMappingForHelper(
-      MappingHelperService.helperAddResponseTemplatingTransformer(
-        this.getMappingForHelper()
-      )
-    );
+    this.setMappingForHelper(MappingHelperService.helperAddResponseTemplatingTransformer(this.getMappingForHelper()));
   }
 
   ngOnDestroy(): void {
@@ -425,37 +354,25 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   helpersCopyJsonPath() {
     if (UtilService.copyToClipboard("{{jsonPath request.body '$.'}}")) {
-      this.messageService.setMessage(
-        new Message('jsonPath copied to clipboard', MessageType.INFO, 3000)
-      );
+      this.messageService.setMessage(new Message("jsonPath copied to clipboard", MessageType.INFO, 3000));
     } else {
-      this.messageService.setMessage(
-        new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000)
-      );
+      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000));
     }
   }
 
   helpersCopyXpath() {
     if (UtilService.copyToClipboard("{{xPath request.body '/'}}")) {
-      this.messageService.setMessage(
-        new Message('xPath copied to clipboard', MessageType.INFO, 3000)
-      );
+      this.messageService.setMessage(new Message("xPath copied to clipboard", MessageType.INFO, 3000));
     } else {
-      this.messageService.setMessage(
-        new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000)
-      );
+      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000));
     }
   }
 
   helpersCopySoap() {
     if (UtilService.copyToClipboard("{{soapXPath request.body '/'}}")) {
-      this.messageService.setMessage(
-        new Message('soapXPath copied to clipboard', MessageType.INFO, 3000)
-      );
+      this.messageService.setMessage(new Message("soapXPath copied to clipboard", MessageType.INFO, 3000));
     } else {
-      this.messageService.setMessage(
-        new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000)
-      );
+      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000));
     }
   }
 

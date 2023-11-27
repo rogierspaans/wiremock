@@ -1,7 +1,7 @@
-import { Item } from './item';
-import { UtilService } from '../../services/util.service';
-import { Proxy } from './proxy';
-import moment from 'moment';
+import { Item } from "./item";
+import { UtilService } from "../../services/util.service";
+import { Proxy } from "./proxy";
+import moment from "moment";
 
 export class LoggedRequest extends Proxy implements Item {
   url!: string;
@@ -31,13 +31,10 @@ export class LoggedRequest extends Proxy implements Item {
 
   getSubtitle(): string {
     let soap;
-    if (
-      UtilService.isDefined(this.body) &&
-      (soap = UtilService.getSoapMethodRegex().exec(this.body))
-    ) {
+    if (UtilService.isDefined(this.body) && (soap = UtilService.getSoapMethodRegex().exec(this.body))) {
       return soap[2];
     }
-    return 'method=' + this.method;
+    return "method=" + this.method;
   }
 
   getId(): string {
@@ -60,7 +57,7 @@ export class LoggedRequest extends Proxy implements Item {
 
   deserialize(unchecked: LoggedRequest): LoggedRequest {
     // We hide a generated id in a "transient" layer
-    UtilService.transient(this, 'id', UtilService.generateUUID());
+    UtilService.transient(this, "id", UtilService.generateUUID());
     this.url = unchecked.url;
     this.absoluteUrl = unchecked.absoluteUrl;
     this.clientIp = unchecked.clientIp;

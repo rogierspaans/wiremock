@@ -1,7 +1,7 @@
 const PROXY_CONFIG = [
   {
-    context: ['/__admin/mappings', '/__admin/requests', '/__admin/recordings/**', '/__admin/proxy'],
-    target: 'http://127.0.0.1:8089',
+    context: ["/__admin/mappings", "/__admin/requests", "/__admin/recordings/**", "/__admin/proxy"],
+    target: "http://127.0.0.1:8089",
     secure: false,
   },
 ];

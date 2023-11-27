@@ -11,19 +11,19 @@ import {
   SimpleChanges,
   ViewChild,
   ViewChildren,
-} from '@angular/core';
-import { Item } from '../../model/wiremock/item';
-import { UtilService } from '../../services/util.service';
-import { WiremockService } from '../../services/wiremock.service';
-import { MessageService } from '../message/message.service';
+} from "@angular/core";
+import { Item } from "../../model/wiremock/item";
+import { UtilService } from "../../services/util.service";
+import { WiremockService } from "../../services/wiremock.service";
+import { MessageService } from "../message/message.service";
 
 @Component({
-  selector: 'wm-list-view',
-  templateUrl: './list-view.component.html',
-  styleUrls: ['./list-view.component.scss'],
+  selector: "wm-list-view",
+  templateUrl: "./list-view.component.html",
+  styleUrls: ["./list-view.component.scss"],
 })
 export class ListViewComponent implements OnChanges, AfterViewChecked {
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
   @Input()
   items?: Item[];
@@ -41,10 +41,10 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
   @Output()
   activeItemChange: EventEmitter<Item> = new EventEmitter();
 
-  @ViewChild('childrenContainer')
+  @ViewChild("childrenContainer")
   childrenContainer!: ElementRef;
 
-  @ViewChildren('listChildren')
+  @ViewChildren("listChildren")
   listChildren!: QueryList<ElementRef>;
 
   constructor(
@@ -63,7 +63,7 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
   ngOnChanges(changes: SimpleChanges): void {
     let changed = false;
 
-    if (changes['items'] && this.items) {
+    if (changes["items"] && this.items) {
       if (this.items.length > this.pageSize) {
         const maxPages = Math.ceil(this.items.length / this.pageSize);
         if (maxPages < this.page) {
@@ -94,10 +94,7 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
 
   private setFilteredItems() {
     if (this.items) {
-      this.filteredItems = this.items.slice(
-        (this.page - 1) * this.pageSize,
-        this.page * this.pageSize
-      );
+      this.filteredItems = this.items.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
     }
   }
 
@@ -135,11 +132,7 @@ export class ListViewComponent implements OnChanges, AfterViewChecked {
     if (this.activeItemChanged) {
       this.activeItemChanged = false;
       // only once after something changed.
-      UtilService.scrollIntoView(
-        this.childrenContainer,
-        this.listChildren,
-        this.activeItem
-      );
+      UtilService.scrollIntoView(this.childrenContainer, this.listChildren, this.activeItem);
     }
   }
 }

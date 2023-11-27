@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SearchService {
   private search = new BehaviorSubject<string | undefined>(undefined);

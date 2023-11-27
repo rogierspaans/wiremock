@@ -1,5 +1,5 @@
-import { TreeNode } from './tree-node';
-import { Item } from '../wiremock/item';
+import { TreeNode } from "./tree-node";
+import { Item } from "../wiremock/item";
 
 export class Tree {
   private root: TreeNode;
@@ -39,11 +39,7 @@ export class Tree {
     for (const node of this.preOrderTraversal()) {
       if (node.value.getId() === parentId) {
         // tslint:disable-next-line:no-non-null-assertion
-        const newNode = new TreeNode(
-          value,
-          this.find(parentId)!.depth + 1,
-          node
-        );
+        const newNode = new TreeNode(value, this.find(parentId)!.depth + 1, node);
         node.children.push(newNode);
         return newNode;
       }

@@ -5,10 +5,7 @@
   [size]="'sm'"
   [page]="page"
   (pageChange)="onPageChange($event)"></ngb-pagination>
-<div
-  #childrenContainer
-  *ngIf="filteredItems?.length || 0 > 0"
-  class="wmHolyGrailScroll wmListView">
+<div #childrenContainer *ngIf="filteredItems?.length || 0 > 0" class="wmHolyGrailScroll wmListView">
   <div class="wmListScrollWrapper">
     <ul class="list-group wmListGroup">
       <li

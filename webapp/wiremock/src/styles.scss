@@ -1,4 +1,4 @@
-@import 'bootstrapCustom';
+@import "bootstrapCustom";
 
 .tab-pane {
   display: flex !important;
@@ -64,8 +64,7 @@
   //height: auto;
   padding: 0.5em;
   font-size: 14px;
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   border: 0;
   white-space: pre-wrap;
   word-break: break-all;
