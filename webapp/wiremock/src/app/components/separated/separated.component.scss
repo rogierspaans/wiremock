@@ -7,6 +7,19 @@
   border-bottom-right-radius: $card-border-radius;
 }
 
+.table {
+  height: 1px;
+}
+
+.table td {
+  padding: .25em;
+  height: 100%;
+
+  wm-code-entry {
+    height: 100%;
+  }
+}
+
 .table tr > td:not(:first-child) {
   padding: 0;
 }
@@ -26,4 +39,5 @@
 .wmStubMappingLink {
   display: inline-block;
   padding: 7px;
+  font-size: 14px;
 }
