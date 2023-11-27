@@ -16,37 +16,34 @@ import {
   NgbPopoverModule,
   NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import {
-  FontAwesomeModule,
-  FaIconLibrary,
-} from '@fortawesome/angular-fontawesome';
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faAlignJustify,
   faAngleDoubleUp,
   faBars,
   faCamera,
+  faCheck,
+  faChevronDown,
+  faChevronRight,
   faClock,
   faCog,
   faCopy,
   faDotCircle,
   faExchangeAlt,
   faFileAlt,
+  faFolder,
   faLink,
+  faList,
   faPencilAlt,
+  faPlay,
   faPlus,
   faPowerOff,
   faSave,
   faSearch,
-  faPlay,
   faStop,
   faSyncAlt,
   faTimes,
   faTrash,
-  faFolder,
-  faCheck,
-  faChevronRight,
-  faChevronDown,
-  faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { ListViewComponent } from './components/list-view/list-view.component';
 import { MatchedComponent } from './components/matched/matched.component';
@@ -140,17 +137,18 @@ import { HIGHLIGHT_OPTIONS, HighlightModule } from 'ngx-highlightjs';
       provide: HIGHLIGHT_OPTIONS,
       useValue: {
         coreLibraryLoader: () => import('highlight.js/lib/core'),
-        lineNumbersLoader: () => import('ngx-highlightjs/line-numbers'), // Optional, only if you want the line numbers
+        // lineNumbersLoader: () => import('ngx-highlightjs/line-numbers'),
         languages: {
           //  'html', 'json', 'xml', 'http'
           json: () => import('highlight.js/lib/languages/json'),
           xml: () => import('highlight.js/lib/languages/xml'),
           http: () => import('highlight.js/lib/languages/http'),
         },
+        themePath: 'assets/github.css',
       },
     },
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [ AppComponent ],
 })
 export class AppModule {
   constructor(library: FaIconLibrary) {
