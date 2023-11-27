@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { UnmatchedComponent } from './unmatched.component';
+import { UnmatchedComponent } from "./unmatched.component";
 
-describe('UnmatchedComponent', () => {
+describe("UnmatchedComponent", () => {
   let component: UnmatchedComponent;
   let fixture: ComponentFixture<UnmatchedComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UnmatchedComponent ]
-    })
-    .compileComponents();
+      declarations: [UnmatchedComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('UnmatchedComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

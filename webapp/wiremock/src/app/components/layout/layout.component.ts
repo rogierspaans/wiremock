@@ -1,7 +1,6 @@
 import {
   Component,
   ContentChild,
-  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
@@ -10,43 +9,46 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  TemplateRef
-} from '@angular/core';
-import {Item} from '../../model/wiremock/item';
-import {UtilService} from '../../services/util.service';
-import {SearchEvent} from '../../model/wiremock/search-event';
-import {FormControl} from '@angular/forms';
-import {debounceTime, takeUntil} from 'rxjs/operators';
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {SearchService} from '../../services/search.service';
-import {Subject} from 'rxjs/internal/Subject';
+  TemplateRef,
+} from "@angular/core";
+import { Item } from "../../model/wiremock/item";
+import { UtilService } from "../../services/util.service";
+import { SearchEvent } from "../../model/wiremock/search-event";
+import { FormControl } from "@angular/forms";
+import { debounceTime, takeUntil } from "rxjs/operators";
+import { ActivatedRoute, Params, Router } from "@angular/router";
+import { SearchService } from "../../services/search.service";
+import { Subject } from "rxjs/internal/Subject";
 
 @Component({
-  selector: 'wm-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: [ './layout.component.scss' ]
+  selector: "wm-layout",
+  templateUrl: "./layout.component.html",
+  styleUrls: ["./layout.component.scss"],
 })
 export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
+  @HostBinding("class") classes = "wmHolyGrailBody";
 
-  @HostBinding('class') classes = 'wmHolyGrailBody';
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
-  private ngUnsubscribe: Subject<any> = new Subject();
-
-  @ContentChild('content') content: TemplateRef<ElementRef>;
-  @ContentChild('actions') actions: TemplateRef<ElementRef>;
+  @ContentChild("content") content!: TemplateRef<{
+    $implicit: Item | undefined;
+  }>;
+  @ContentChild("actions") actions!: TemplateRef<{
+    $implicit: Item | undefined;
+  }>;
 
   @Input()
-  items: Item[];
+  items?: Item[];
 
-  filteredItems: Item[];
+  filteredItems?: Item[];
 
-  activeItem: Item;
+  activeItem?: Item;
 
   @Input()
   supportsTreeView = false;
 
   @Input()
-  activeItemId: string;
+  activeItemId?: string;
 
   @Output()
   activeItemChange: EventEmitter<Item> = new EventEmitter();
@@ -58,11 +60,13 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   caseSensitiveSearchEnabled = false;
   searchClearVisible = false;
 
-  lastSearch: string;
+  lastSearch?: string;
 
-  constructor(private searchService: SearchService,
-              private activatedRoute: ActivatedRoute, private router: Router) {
-  }
+  constructor(
+    private searchService: SearchService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.search.valueChanges.pipe(takeUntil(this.ngUnsubscribe), debounceTime(200)).subscribe(next => {
@@ -75,7 +79,7 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.activatedRoute.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: Params) => {
-      this.activeItemId = params['active'];
+      this.activeItemId = params["active"];
       this.setActiveItemById(this.activeItemId, UtilService.isDefined(this.activeItemId));
     });
 
@@ -87,40 +91,44 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  private setActiveItemById(itemId: string, noClear = false) {
-    if (UtilService.isDefined(this.filteredItems)) {
+  private setActiveItemById(itemId: string | undefined, noClear = false) {
+    if (this.filteredItems) {
       this.setActiveItem(UtilService.getActiveItem(this.filteredItems, itemId));
     } else if (!noClear) {
-      this.setActiveItem(null);
+      this.setActiveItem();
     }
   }
 
-  private setActiveItem(item: Item) {
+  private setActiveItem(item?: Item) {
     this.activeItem = item;
-    if (UtilService.isDefined(this.activeItem)) {
+    if (this.activeItem) {
       this.activeItemId = this.activeItem.getId();
       const currentUrl = this.router.url;
-      const newPath = this.router.url.split('?')[0];
+      const newPath = this.router.url.split("?")[0];
 
-      if (currentUrl.indexOf(newPath) === -1 || (currentUrl.indexOf(newPath) > -1 && currentUrl.indexOf(this.activeItemId) === -1)) {
-        this.router.navigate([ this.router.url.split('?')[0] ], {queryParams: {active: this.activeItemId}});
+      if (
+        currentUrl.indexOf(newPath) === -1 ||
+        (currentUrl.indexOf(newPath) > -1 && currentUrl.indexOf(this.activeItemId) === -1)
+      ) {
+        this.router.navigate([this.router.url.split("?")[0]], {
+          queryParams: { active: this.activeItemId },
+        });
       }
     } else {
-      this.activeItemId = null;
+      this.activeItemId = undefined;
       const currentUrl = this.router.url;
-      const newUrl = this.router.url.split('?')[0];
+      const newUrl = this.router.url.split("?")[0];
       if (currentUrl !== newUrl) {
-        this.router.navigate([ newUrl ]);
+        this.router.navigate([newUrl]);
       }
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (UtilService.isUndefined(changes)) {
+    if (!changes) {
       return;
     }
-    if (UtilService.isDefined(changes.items) && (UtilService.isDefined(changes.items.currentValue)
-      || UtilService.isDefined(changes.items.previousValue))) {
+    if (changes["items"] && (changes["items"].currentValue || changes["items"].previousValue)) {
       // We only update filteredItems when actual items changed. activeItemId can be set but it is only a suggestion. This component
       // is responsible for selecting items
       this.onSearchChanged(new SearchEvent(this.lastSearch, this.caseSensitiveSearchEnabled));
@@ -128,16 +136,16 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onSearchChanged(search: SearchEvent) {
-    // this.lastSearch = search;
-    if (UtilService.isDefined(search) && UtilService.isDefined(search.text)) {
-      this.filteredItems = UtilService.deepSearch(this.items, search.text, search.caseSensitive);
-    } else {
-      this.filteredItems = UtilService.deepSearch(this.items, '', false);
+    if (this.items) {
+      if (search && search.text) {
+        this.filteredItems = UtilService.deepSearch(this.items, search.text, search.caseSensitive);
+      } else {
+        this.filteredItems = UtilService.deepSearch(this.items, "", false);
+      }
     }
 
-    if (UtilService.isDefined(this.filteredItems) && this.filteredItems.length > 0) {
-
-      const foundIndex = this.filteredItems.findIndex((item: Item, index: number) => {
+    if (this.filteredItems && this.filteredItems.length > 0) {
+      const foundIndex = this.filteredItems.findIndex((item: Item) => {
         return UtilService.isDefined(this.activeItemId) && item.getId() === this.activeItemId;
       });
 
@@ -148,11 +156,11 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
         this.onActiveItemChange(this.filteredItems[0]);
       }
     } else {
-      this.onActiveItemChange(null);
+      this.onActiveItemChange();
     }
   }
 
-  onActiveItemChange(item: Item) {
+  onActiveItemChange(item?: Item) {
     this.setActiveItem(item);
     this.activeItemChange.emit(this.activeItem);
   }
@@ -163,7 +171,7 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clearSearch() {
-    this.search.setValue('');
+    this.search.setValue("");
   }
 
   ngOnDestroy(): void {

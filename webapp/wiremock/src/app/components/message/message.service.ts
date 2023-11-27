@@ -1,17 +1,15 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class MessageService {
+  private message = new BehaviorSubject<Message | undefined>(undefined);
 
-  private message = new BehaviorSubject<Message>(null);
+  constructor() {}
 
-  constructor() {
-  }
-
-  getSubject(): BehaviorSubject<Message> {
+  getSubject(): BehaviorSubject<Message | undefined> {
     return this.message;
   }
 
@@ -22,7 +20,7 @@ export class MessageService {
 
 export class Message {
   message: string;
-  html: string;
+  html?: string;
   type: MessageType;
   duration: number;
 
@@ -35,7 +33,7 @@ export class Message {
 }
 
 export enum MessageType {
-  INFO = 'info',
-  WARN = 'warning',
-  ERROR = 'danger'
+  INFO = "info",
+  WARN = "warning",
+  ERROR = "danger",
 }

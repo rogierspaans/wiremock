@@ -1,14 +1,11 @@
-import {Directive, HostBinding} from '@angular/core';
+import { Directive, HostBinding } from "@angular/core";
 
 @Directive({
-  // tslint:disable-next-line:directive-selector
-  selector: 'wm-raw-separated-test'
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: "wm-raw-separated-test",
 })
 export class TestDirective {
+  @HostBinding("class") classes = "wmHolyGrailBody";
 
-  @HostBinding('class') classes = 'wmHolyGrailBody';
-
-  constructor() {
-  }
-
+  constructor() {}
 }

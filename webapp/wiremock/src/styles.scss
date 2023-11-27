@@ -1,20 +1,24 @@
 @import "bootstrapCustom";
+@import "highlight";
+@import "ace";
 
 .tab-pane {
-  display: flex!important;
+  display: flex !important;
   flex: 1;
 }
 
 .wmTabs > .nav {
   margin: 0;
-  padding: .5rem 1.25rem 0;
+  padding: 0.5rem 1.25rem 0;
 }
 
 .hidden {
   display: none !important;
 }
 
-.wmFormGroupLeft, .wmFormGroupMid, .wmFormGroupRight {
+.wmFormGroupLeft,
+.wmFormGroupMid,
+.wmFormGroupRight {
   position: relative;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
@@ -26,14 +30,16 @@
   }
 }
 
-.wmFormGroupRight, .wmFormGroupMid {
+.wmFormGroupRight,
+.wmFormGroupMid {
   > .form-control {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
 }
 
-.wmFormGroupLeft, .wmFormGroupMid {
+.wmFormGroupLeft,
+.wmFormGroupMid {
   > .form-control {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -74,9 +80,12 @@ body {
   flex-direction: column;
 }
 
-.wmHolyGrailBody, .wmTabs > .tab-content, .wmTabs > .tab-content > .tab-pane {
+.wmHolyGrailBody,
+.wmTabs > .tab-content,
+.wmTabs > .tab-content > .tab-pane {
   display: flex;
   flex: 1;
+
   &.column {
     flex-direction: column;
   }
@@ -88,6 +97,7 @@ body {
   flex-grow: 1;
   overflow: auto;
   position: relative;
+
   > * {
     position: absolute;
     width: 100%;
@@ -105,7 +115,6 @@ body {
 
 .pagination {
   flex-wrap: wrap;
-  border-top: 1px solid $border-color;
   margin: 0 0 -1px;
 }
 
@@ -185,7 +194,6 @@ body {
   min-height: 70%;
 }
 
-
 // Ace-Editor
 .ace_search_form {
   display: flex;
@@ -196,13 +204,80 @@ body {
 }
 
 .ace_searchbtn {
-  display: flex!important;
+  display: flex !important;
   align-items: center;
 }
 
 // Firefox specific
 
 .modal-dialog {
- height: calc(100% - 2*1.75rem);
+  height: calc(100% - 2 * 1.75rem);
 }
 
+// Dark mode needs some global styles so moved some things here. At least in case it is color related
+
+// TreeView
+.wmFolderContainer {
+  height: 30px;
+  background-color: lighten($info, 50%);
+}
+
+.wmFolderContainer:hover {
+  background-color: lighten($info, 30%);
+}
+
+@include color-mode(dark) {
+  .wmFolderContainer {
+    background-color: $info;
+  }
+
+  .wmFolderContainer:hover {
+    background-color: darken($info, 20%);
+  }
+}
+
+// StateMachine
+#wmStateMachine {
+  background-color: $light-bg-subtle;
+}
+
+@include color-mode(dark) {
+  #wmStateMachine {
+    background-color: $dark-bg-subtle-dark;
+  }
+}
+
+// NavBar
+#wmNavBar {
+  background-color: $gray-100;
+  border-bottom: 1px solid $navbar-light-toggler-border-color;
+}
+
+@include color-mode(dark) {
+  #wmNavBar {
+    background-color: $dark-bg-subtle-dark;
+    border-bottom: 1px solid $navbar-dark-toggler-border-color;
+  }
+}
+
+// SubMappingLink
+#wmSeparatedStubMapping {
+  background-color: $gray-100;
+}
+
+@include color-mode(dark) {
+  #wmSeparatedStubMapping {
+    background-color: $dark-bg-subtle-dark;
+  }
+}
+
+// Pagination
+ngb-pagination {
+  border-bottom: 1px solid $navbar-light-toggler-border-color;
+}
+
+@include color-mode(dark) {
+  ngb-pagination {
+    border-bottom: 1px solid $navbar-dark-toggler-border-color;
+  }
+}

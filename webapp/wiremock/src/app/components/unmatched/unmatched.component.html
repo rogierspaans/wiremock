@@ -1,11 +1,15 @@
-<wm-layout [items]="requestResult?.requests">
+<wm-layout [items]="requestResult ? requestResult.requests : []">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-secondary" [disabled]="!activeItem" (click)="copyRequest(activeItem)">
         <fa-icon icon="copy"></fa-icon>
         Copy Request
       </button>
-      <button type="button" class="btn btn-secondary" [disabled]="!isSoapRequest(activeItem)" (click)="copySoap(activeItem)">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="!isSoapRequest(activeItem)"
+        (click)="copySoap(activeItem)">
         <fa-icon icon="copy"></fa-icon>
         Copy SOAP
       </button>
@@ -43,6 +47,4 @@
       </wm-raw-separated-separated>
     </wm-raw-separated>
   </ng-template>
-
 </wm-layout>
-

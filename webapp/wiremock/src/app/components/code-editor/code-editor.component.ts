@@ -1,34 +1,40 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  Component, ElementRef,
+  Component,
+  ElementRef,
   EventEmitter,
-  Input, NgZone,
-  OnChanges, OnDestroy,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
   OnInit,
   Output,
-  SimpleChanges, ViewChild
-} from '@angular/core';
-import {UtilService} from '../../services/util.service';
-import {Subject, timer} from 'rxjs';
-import * as ace from 'ace-builds';
-import {debounce, takeUntil} from 'rxjs/operators';
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
+import { UtilService } from "../../services/util.service";
+import { Subject } from "rxjs";
+import * as ace from "ace-builds";
+import { Ace } from "ace-builds";
+import { takeUntil } from "rxjs/operators";
+import { ThemeService } from "../../services/theme.service";
+import Editor = Ace.Editor;
 
 @Component({
-  selector: 'wm-code-editor',
-  templateUrl: './code-editor.component.html',
-  styleUrls: [ './code-editor.component.scss' ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "wm-code-editor",
+  templateUrl: "./code-editor.component.html",
+  styleUrls: ["./code-editor.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
-
   public static DEFAULT_OPTIONS = {
-    selectionStyle: 'text',
+    selectionStyle: "text",
     highlightActiveLine: true,
     highlightSelectedWord: true,
     readOnly: false,
-    cursorStyle: 'ace',
-    mergeUndoDeltas: 'true',
+    cursorStyle: "ace",
+    mergeUndoDeltas: "true",
     behavioursEnabled: true,
     wrapBehavioursEnabled: true,
     autoScrollEditorIntoView: true, // we need that
@@ -48,37 +54,37 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
     // ..
     // firstLineNumber: 1
     wrap: true,
-    enableMultiselect: true
+    enableMultiselect: true,
     // maxLines: 100
     // minLines: 10
   };
 
-  @ViewChild('editorCanvas')
-  editorCanvas: ElementRef;
+  @ViewChild("editorCanvas")
+  editorCanvas!: ElementRef;
 
-  private editor;
+  private editor?: Editor;
 
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   private editorChanges: Subject<string> = new Subject();
 
-  _code: string;
+  _code!: string;
 
   @Input()
-  set code(value: string) {
+  set code(value: string | undefined) {
     if (this._code !== value) {
-      if (value === null || typeof value === 'undefined') {
-        this._code = '';
+      if (UtilService.isUndefined(value)) {
+        this._code = "";
       } else {
         // prettify with cast to string. Due to javascript type in-safety
-        this._code = UtilService.prettify(value) + '';
+        this._code = UtilService.prettify(value) + "";
       }
       this.setEditorValue();
     }
   }
 
   @Input()
-  language: string;
+  language!: string;
 
   @Input()
   options = CodeEditorComponent.DEFAULT_OPTIONS;
@@ -86,83 +92,97 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   @Output()
   valueChange = new EventEmitter<string>();
 
-  constructor(private zone: NgZone) {
-  }
+  constructor(
+    private zone: NgZone,
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
     // debounce fast changes which occur in copy / paste scenarios and make ace crash if value is changed during paste scenario.
-    this.editorChanges.pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(value => {
-        this._code = value;
-        this.valueChange.emit(this._code);
-      });
+    this.editorChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
+      this._code = value;
+      this.valueChange.emit(this._code);
+    });
+
+    this.themeService.changes$.subscribe(theme => {
+      this.setTheme();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (UtilService.isDefined(this.editor)) {
-
-      if (UtilService.isDefined(changes.options)) {
+    if (this.editor) {
+      if (changes["options"]) {
         this.zone.runOutsideAngular(() => {
           this.setOptions();
         });
       }
 
-      if (UtilService.isDefined(changes.language)) {
+      if (changes["language"]) {
         this.zone.runOutsideAngular(() => {
-          this.editor.session.setMode('ace/mode/' + this.language);
+          if (this.editor) {
+            this.editor.session.setMode("ace/mode/" + this.language);
+          }
         });
       }
     }
   }
 
   private setEditorValue() {
-    if (UtilService.isDefined(this.editor) && typeof this._code !== 'undefined') {
+    if (this.editor && UtilService.isDefined(this._code)) {
       this.zone.runOutsideAngular(() => {
-        this.editor.setValue(this._code);
-        this.editor.selection.clearSelection();
+        if (this.editor && UtilService.isDefined(this._code)) {
+          this.editor.setValue(this._code);
+          this.editor.selection.clearSelection();
+        }
       });
     }
   }
 
-  getCode(): string {
+  getCode(): string | undefined {
     return this._code;
   }
 
   refresh(): void {
-    if (UtilService.isDefined(this.editor)) {
+    if (this.editor) {
       this.setEditorValue();
     }
   }
 
   resize(): void {
-    if (UtilService.isDefined(this.editor)) {
+    if (this.editor) {
       this.editor.resize();
     }
   }
 
   private setOptions() {
-    this.editor.setOptions(this.options);
-    if (this.options.readOnly === true) {
-      this.editor.renderer.$cursorLayer.element.style.display = 'none';
-    } else {
-      this.editor.renderer.$cursorLayer.element.style.display = 'block';
+    if (this.editor) {
+      this.editor.setOptions(this.options);
+      if (this.options.readOnly) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.editor.renderer as any).$cursorLayer.element.style.display = "none";
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.editor.renderer as any).$cursorLayer.element.style.display = "block";
+      }
     }
   }
 
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
       this.editor = ace.edit(this.editorCanvas.nativeElement);
-      this.editor.setTheme('ace/theme/monokai');
-      this.editor.container.style.lineHeight = 1.5;
+      this.setTheme();
+      this.editor.container.style.lineHeight = "1.5";
       this.setOptions();
-      this.editor.session.setMode('ace/mode/' + this.language);
+      this.editor.session.setMode("ace/mode/" + this.language);
       this.setEditorValue();
 
-      this.editor.session.on('change', () => {
+      this.editor.session.on("change", () => {
         // param would be delta but I do not need it
         // delta.start, delta.end, delta.lines, delta.action
         this.zone.run(() => {
-          this.editorChanges.next(this.editor.getValue());
+          if (this.editor) {
+            this.editorChanges.next(this.editor.getValue());
+          }
         });
       });
     });
@@ -171,5 +191,17 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
+  }
+
+  setTheme() {
+    if (this.editor) {
+      const theme = this.themeService.getPreferredResolvedTheme();
+
+      if (theme === "dark") {
+        this.editor.setTheme("ace/theme/github_dark");
+      } else {
+        this.editor.setTheme("ace/theme/github");
+      }
+    }
   }
 }

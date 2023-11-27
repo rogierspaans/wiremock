@@ -1,28 +1,27 @@
-import {Component, OnInit} from '@angular/core';
-import {Message, MessageService, MessageType} from './message.service';
-import {UtilService} from '../../services/util.service';
+import { Component } from "@angular/core";
+import { Message, MessageService } from "./message.service";
 
 @Component({
   // selector: 'wm-message',
-  selector: 'wm-message',
-  templateUrl: './message.component.html',
-  styleUrls: [ './message.component.scss' ]
+  selector: "wm-message",
+  templateUrl: "./message.component.html",
+  styleUrls: ["./message.component.scss"],
 })
-export class MessageComponent implements OnInit {
-
+export class MessageComponent {
   // @HostBinding('class') classes = 'wmAlert';
 
-  message: Message;
+  message?: Message;
 
-  timeout: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  timeout?: any;
 
   constructor(private messageService: MessageService) {
-    this.message = null;
+    this.message = undefined;
 
     this.messageService.getSubject().subscribe(next => {
       this.message = next;
 
-      if (UtilService.isDefined(next) && UtilService.isDefined(next.duration)) {
+      if (next && next.duration) {
         if (this.timeout) {
           clearTimeout(this.timeout);
         }
@@ -33,10 +32,7 @@ export class MessageComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
-
   closeAlert() {
-    this.message = null;
+    this.message = undefined;
   }
 }

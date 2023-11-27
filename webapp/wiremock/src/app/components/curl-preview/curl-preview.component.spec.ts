@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CurlPreviewComponent } from './curl-preview.component';
+import { CurlPreviewComponent } from "./curl-preview.component";
 
-describe('CurlPreviewComponent', () => {
+describe("CurlPreviewComponent", () => {
   let component: CurlPreviewComponent;
   let fixture: ComponentFixture<CurlPreviewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CurlPreviewComponent ]
-    })
-    .compileComponents();
+      declarations: [CurlPreviewComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('CurlPreviewComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,4 +1,4 @@
-<wm-layout [items]="serveEventResult?.requests">
+<wm-layout [items]="serveEventResult ? serveEventResult.requests : []">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
       <div ngbDropdown class="btn-group" role="group">
@@ -35,5 +35,4 @@
       </wm-raw-separated-separated>
     </wm-raw-separated>
   </ng-template>
-
 </wm-layout>

@@ -1,29 +1,30 @@
 import {
-  AfterViewInit,
-  Component, ContentChild, ElementRef, EventEmitter,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
-  OnInit, Output,
-  ViewChild,
-  ViewEncapsulation
-} from '@angular/core';
-import {takeUntil} from 'rxjs/operators';
-import {UtilService} from '../../services/util.service';
-import {Tab, TabSelectionService} from '../../services/tab-selection.service';
-import {Subject} from 'rxjs/internal/Subject';
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from "@angular/core";
+import { takeUntil } from "rxjs/operators";
+import { UtilService } from "../../services/util.service";
+import { Tab, TabSelectionService } from "../../services/tab-selection.service";
+import { Subject } from "rxjs/internal/Subject";
 
 @Component({
-  selector: 'wm-raw-separated',
-  templateUrl: './raw-separated.component.html',
-  styleUrls: [ './raw-separated.component.scss' ],
-  encapsulation: ViewEncapsulation.None
+  selector: "wm-raw-separated",
+  templateUrl: "./raw-separated.component.html",
+  styleUrls: ["./raw-separated.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
-export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class RawSeparatedComponent implements OnInit, OnDestroy {
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
-
-  private ngUnsubscribe: Subject<any> = new Subject();
+  private ngUnsubscribe: Subject<boolean> = new Subject();
 
   @Input()
   separatedDisabled = false;
@@ -40,8 +41,8 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output()
   activeIdChanged = new EventEmitter<Tab>();
 
-  @ContentChild('wm-raw-separated-test')
-  test: ElementRef;
+  @ContentChild("wm-raw-separated-test")
+  test!: ElementRef;
 
   activeId = Tab.RAW;
 
@@ -49,8 +50,7 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
   SEPARATED = Tab.SEPARATED;
   TEST = Tab.TEST;
 
-  constructor(private tabSelectionService: TabSelectionService) {
-  }
+  constructor(private tabSelectionService: TabSelectionService) {}
 
   ngOnInit() {
     this.tabSelectionService.tab$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(tabToSelect => {
@@ -61,13 +61,9 @@ export class RawSeparatedComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
-  }
-
-  ngAfterViewInit(): void {
   }
 
   onActiveIdChange($event: Tab) {

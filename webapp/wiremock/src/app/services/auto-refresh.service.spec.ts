@@ -1,15 +1,15 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed, inject } from "@angular/core/testing";
 
-import { AutoRefreshService } from './auto-refresh.service';
+import { AutoRefreshService } from "./auto-refresh.service";
 
-describe('AutoRefreshService', () => {
+describe("AutoRefreshService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AutoRefreshService]
+      providers: [AutoRefreshService],
     });
   });
 
-  it('should be created', inject([AutoRefreshService], (service: AutoRefreshService) => {
+  it("should be created", inject([AutoRefreshService], (service: AutoRefreshService) => {
     expect(service).toBeTruthy();
   }));
 });

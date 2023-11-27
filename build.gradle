@@ -15,9 +15,9 @@ plugins {
   id 'idea'
   id 'eclipse'
   id 'project-report'
-  id 'com.diffplug.spotless' version '6.21.0'
+  id 'com.diffplug.spotless' version '6.22.0'
   id 'com.github.johnrengelman.shadow' version '8.1.0'
-  id "org.sonarqube" version "4.3.1.3277"
+  id "org.sonarqube" version "4.4.1.3373"
   id 'jacoco'
 }
 
@@ -25,13 +25,13 @@ group = 'org.wiremock'
 
 project.ext {
   versions = [
-    handlebars     : '4.3.1',
-    jetty          : '11.0.16',
-    guava          : '32.1.2-jre',
-    jackson        : '2.15.2',
-    xmlUnit        : '2.9.1',
-    jsonUnit       : '2.38.0',
-    junitJupiter   : '5.10.0'
+    handlebars  : '4.3.1',
+    jetty       : '11.0.18',
+    guava       : '32.1.3-jre',
+    jackson     : '2.15.3',
+    xmlUnit     : '2.9.1',
+    jsonUnit    : '2.38.0',
+    junitJupiter: '5.10.0'
   ]
 }
 
@@ -78,7 +78,7 @@ dependencies {
   api "com.jayway.jsonpath:json-path:2.8.0", {
     exclude group: 'org.ow2.asm', module: 'asm'
   }
-  api "org.ow2.asm:asm:9.5"
+  api "org.ow2.asm:asm:9.6"
 
   implementation "org.slf4j:slf4j-api:1.7.36"
   standaloneOnly "org.slf4j:slf4j-nop:1.7.36"
@@ -99,10 +99,10 @@ dependencies {
     exclude group: 'org.mozilla', module: 'rhino'
   }
 
-  api 'commons-fileupload:commons-fileupload:1.5',  {
+  api 'commons-fileupload:commons-fileupload:1.5', {
     exclude group: 'commons-io', module: 'commons-io'
   }
-  api "commons-io:commons-io:2.13.0"
+  api "commons-io:commons-io:2.15.0"
 
   api 'com.networknt:json-schema-validator:1.0.87'
 
@@ -116,14 +116,14 @@ dependencies {
 
   testImplementation "org.hamcrest:hamcrest-core:2.2"
   testImplementation "org.hamcrest:hamcrest-library:2.2"
-  testImplementation 'org.mockito:mockito-core:5.5.0'
-  testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+  testImplementation 'org.mockito:mockito-core:5.6.0'
+  testImplementation 'org.mockito:mockito-junit-jupiter:5.6.0'
   testImplementation "net.javacrumbs.json-unit:json-unit:$versions.jsonUnit"
   testImplementation "org.skyscreamer:jsonassert:1.2.3"
   testImplementation 'com.toomuchcoding.jsonassert:jsonassert:0.6.2'
   testImplementation 'org.awaitility:awaitility:4.2.0'
   testImplementation "com.googlecode.jarjar:jarjar:1.3"
-  testImplementation "commons-io:commons-io:2.13.0"
+  testImplementation "commons-io:commons-io:2.15.0"
   testImplementation 'org.scala-lang:scala-library:2.13.12'
   testImplementation 'com.tngtech.archunit:archunit-junit5:0.23.1'
 
@@ -133,13 +133,13 @@ dependencies {
   testRuntimeOnly "ch.qos.logback:logback-classic:1.4.0"
   testRuntimeOnly files('src/test/resources/classpath file source/classpathfiles.zip', 'src/test/resources/classpath-filesource.jar')
 
-  testImplementation ('net.jockx:littleproxy:1.1.3') {
+  testImplementation('net.jockx:littleproxy:1.1.3') {
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.commons', module: 'commons-lang3'
     exclude group: 'org.slf4j', module: 'slf4j-api'
     exclude group: 'io.netty', module: 'netty-all'
   }
-  testImplementation "io.netty:netty-all:4.1.98.Final"
+  testImplementation "io.netty:netty-all:4.1.99.Final"
 
   testImplementation files('test-extension/test-extension.jar')
 
@@ -184,7 +184,7 @@ allprojects {
   ext {
     runningOnCI = System.getenv('CI') == 'true'
 
-    repoUser =     this.hasProperty('sonatypeUser')     ? sonatypeUser : 'default'
+    repoUser = this.hasProperty('sonatypeUser') ? sonatypeUser : 'default'
     repoPassword = this.hasProperty('sonatypePassword') ? sonatypePassword : 'default'
 
     pomInfo = {
@@ -215,7 +215,7 @@ allprojects {
     mavenCentral()
   }
 
-  version = '3.2.0.0'
+  version = '3.3.1.0'
 
 
   sourceCompatibility = 11
@@ -447,11 +447,19 @@ task generateWebapp(type: Exec) {
   }
 }
 
+task finalizeWebapp(type: Copy) {
+  mustRunAfter generateWebapp
+  // Because of: https://github.com/angular/angular-cli/issues/26304
+  // we need to copy some things around.
+  from 'webapp/wiremock/dist/browser'
+  into 'src/main/resources/assets/webapp'
+}
+
 jar.dependsOn generateWebapp
 processResources.dependsOn generateWebapp
 
 task deleteGeneratedWebapp(type: Delete) {
-  delete "src/main/resources/assets/webapp"
+  delete 'src/main/resources/assets/webapp'
 }
 
 clean.dependsOn deleteGeneratedWebapp
@@ -557,7 +565,7 @@ tasks.withType(JavaCompile) {
 
 eclipse.classpath.file {
   whenMerged {
-    entries.find{ it.path ==~ '.*JRE_CONTAINER.*' }.each {
+    entries.find { it.path ==~ '.*JRE_CONTAINER.*' }.each {
       it.entryAttributes['module'] = true
       it.entryAttributes['add-exports'] = 'java.base/sun.security.x509=ALL-UNNAMED'
     }

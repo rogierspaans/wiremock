@@ -1,15 +1,15 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed, inject } from "@angular/core/testing";
 
-import { WiremockService } from './wiremock.service';
+import { WiremockService } from "./wiremock.service";
 
-describe('WiremockService', () => {
+describe("WiremockService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [WiremockService]
+      providers: [WiremockService],
     });
   });
 
-  it('should ...', inject([WiremockService], (service: WiremockService) => {
+  it("should ...", inject([WiremockService], (service: WiremockService) => {
     expect(service).toBeTruthy();
   }));
 });

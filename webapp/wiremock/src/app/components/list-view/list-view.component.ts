@@ -1,35 +1,37 @@
 import {
   AfterViewChecked,
-  Component, ElementRef,
+  Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
   OnChanges,
-  OnInit,
-  Output, QueryList,
-  SimpleChanges, ViewChild, ViewChildren
-} from '@angular/core';
-import {Item} from '../../model/wiremock/item';
-import {UtilService} from '../../services/util.service';
-import {WiremockService} from '../../services/wiremock.service';
-import {MessageService} from '../message/message.service';
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from "@angular/core";
+import { Item } from "../../model/wiremock/item";
+import { UtilService } from "../../services/util.service";
+import { WiremockService } from "../../services/wiremock.service";
+import { MessageService } from "../message/message.service";
 
 @Component({
-  selector: 'wm-list-view',
-  templateUrl: './list-view.component.html',
-  styleUrls: [ './list-view.component.scss' ]
+  selector: "wm-list-view",
+  templateUrl: "./list-view.component.html",
+  styleUrls: ["./list-view.component.scss"],
 })
-export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
-
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
-
-  @Input()
-  items: Item[];
-
-  filteredItems: Item[];
+export class ListViewComponent implements OnChanges, AfterViewChecked {
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
   @Input()
-  activeItem: Item;
+  items?: Item[];
+
+  filteredItems?: Item[];
+
+  @Input()
+  activeItem?: Item;
   activeItemChanged = false;
 
   pageSize = 20;
@@ -39,19 +41,16 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   @Output()
   activeItemChange: EventEmitter<Item> = new EventEmitter();
 
-  @ViewChild('childrenContainer')
-  childrenContainer: ElementRef;
+  @ViewChild("childrenContainer")
+  childrenContainer!: ElementRef;
 
-  @ViewChildren('listChildren')
-  listChildren: QueryList<ElementRef>;
+  @ViewChildren("listChildren")
+  listChildren!: QueryList<ElementRef>;
 
-  constructor(private wiremockService: WiremockService,
-              private messageService: MessageService) {
-  }
-
-
-  ngOnInit() {
-  }
+  constructor(
+    private wiremockService: WiremockService,
+    private messageService: MessageService
+  ) {}
 
   selectActiveItem(item: Item) {
     if (this.activeItem === item) {
@@ -62,10 +61,9 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
     let changed = false;
 
-    if (UtilService.isDefined(changes.items) && UtilService.isDefined(this.items)) {
+    if (changes["items"] && this.items) {
       if (this.items.length > this.pageSize) {
         const maxPages = Math.ceil(this.items.length / this.pageSize);
         if (maxPages < this.page) {
@@ -77,10 +75,11 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
       changed = true;
     }
 
-    if (UtilService.isDefined(this.activeItem) && UtilService.isDefined(this.items)) {
-      const index = this.items.findIndex((item: Item) => {
-        return item.getId() === this.activeItem.getId();
-      }) + 1;
+    if (this.activeItem && this.items) {
+      const index =
+        this.items.findIndex((item: Item) => {
+          return item.getId() === this.activeItem?.getId();
+        }) + 1;
 
       this.page = Math.ceil(index / this.pageSize);
 
@@ -94,31 +93,39 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   }
 
   private setFilteredItems() {
-    this.filteredItems = this.items.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+    if (this.items) {
+      this.filteredItems = this.items.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+    }
   }
 
   onPageChange(page: number) {
     this.page = page;
     this.setFilteredItems();
-    this.selectActiveItem(this.filteredItems[0]);
+    if (this.filteredItems) {
+      this.selectActiveItem(this.filteredItems[0]);
+    }
   }
 
   enableProxy(item: Item) {
-    this.wiremockService.enableProxy(item.getId()).subscribe(data => {
+    this.wiremockService.enableProxy(item.getId()).subscribe({
+      next: () => {
         // do nothing
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      },
+    });
   }
 
   disableProxy(item: Item) {
-    this.wiremockService.disableProxy(item.getId()).subscribe(data => {
+    this.wiremockService.disableProxy(item.getId()).subscribe({
+      next: () => {
         // do nothing
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      },
+    });
   }
 
   ngAfterViewChecked(): void {

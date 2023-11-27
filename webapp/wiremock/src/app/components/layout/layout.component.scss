@@ -1,13 +1,15 @@
+@import "../../../variables";
+
 #wmListView {
   width: 30%;
-  margin-top: -1px;
 }
 
-#wmContainer {
+#wmLayoutContainer {
   width: 70%;
 }
 
-#wmContainer, #wmControlContainer {
+#wmLayoutContainer,
+#wmLayoutControlContainer {
   display: flex;
   flex-direction: column;
 }
@@ -26,4 +28,7 @@
   padding: 5px 10px;
 }
 
-
+#wmCaseSensitiveSearchWrapper {
+  padding-top: 0;
+  padding-bottom: 0;
+}

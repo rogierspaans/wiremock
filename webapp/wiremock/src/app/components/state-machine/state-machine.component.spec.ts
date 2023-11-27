@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { StateMachineComponent } from './state-machine.component';
+import { StateMachineComponent } from "./state-machine.component";
 
-describe('StateMachineComponent', () => {
+describe("StateMachineComponent", () => {
   let component: StateMachineComponent;
   let fixture: ComponentFixture<StateMachineComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StateMachineComponent ]
-    })
-    .compileComponents();
+      declarations: [StateMachineComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('StateMachineComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

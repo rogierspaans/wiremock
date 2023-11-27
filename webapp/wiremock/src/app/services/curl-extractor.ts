@@ -1,8 +1,7 @@
-import {LoggedRequest} from '../model/wiremock/logged-request';
-import {ServeEvent} from '../model/wiremock/serve-event';
+import { LoggedRequest } from "../model/wiremock/logged-request";
+import { ServeEvent } from "../model/wiremock/serve-event";
 
 export class CurlExtractor {
-
   public static copyCurl(request: LoggedRequest | ServeEvent): string {
     return CurlExtractor.extractCurl(request).toString();
   }
@@ -22,8 +21,7 @@ export class CurlExtractor {
   }
 
   private static extractHeaders(request: LoggedRequest): Header[] {
-
-    const headers = [];
+    const headers: Header[] = [];
     const keys = Object.keys(request.headers);
 
     keys.forEach(key => {
@@ -35,18 +33,17 @@ export class CurlExtractor {
     return headers;
   }
 
-
-  private static checkProperty(property): boolean {
+  private static checkProperty(property: string): boolean {
     switch (property) {
-      case 'Postman-Token':
-      case 'User-Agent':
-      case 'Connection':
-      case 'Cookie':
-      case 'Referer':
-      case 'Accept-Encoding':
-      case 'Accept-Language':
-      case 'Cache-Control':
-      case 'Host':
+      case "Postman-Token":
+      case "User-Agent":
+      case "Connection":
+      case "Cookie":
+      case "Referer":
+      case "Accept-Encoding":
+      case "Accept-Language":
+      case "Cache-Control":
+      case "Host":
         return false;
     }
     return true;
@@ -54,11 +51,11 @@ export class CurlExtractor {
 }
 
 export class Curl {
-  private _httpMethod: string;
-  private _url: string;
-  private _body: string;
-  private _verbose: boolean;
-  private _headers: Header[];
+  private _httpMethod = "";
+  private _url = "";
+  private _body?: string;
+  private _verbose = false;
+  private _headers: Header[] = [];
 
   get httpMethod(): string {
     return this._httpMethod;
@@ -76,7 +73,7 @@ export class Curl {
     this._url = value;
   }
 
-  get body(): string {
+  get body(): string | undefined {
     return this._body;
   }
 
@@ -101,12 +98,12 @@ export class Curl {
   }
 
   public toString(): string {
-    let curlString = 'curl ';
-    curlString += this.httpMethodToString() + ' \\\n';
-    curlString += this.urlToString() + ' \\\n';
-    curlString += this.bodyToString() + ' \\\n';
+    let curlString = "curl ";
+    curlString += this.httpMethodToString() + " \\\n";
+    curlString += this.urlToString() + " \\\n";
+    curlString += this.bodyToString() + " \\\n";
     if (this.verbose) {
-      curlString += this.verboseToString() + ' \\\n';
+      curlString += this.verboseToString() + " \\\n";
     }
     curlString += this.headersToString();
 
@@ -114,28 +111,28 @@ export class Curl {
   }
 
   private httpMethodToString(): string {
-    return '-X ' + this.httpMethod;
+    return "-X " + this.httpMethod;
   }
 
   private urlToString(): string {
-    return '\'' + this.url + '\'';
+    return "'" + this.url + "'";
   }
 
   private bodyToString(): string {
-    return '-d \'' + this.body + '\'';
+    return "-d '" + this.body + "'";
   }
 
   private verboseToString(): string {
-    return '-v';
+    return "-v";
   }
 
   private headersToString(): string {
-    let headerString = '';
+    let headerString = "";
     const headers = this.headers;
     headers.forEach((header, i) => {
-      headerString += '-H \'' + header.key + ': ' + header.value + '\'';
+      headerString += "-H '" + header.key + ": " + header.value + "'";
       if (i !== this.headers.length - 1) {
-        headerString += ' \\\n';
+        headerString += " \\\n";
       }
     });
     return headerString;
@@ -143,11 +140,10 @@ export class Curl {
 }
 
 export class Header {
-  private _key: string;
-  private _value: string;
+  private _key?: string;
+  private _value?: string;
 
-
-  get key(): string {
+  get key(): string | undefined {
     return this._key;
   }
 
@@ -155,7 +151,7 @@ export class Header {
     this._key = value;
   }
 
-  get value(): string {
+  get value(): string | undefined {
     return this._value;
   }
 

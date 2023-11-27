@@ -1,23 +1,26 @@
-import {Component, HostBinding, Input, OnInit} from '@angular/core';
+import { Component, HostBinding, Input } from "@angular/core";
+import { UtilService } from "../../services/util.service";
 
 @Component({
-  selector: 'wm-code-entry',
-  templateUrl: './code-entry.component.html',
-  styleUrls: [ './code-entry.component.scss' ]
+  selector: "wm-code-entry",
+  templateUrl: "./code-entry.component.html",
+  styleUrls: ["./code-entry.component.scss"],
 })
-export class CodeEntryComponent implements OnInit {
+export class CodeEntryComponent {
+  @HostBinding("class") classes = "wmHolyGrailBody";
 
-  @HostBinding('class') classes = 'wmHolyGrailBody';
-
+  _code?: string;
   @Input()
-  code: string;
-
-  @Input()
-  language: string;
-
-  constructor() {
+  set code(value: string | undefined) {
+    if (value) {
+      this._code = UtilService.prettify(String(value));
+    } else {
+      this._code = undefined;
+    }
   }
 
-  ngOnInit() {
-  }
+  @Input()
+  language?: string;
+
+  constructor() {}
 }

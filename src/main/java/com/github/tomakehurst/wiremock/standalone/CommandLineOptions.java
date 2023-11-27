@@ -35,6 +35,8 @@ import com.github.tomakehurst.wiremock.global.GlobalSettings;
 import com.github.tomakehurst.wiremock.http.CaseInsensitiveKey;
 import com.github.tomakehurst.wiremock.http.HttpServerFactory;
 import com.github.tomakehurst.wiremock.http.ThreadPoolFactory;
+import com.github.tomakehurst.wiremock.http.client.ApacheHttpClientFactory;
+import com.github.tomakehurst.wiremock.http.client.HttpClientFactory;
 import com.github.tomakehurst.wiremock.http.trafficlistener.ConsoleNotifyingWiremockNetworkTrafficListener;
 import com.github.tomakehurst.wiremock.http.trafficlistener.DoNothingWiremockNetworkTrafficListener;
 import com.github.tomakehurst.wiremock.http.trafficlistener.WiremockNetworkTrafficListener;
@@ -497,6 +499,11 @@ public class CommandLineOptions implements Options {
   }
 
   @Override
+  public HttpClientFactory httpClientFactory() {
+    return new ApacheHttpClientFactory();
+  }
+
+  @Override
   public ThreadPoolFactory threadPoolFactory() {
     return new QueuedThreadPoolFactory();
   }
@@ -897,7 +904,7 @@ public class CommandLineOptions implements Options {
 
   @Override
   public NetworkAddressRules getProxyTargetRules() {
-    NetworkAddressRules.Builder builder = NetworkAddressRules.builder();
+    DefaultNetworkAddressRules.Builder builder = NetworkAddressRules.builder();
     if (optionSet.has(ALLOW_PROXY_TARGETS)) {
       Arrays.stream(((String) optionSet.valueOf(ALLOW_PROXY_TARGETS)).split(","))
           .forEach(builder::allow);
@@ -932,7 +939,7 @@ public class CommandLineOptions implements Options {
   @Override
   public int proxyTimeout() {
     return optionSet.has(PROXY_TIMEOUT)
-        ? Integer.valueOf((String) optionSet.valueOf(PROXY_TIMEOUT))
+        ? Integer.parseInt((String) optionSet.valueOf(PROXY_TIMEOUT))
         : DEFAULT_TIMEOUT;
   }
 
@@ -968,11 +975,10 @@ public class CommandLineOptions implements Options {
 
   private boolean isAsynchronousResponseEnabled() {
     return optionSet.has(ASYNCHRONOUS_RESPONSE_ENABLED)
-        ? Boolean.valueOf((String) optionSet.valueOf(ASYNCHRONOUS_RESPONSE_ENABLED))
-        : false;
+        && Boolean.parseBoolean((String) optionSet.valueOf(ASYNCHRONOUS_RESPONSE_ENABLED));
   }
 
   private int getAsynchronousResponseThreads() {
-    return Integer.valueOf((String) optionSet.valueOf(ASYNCHRONOUS_RESPONSE_THREADS));
+    return Integer.parseInt((String) optionSet.valueOf(ASYNCHRONOUS_RESPONSE_THREADS));
   }
 }

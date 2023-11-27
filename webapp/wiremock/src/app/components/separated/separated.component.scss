@@ -1,14 +1,27 @@
-.wmSeparatedWrapper {
-  padding: 0.25em;
-}
+@import "../../../variables";
 
 .card-body {
   padding: 0;
+  overflow: hidden;
+  border-bottom-left-radius: $card-border-radius;
+  border-bottom-right-radius: $card-border-radius;
+}
+
+.table {
+  height: 1px;
+}
+
+.table td {
+  padding: .25em;
+  height: 100%;
+
+  wm-code-entry {
+    height: 100%;
+  }
 }
 
 .table tr > td:not(:first-child) {
   padding: 0;
-  background-color: #232323;
 }
 
 .table tr > td:first-child {
@@ -26,4 +39,5 @@
 .wmStubMappingLink {
   display: inline-block;
   padding: 7px;
+  font-size: 14px;
 }

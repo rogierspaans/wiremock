@@ -1,82 +1,85 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
 
-import {AppRoutingModule} from './app-routing.module';
-import {AppComponent} from './app.component';
-import {HomeComponent} from './components/home/home.component';
-import {MappingsComponent} from './components/mappings/mappings.component';
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { HomeComponent } from "./components/home/home.component";
+import { MappingsComponent } from "./components/mappings/mappings.component";
 import {
   NgbAlertModule,
-  NgbButtonsModule,
-  NgbCollapseModule, NgbDropdownMenu, NgbDropdownModule,
+  NgbCollapseModule,
+  NgbDropdownModule,
   NgbModal,
   NgbModalModule,
-  NgbModule,
-  NgbNav,
-  NgbNavbar,
-  NgbNavModule, NgbPaginationModule, NgbPopoverModule, NgbTooltipModule
-} from '@ng-bootstrap/ng-bootstrap';
-import {FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';
+  NgbNavModule,
+  NgbPaginationModule,
+  NgbPopoverModule,
+  NgbTooltipModule,
+} from "@ng-bootstrap/ng-bootstrap";
+import { FaIconLibrary, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
   faAlignJustify,
   faAngleDoubleUp,
   faBars,
   faCamera,
+  faCheck,
+  faChevronDown,
+  faChevronRight,
+  faCircleHalfStroke,
   faClock,
   faCog,
   faCopy,
   faDotCircle,
   faExchangeAlt,
   faFileAlt,
+  faFolder,
   faLink,
+  faList,
+  faMoon,
   faPencilAlt,
+  faPlay,
   faPlus,
   faPowerOff,
   faSave,
   faSearch,
-  faPlay,
   faStop,
+  faSun,
   faSyncAlt,
   faTimes,
   faTrash,
-  faFolder,
-  faCheck,
-  faChevronRight,
-  faChevronDown,
-  faList,
-} from '@fortawesome/free-solid-svg-icons';
-import {ListViewComponent} from './components/list-view/list-view.component';
-import {MatchedComponent} from './components/matched/matched.component';
-import {UnmatchedComponent} from './components/unmatched/unmatched.component';
-import {LayoutComponent} from './components/layout/layout.component';
-import {HttpClientModule} from '@angular/common/http';
-import {WiremockService} from './services/wiremock.service';
-import {CodeEntryComponent} from './components/code-entry/code-entry.component';
-import {HighlightJsDirective} from './directives/highlight-js.directive';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {RawSeparatedComponent} from './components/raw-separated/raw-separated.component';
-import {RawDirective} from './components/raw-separated/raw.directive';
-import {SeparatedComponent} from './components/separated/separated.component';
-import {SeparatedDirective} from './components/raw-separated/separated.directive';
-import {KeysPipe} from './pipes/keys.pipe';
-import {CapitalizeFirstPipe} from './pipes/capitalize-first.pipe';
-import {IsObjectPipe} from './pipes/is-object.pipe';
-import {IsNoObjectPipe} from './pipes/is-no-object.pipe';
-import {PrettifyPipe} from './pipes/prettify.pipe';
-import {SplitCamelCasePipe} from './pipes/split-camel-case.pipe';
-import {WebSocketService} from './services/web-socket.service';
-import {MessageComponent} from './components/message/message.component';
-import {MessageService} from './components/message/message.service';
-import {DialogRecordingComponent} from './dialogs/dialog-recording/dialog-recording.component';
-import {SearchService} from './services/search.service';
-import {CodeEditorComponent} from './components/code-editor/code-editor.component';
-import {StateComponent} from './components/state/state.component';
-import {StateMachineComponent} from './components/state-machine/state-machine.component';
-import {StateMappingInfoComponent} from './components/state-mapping-info/state-mapping-info.component';
-import {CurlPreviewComponent} from './components/curl-preview/curl-preview.component';
-import { MappingTestComponent } from './components/mapping-test/mapping-test.component';
-import {TestDirective} from './components/raw-separated/test.directive';
-import { TreeViewComponent } from './components/tree-view/tree-view.component';
+} from "@fortawesome/free-solid-svg-icons";
+import { ListViewComponent } from "./components/list-view/list-view.component";
+import { MatchedComponent } from "./components/matched/matched.component";
+import { UnmatchedComponent } from "./components/unmatched/unmatched.component";
+import { LayoutComponent } from "./components/layout/layout.component";
+import { HttpClientModule } from "@angular/common/http";
+import { WiremockService } from "./services/wiremock.service";
+import { CodeEntryComponent } from "./components/code-entry/code-entry.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { RawSeparatedComponent } from "./components/raw-separated/raw-separated.component";
+import { RawDirective } from "./components/raw-separated/raw.directive";
+import { SeparatedComponent } from "./components/separated/separated.component";
+import { SeparatedDirective } from "./components/raw-separated/separated.directive";
+import { KeysPipe } from "./pipes/keys.pipe";
+import { CapitalizeFirstPipe } from "./pipes/capitalize-first.pipe";
+import { IsObjectPipe } from "./pipes/is-object.pipe";
+import { IsNoObjectPipe } from "./pipes/is-no-object.pipe";
+import { PrettifyPipe } from "./pipes/prettify.pipe";
+import { SplitCamelCasePipe } from "./pipes/split-camel-case.pipe";
+import { WebSocketService } from "./services/web-socket.service";
+import { MessageComponent } from "./components/message/message.component";
+import { MessageService } from "./components/message/message.service";
+import { DialogRecordingComponent } from "./dialogs/dialog-recording/dialog-recording.component";
+import { SearchService } from "./services/search.service";
+import { CodeEditorComponent } from "./components/code-editor/code-editor.component";
+import { StateComponent } from "./components/state/state.component";
+import { StateMachineComponent } from "./components/state-machine/state-machine.component";
+import { StateMappingInfoComponent } from "./components/state-mapping-info/state-mapping-info.component";
+import { CurlPreviewComponent } from "./components/curl-preview/curl-preview.component";
+import { MappingTestComponent } from "./components/mapping-test/mapping-test.component";
+import { TestDirective } from "./components/raw-separated/test.directive";
+import { TreeViewComponent } from "./components/tree-view/tree-view.component";
+import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
 
 @NgModule({
   declarations: [
@@ -88,7 +91,6 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     UnmatchedComponent,
     LayoutComponent,
     CodeEntryComponent,
-    HighlightJsDirective,
     RawSeparatedComponent,
     RawDirective,
     SeparatedDirective,
@@ -108,7 +110,7 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     StateMappingInfoComponent,
     CurlPreviewComponent,
     MappingTestComponent,
-    TreeViewComponent
+    TreeViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -121,19 +123,37 @@ import { TreeViewComponent } from './components/tree-view/tree-view.component';
     NgbNavModule,
     NgbCollapseModule,
     NgbModalModule,
-    NgbButtonsModule,
     NgbDropdownModule,
     NgbAlertModule,
     NgbTooltipModule,
     NgbPopoverModule,
     NgbPaginationModule,
+    HighlightModule,
   ],
-  providers: [ WiremockService, WebSocketService, MessageService, SearchService, NgbModal ],
-  bootstrap: [ AppComponent ],
-  entryComponents: [ DialogRecordingComponent, StateMappingInfoComponent, CurlPreviewComponent, MappingTestComponent ]
+  providers: [
+    WiremockService,
+    WebSocketService,
+    MessageService,
+    SearchService,
+    NgbModal,
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import("highlight.js/lib/core"),
+        // lineNumbersLoader: () => import('ngx-highlightjs/line-numbers'),
+        languages: {
+          //  'html', 'json', 'xml', 'http'
+          json: () => import("highlight.js/lib/languages/json"),
+          xml: () => import("highlight.js/lib/languages/xml"),
+          http: () => import("highlight.js/lib/languages/http"),
+        },
+        themePath: "assets/highlightjs/styles/github.css",
+      },
+    },
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
-
   constructor(library: FaIconLibrary) {
     // add icons. Only remove if not used anymore otherwise app will crash!
     library.addIcons(faBars);
@@ -162,5 +182,8 @@ export class AppModule {
     library.addIcons(faChevronRight);
     library.addIcons(faChevronDown);
     library.addIcons(faList);
+    library.addIcons(faSun);
+    library.addIcons(faMoon);
+    library.addIcons(faCircleHalfStroke);
   }
 }

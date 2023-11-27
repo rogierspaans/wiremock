@@ -1,9 +1,8 @@
-import {LoggedRequest} from './logged-request';
+import { LoggedRequest } from "./logged-request";
 
 export class FindRequestResult {
-
-  requests: LoggedRequest[];
-  requestJournalDisabled: boolean;
+  requests!: LoggedRequest[];
+  requestJournalDisabled!: boolean;
 
   deserialize(unchecked: FindRequestResult): FindRequestResult {
     this.requests = [];

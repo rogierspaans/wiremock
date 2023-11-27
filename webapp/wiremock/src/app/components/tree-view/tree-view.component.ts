@@ -1,58 +1,61 @@
 import {
-  AfterViewChecked, AfterViewInit,
-  Component, ElementRef,
+  AfterViewChecked,
+  Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
   OnChanges,
-  OnInit,
-  Output, QueryList,
-  SimpleChanges, ViewChild,
-  ViewChildren
-} from '@angular/core';
-import {Item} from '../../model/wiremock/item';
-import {UtilService} from '../../services/util.service';
-import {WiremockService} from '../../services/wiremock.service';
-import {MessageService} from '../message/message.service';
-import {Tree} from '../../model/tree/tree';
-import {Root} from '../../model/tree/root';
-import {TreeNode} from '../../model/tree/tree-node';
-import {Folder} from '../../model/tree/folder';
-import {TreeHelper} from './tree-helper';
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from "@angular/core";
+import { Item } from "../../model/wiremock/item";
+import { UtilService } from "../../services/util.service";
+import { WiremockService } from "../../services/wiremock.service";
+import { MessageService } from "../message/message.service";
+import { Tree } from "../../model/tree/tree";
+import { Root } from "../../model/tree/root";
+import { TreeNode } from "../../model/tree/tree-node";
+import { Folder } from "../../model/tree/folder";
+import { TreeHelper } from "./tree-helper";
 
 @Component({
-  selector: 'wm-tree-view',
-  templateUrl: './tree-view.component.html',
-  styleUrls: [ './tree-view.component.scss' ]
+  selector: "wm-tree-view",
+  templateUrl: "./tree-view.component.html",
+  styleUrls: ["./tree-view.component.scss"],
 })
-export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked {
-
-  @HostBinding('class') classes = 'wmHolyGrailBody column';
-
-  @Input()
-  items: Item[];
+export class TreeViewComponent implements OnChanges, AfterViewChecked {
+  @HostBinding("class") classes = "wmHolyGrailBody column";
 
   @Input()
-  activeItem: Item;
+  items?: Item[];
+
+  @Input()
+  activeItem?: Item;
   activeItemChanged = false;
 
   @Output()
   activeItemChange: EventEmitter<Item> = new EventEmitter();
 
-  rootNode: TreeNode;
+  rootNode?: TreeNode;
   private rootItem: Item;
 
-  treeItems: TreeNode[];
-  private previousTree: Tree;
+  treeItems!: TreeNode[];
+  private previousTree?: Tree;
 
-  @ViewChild('childrenContainer')
-  childrenContainer: ElementRef;
+  @ViewChild("childrenContainer")
+  childrenContainer!: ElementRef;
 
-  @ViewChildren('listChildren')
-  listChildren: QueryList<ElementRef>;
+  @ViewChildren("listChildren")
+  listChildren!: QueryList<ElementRef>;
 
-  constructor(private wiremockService: WiremockService,
-              private messageService: MessageService) {
+  constructor(
+    private wiremockService: WiremockService,
+    private messageService: MessageService
+  ) {
     this.rootItem = new Root();
   }
 
@@ -69,13 +72,10 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
     this.activeItemChange.emit(this.activeItem);
   }
 
-  ngOnInit() {
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     // only when we actually change items. No need to change when activeItem changes because this would only
     // include expand and this is done by user.
-    if (UtilService.isDefined(changes.items) && UtilService.isDefined(this.items)) {
+    if (changes["items"] && this.items) {
       // First we sort items by group so that folders are shown first
       TreeHelper.sortItemsByFolderName(this.items);
 
@@ -98,9 +98,6 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
     }
   }
 
-  ngAfterViewInit(): void {
-  }
-
   ngAfterViewChecked(): void {
     if (this.activeItemChanged) {
       this.activeItemChanged = false;
@@ -110,20 +107,24 @@ export class TreeViewComponent implements OnInit, OnChanges, AfterViewInit, Afte
   }
 
   enableProxy(item: Item) {
-    this.wiremockService.enableProxy(item.getId()).subscribe(() => {
+    this.wiremockService.enableProxy(item.getId()).subscribe(
+      () => {
         // do nothing
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      }
+    );
   }
 
   disableProxy(item: Item) {
-    this.wiremockService.disableProxy(item.getId()).subscribe(() => {
+    this.wiremockService.disableProxy(item.getId()).subscribe(
+      () => {
         // do nothing
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      });
+      }
+    );
   }
 }

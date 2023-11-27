@@ -1,16 +1,17 @@
-import {StubMapping} from './stub-mapping';
-import {UtilService} from '../../services/util.service';
-import {ProxyConfig} from './proxy-config';
+import { StubMapping } from "./stub-mapping";
+import { UtilService } from "../../services/util.service";
+import { ProxyConfig } from "./proxy-config";
 
 export class ListStubMappingsResult {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta: any;
-  mappings: StubMapping[];
+  mappings: StubMapping[] = [];
 
   public static hasItems(value: ListStubMappingsResult): boolean {
     return UtilService.isDefined(value) && UtilService.isDefined(value.mappings) && value.mappings.length > 0;
   }
 
-  deserialize(unchecked: ListStubMappingsResult, proxyConfig: ProxyConfig): ListStubMappingsResult {
+  deserialize(unchecked: ListStubMappingsResult, proxyConfig?: ProxyConfig): ListStubMappingsResult {
     this.meta = unchecked.meta;
     this.mappings = [];
     unchecked.mappings.forEach(mapping => {

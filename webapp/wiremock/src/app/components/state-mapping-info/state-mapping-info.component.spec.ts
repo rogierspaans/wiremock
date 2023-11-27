@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { StateMappingInfoComponent } from './state-mapping-info.component';
+import { StateMappingInfoComponent } from "./state-mapping-info.component";
 
-describe('StateMappingInfoComponent', () => {
+describe("StateMappingInfoComponent", () => {
   let component: StateMappingInfoComponent;
   let fixture: ComponentFixture<StateMappingInfoComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StateMappingInfoComponent ]
-    })
-    .compileComponents();
+      declarations: [StateMappingInfoComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('StateMappingInfoComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

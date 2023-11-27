@@ -1,33 +1,30 @@
-import {Component, HostBinding, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
-import {StubMapping} from '../../model/wiremock/stub-mapping';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import mimeDb from 'mime-db';
-import {WiremockService} from '../../services/wiremock.service';
-import {HttpErrorResponse, HttpEventType, HttpHeaders, HttpProgressEvent, HttpResponse} from '@angular/common/http';
-import {Item} from '../../model/wiremock/item';
-import {ServeEvent} from '../../model/wiremock/serve-event';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {CodeEditorComponent} from '../code-editor/code-editor.component';
+import { Component, HostBinding, Input, OnChanges, ViewChild } from "@angular/core";
+import { StubMapping } from "../../model/wiremock/stub-mapping";
+import { FormControl } from "@angular/forms";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
+import mimeDb from "mime-db";
+import { WiremockService } from "../../services/wiremock.service";
+import { HttpErrorResponse, HttpEvent, HttpEventType, HttpHeaders } from "@angular/common/http";
+import { Item } from "../../model/wiremock/item";
+import { ServeEvent } from "../../model/wiremock/serve-event";
+import { BehaviorSubject } from "rxjs";
+import { CodeEditorComponent } from "../code-editor/code-editor.component";
 
 @Component({
-  selector: 'wm-mapping-test',
-  templateUrl: './mapping-test.component.html',
-  styleUrls: [ './mapping-test.component.scss' ]
+  selector: "wm-mapping-test",
+  templateUrl: "./mapping-test.component.html",
+  styleUrls: ["./mapping-test.component.scss"],
 })
-export class MappingTestComponent implements OnInit, OnChanges {
-
-
-  @HostBinding('class') classes = 'wmHolyGrailBody';
+export class MappingTestComponent implements OnChanges {
+  @HostBinding("class") classes = "wmHolyGrailBody";
 
   codeOptions = {
-    selectionStyle: 'text',
+    selectionStyle: "text",
     highlightActiveLine: true,
     highlightSelectedWord: true,
     readOnly: false,
-    cursorStyle: 'ace',
-    mergeUndoDeltas: 'true',
+    cursorStyle: "ace",
+    mergeUndoDeltas: "true",
     behavioursEnabled: true,
     wrapBehavioursEnabled: true,
     copyWithEmptySelection: true,
@@ -45,16 +42,16 @@ export class MappingTestComponent implements OnInit, OnChanges {
     showLineNumbers: true,
     // ..
     wrap: true,
-    enableMultiselect: true
+    enableMultiselect: true,
   };
 
   codeReadOnlyOptions = {
-    selectionStyle: 'text',
+    selectionStyle: "text",
     highlightActiveLine: true, // readOnly
     highlightSelectedWord: true,
     readOnly: true, // readOnly
-    cursorStyle: 'ace',
-    mergeUndoDeltas: 'true',
+    cursorStyle: "ace",
+    mergeUndoDeltas: "true",
     behavioursEnabled: true,
     wrapBehavioursEnabled: true,
     copyWithEmptySelection: true,
@@ -72,55 +69,65 @@ export class MappingTestComponent implements OnInit, OnChanges {
     showLineNumbers: true,
     // ..
     wrap: true,
-    enableMultiselect: true
+    enableMultiselect: true,
   };
 
   @Input()
-  mapping: StubMapping;
+  mapping?: StubMapping;
 
-  @ViewChild('headerContent') headerEditor: CodeEditorComponent;
-  @ViewChild('bodyContent') bodyEditor: CodeEditorComponent;
+  @ViewChild("headerContent") headerEditor!: CodeEditorComponent;
+  @ViewChild("bodyContent") bodyEditor!: CodeEditorComponent;
 
-  headerCode: string;
+  headerCode?: string;
 
-  method = 'GET';
+  method: string | undefined = "GET";
   url = new FormControl();
-  language = 'json';
+  language = "json";
 
-  response: any = '';
-  responseBody: any = '';
-  responseLanguage = 'json';
+  response = "";
+  responseBody = "";
+  responseLanguage = "json";
   responseIsMapping = false;
-  responseMappingId = '';
+  responseMappingId = "";
 
-  $headerValueChanges = new BehaviorSubject('');
+  $headerValueChanges = new BehaviorSubject("");
 
-  supportedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'COPY', 'HEAD', 'OPTIONS', 'LINK', 'UNLINK', 'PURGE', 'LOCK', 'UNLOCK', 'PROPFIND', 'VIEW'];
+  supportedMethods = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "COPY",
+    "HEAD",
+    "OPTIONS",
+    "LINK",
+    "UNLINK",
+    "PURGE",
+    "LOCK",
+    "UNLOCK",
+    "PROPFIND",
+    "VIEW",
+  ];
 
   private static contentTypeToLanguage(cT: string) {
     // text/plain;charset=UTF-8
 
-    let result = 'text';
+    let result = "text";
 
-    if (cT.includes('json')) {
-      result = 'json';
-    } else if (cT.includes('xml')) {
-      result = 'xml';
+    if (cT.includes("json")) {
+      result = "json";
+    } else if (cT.includes("xml")) {
+      result = "xml";
     }
 
     return result;
   }
 
-  constructor(/*public activeModal: NgbActiveModal,*/
-              private wiremockService: WiremockService) {
-  }
-
-  ngOnInit(): void {
-
-  }
+  constructor(private wiremockService: WiremockService) {}
 
   ngOnChanges(): void {
-    if (this.mapping == null) {
+    if (!this.mapping) {
       return;
     }
 
@@ -129,52 +136,51 @@ export class MappingTestComponent implements OnInit, OnChanges {
     this.url.setValue(this.getUrl());
 
     const cT = this.guessRequestContentType();
-    this.responseBody = '';
-    this.response = '';
-    this.responseLanguage = 'json';
+    this.responseBody = "";
+    this.response = "";
+    this.responseLanguage = "json";
     this.responseIsMapping = false;
 
-    this.$headerValueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(nextCT => {
-        this.language = MappingTestComponent.contentTypeToLanguage(nextCT);
-      });
+    this.$headerValueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(nextCT => {
+      this.language = MappingTestComponent.contentTypeToLanguage(nextCT);
+    });
 
     this.setContentType(cT);
   }
 
   private getUrl() {
-    if (this.mapping.request) {
-      return this.mapping.request.url ?? this.mapping.request.urlPath ??
-        this.mapping.request.urlPattern ?? this.mapping.request.urlPathPattern;
+    if (this.mapping && this.mapping.request) {
+      return (
+        this.mapping.request.url ??
+        this.mapping.request.urlPath ??
+        this.mapping.request.urlPattern ??
+        this.mapping.request.urlPathPattern
+      );
     } else {
-      return '';
+      return "";
     }
   }
 
   private guessRequestContentType() {
-    let result = 'application/json';
+    let result = "application/json";
 
-    let cT = {'default': 'application/json'};
-    if (this.mapping.request && this.mapping.request.headers) {
-      cT = this.mapping.request.headers['Content-Type'] ?? this.mapping.request.headers['content-type'] ?? cT;
+    let cT = { default: "application/json" };
+    if (this.mapping && this.mapping.request && this.mapping.request.headers) {
+      cT = this.mapping.request.headers["Content-Type"] ?? this.mapping.request.headers["content-type"] ?? cT;
     }
 
     for (const value of Object.values(cT)) {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         if (value in mimeDb) {
           // we stop when we find the first valid one.
           result = value;
           break;
         } else {
           // check what every string we read if we can extract something.
-          if (value.includes('json')) {
-            result = 'application/json';
-          } else if (value.includes('xml')) {
-            result = 'application/xml';
+          if (value.includes("json")) {
+            result = "application/json";
+          } else if (value.includes("xml")) {
+            result = "application/xml";
           }
         }
       }
@@ -184,25 +190,32 @@ export class MappingTestComponent implements OnInit, OnChanges {
 
   run() {
     let body = this.bodyEditor.getCode();
-    if (body.trim().length === 0) {
-      body = null;
+    if (body && body.trim().length === 0) {
+      body = undefined;
     }
 
-    const headers: { [header: string]: string | string[] } = {} = this.getHeaders();
+    const headers: { [header: string]: string | string[] } = this.getHeaders();
 
-    this.wiremockService.test(this.url.value, this.method, body, headers).subscribe(resp => {
-      this.handleResponse(resp);
-    }, (error: Error) => {
-      this.handleErrorResponse(error);
-    });
+    const method = this.method || "GET";
+
+    this.wiremockService.test(this.url.value, method, body, headers).subscribe(
+      resp => {
+        this.handleResponse(resp);
+      },
+      (error: Error) => {
+        this.handleErrorResponse(error);
+      }
+    );
   }
 
-  private handleResponse(resp) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private handleResponse(resp: HttpEvent<any>) {
     if (!resp) {
-      this.responseBody = '';
-      this.response = '';
+      this.responseBody = "";
+      this.response = "";
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = {};
     data.type = HttpEventType[resp.type];
     switch (resp.type) {
@@ -211,24 +224,28 @@ export class MappingTestComponent implements OnInit, OnChanges {
         data.statusText = resp.statusText;
         data.headers = this.parseHeaders(resp.headers);
         this.checkIfIsMapping(data.headers);
+        this.responseLanguage = MappingTestComponent.contentTypeToLanguage(
+          data.headers["Content-Type"] ?? data.headers["content-type"] ?? "json"
+        );
 
-        this.responseBody = resp.body ?? '';
+        this.responseBody = resp.body ?? "";
         break;
       case HttpEventType.DownloadProgress:
       case HttpEventType.UploadProgress:
         data.loaded = resp.loaded;
         data.total = resp.total;
 
-        this.responseBody = '';
+        this.responseBody = "";
         break;
       default:
-        this.responseBody = '';
+        this.responseBody = "";
     }
 
     this.response = JSON.stringify(data);
   }
 
   private handleErrorResponse(error: Error | HttpErrorResponse) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = {};
     data.type = error.name;
     data.message = error.message;
@@ -238,25 +255,27 @@ export class MappingTestComponent implements OnInit, OnChanges {
       data.statusText = error.statusText;
       data.headers = this.parseHeaders(error.headers);
 
-      this.responseLanguage = MappingTestComponent.contentTypeToLanguage(data.headers['Content-Type'] ?? data.headers['content-type'] ?? 'json');
+      this.responseLanguage = MappingTestComponent.contentTypeToLanguage(
+        data.headers["Content-Type"] ?? data.headers["content-type"] ?? "json"
+      );
       this.checkIfIsMapping(data.headers);
 
-      this.responseBody = error.error ?? '';
+      this.responseBody = error.error ?? "";
     }
 
     this.response = JSON.stringify(data);
   }
 
-  private checkIfIsMapping(headers: any) {
-    const matchingMapping = headers['matched-stub-id'];
-    this.responseIsMapping = matchingMapping === this.mapping.getId();
+  private checkIfIsMapping(headers: { [key: string]: string }) {
+    const matchingMapping = headers["matched-stub-id"];
+    this.responseIsMapping = matchingMapping === this.mapping?.getId();
     this.responseMappingId = matchingMapping;
   }
 
-  private parseHeaders(headers: any) {
-    const result = {};
+  private parseHeaders(headers: HttpHeaders): { [key: string]: string | null } {
+    const result: { [key: string]: string | null } = {};
     if (headers) {
-      const keys: string[] = headers.keys();
+      const keys = headers.keys();
 
       keys.forEach(key => {
         result[key] = headers.get(key);
@@ -276,17 +295,21 @@ export class MappingTestComponent implements OnInit, OnChanges {
     this.$headerValueChanges.next(text);
   }
 
-  private getHeaders() {
+  private getHeaders(): { [key: string]: string } {
     try {
-      return JSON.parse(this.headerEditor.getCode());
+      const code = this.headerEditor.getCode();
+      if (code) {
+        return JSON.parse(code);
+      }
     } catch (error) {
-      return {};
+      // something went wrong. We do not care.
     }
+    return {};
   }
 
   private setContentType(cT: string) {
     const headers = this.getHeaders();
-    headers['content-type'] = cT;
+    headers["content-type"] = cT;
 
     try {
       this.headerCode = JSON.stringify(headers);
@@ -296,6 +319,6 @@ export class MappingTestComponent implements OnInit, OnChanges {
   }
 
   setMethod($event: MouseEvent) {
-    this.method = ($event.target as any).innerHTML;
+    this.method = ($event.target as HTMLButtonElement).innerHTML;
   }
 }

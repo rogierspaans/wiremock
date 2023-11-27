@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DialogRecordingComponent } from './dialog-recording.component';
+import { DialogRecordingComponent } from "./dialog-recording.component";
 
-describe('DialogRecordingComponent', () => {
+describe("DialogRecordingComponent", () => {
   let component: DialogRecordingComponent;
   let fixture: ComponentFixture<DialogRecordingComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DialogRecordingComponent ]
-    })
-    .compileComponents();
+      declarations: [DialogRecordingComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('DialogRecordingComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

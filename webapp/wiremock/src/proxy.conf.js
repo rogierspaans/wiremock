@@ -1,18 +1,16 @@
 const PROXY_CONFIG = [
   {
     context: [
-      "/**"
+      "/__admin/mappings",
+      "/__admin/requests",
+      "/__admin/recordings/**",
+      "/__admin/proxy",
+      "/__admin/scenarios",
+      "/__admin/shutdown",
     ],
-    "target": "http://localhost:8089",
-    "secure": false,
-    "bypass": function (req, res, proxyOptions) {
-      if (req.url.includes("/__admin/webapp")) {
-        console.log("Skipping proxy for browser request: " + req.url);
-        return "/__admin/webapp/index.html";
-      }
-      // req.headers["X-Custom-Header"] = "yes";
-    }
-  }
+    target: "http://127.0.0.1:8089",
+    secure: false,
+  },
 ];
 
 module.exports = PROXY_CONFIG;

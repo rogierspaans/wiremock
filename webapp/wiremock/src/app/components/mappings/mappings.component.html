@@ -1,5 +1,8 @@
-<wm-layout [items]="result?.mappings" [activeItemId]="activeItemId" (activeItemChange)="onActiveItemChange($event)"
-           [supportsTreeView]="true">
+<wm-layout
+  [items]="result ? result.mappings : []"
+  [activeItemId]="activeItemId"
+  (activeItemChange)="onActiveItemChange($event)"
+  [supportsTreeView]="true">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
       <ng-container *ngIf="editMode === State.NEW">
@@ -45,7 +48,7 @@
               Add Scenario
             </button>
             <button type="button" class="dropdown-item" (click)="helpersToJsonBody()">
-              <span style="font-weight: bold">{{'{ }'}}</span>
+              <span style="font-weight: bold">{{ "{ }" }}</span>
               To Json Body
             </button>
           </div>
@@ -70,8 +73,11 @@
           </div>
         </div>
         <div ngbDropdown class="btn-group" role="group">
-          <button id="wmResponseTemplatingDrop" type="button" class="btn btn-secondary dropdown-toggle"
-                  ngbDropdownToggle>
+          <button
+            id="wmResponseTemplatingDrop"
+            type="button"
+            class="btn btn-secondary dropdown-toggle"
+            ngbDropdownToggle>
             Response Templating
           </button>
           <div ngbDropdownMenu class="dropdown-menu">
@@ -95,21 +101,22 @@
           </div>
         </div>
 
-
         <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
           <fa-icon icon="times"></fa-icon>
           Cancel
         </button>
       </ng-container>
 
-
       <ng-container *ngIf="editMode === State.NORMAL">
         <button type="button" class="btn btn-secondary" (click)="newMapping()">
           <fa-icon icon="plus"></fa-icon>
           New
         </button>
-        <button type="button" class="btn btn-secondary" (click)="editMapping(activeItem)"
-                [disabled]="!activeItem || (activeItem.isProxy() && !activeItem.isProxyEnabled())">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="editMapping(activeItem)"
+          [disabled]="!activeItem || (activeItem.isProxy() && !activeItem.isProxyEnabled())">
           <fa-icon icon="pencil-alt"></fa-icon>
           Edit
         </button>
@@ -150,23 +157,24 @@
         </div>
       </ng-container>
     </div>
-
-
   </ng-template>
 
-
   <ng-template #content let-activeItem>
-    <wm-raw-separated [separatedDisabled]="!activeItem || editMode != NORMAL"
-                      [testDisabled]="!activeItem || editMode != NORMAL"
-                      [testHidden]="editMode == NEW" (activeIdChanged)="RAW ? editor.refresh() : ''">
+    <wm-raw-separated
+      [separatedDisabled]="!activeItem || editMode !== NORMAL"
+      [testDisabled]="!activeItem || editMode !== NORMAL"
+      [testHidden]="editMode === NEW"
+      (activeIdChanged)="RAW ? editor.refresh() : ''">
       <wm-raw-separated-raw>
-        <wm-code-editor #editor
-                        [code]="editorText"
-                        [language]="'json'" [options]="editMode === State.NORMAL ? codeReadOnlyOptions : codeOptions"
-                        (valueChange)="editorValueChange($event)"
-                        (window:keydown.control.s)="saveViaKeyboard($event, activeItem)"
-                        (window:keydown.control.e)="editViaKeyboard($event, activeItem)"
-                        (window:keydown.esc)="abortViaKeyboard($event)"></wm-code-editor>
+        <wm-code-editor
+          #editor
+          [code]="editorText"
+          [language]="'json'"
+          [options]="editMode === State.NORMAL ? codeReadOnlyOptions : codeOptions"
+          (valueChange)="editorValueChange($event)"
+          (window:keydown.control.s)="saveViaKeyboard($event, activeItem)"
+          (window:keydown.control.e)="editViaKeyboard($event, activeItem)"
+          (window:keydown.esc)="abortViaKeyboard($event)"></wm-code-editor>
       </wm-raw-separated-raw>
       <wm-raw-separated-separated>
         <wm-separated *ngIf="activeItem" [activeItem]="activeItem"></wm-separated>
@@ -176,6 +184,4 @@
       </wm-raw-separated-test>
     </wm-raw-separated>
   </ng-template>
-
 </wm-layout>
-

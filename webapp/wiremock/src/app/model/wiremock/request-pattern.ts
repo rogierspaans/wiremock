@@ -1,30 +1,23 @@
 export class RequestPattern {
-
-  url: string;
-  urlPattern: string;
-  urlPath: string;
-  urlPathPattern: string;
-  method: string;
+  url?: string;
+  urlPattern?: string;
+  urlPath?: string;
+  urlPathPattern?: string;
+  method?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   queryParameters: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cookies: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   basicAuth: any;
-  bodyPatterns: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bodyPatterns?: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customMatcher: any;
 
   deserialize(unchecked: RequestPattern): RequestPattern {
     return unchecked;
-    // this.url = unchecked.url;
-    // this.urlPattern = unchecked.urlPattern;
-    // this.urlPath = unchecked.urlPath;
-    // this.urlPathPattern = unchecked.urlPathPattern;
-    // this.method = unchecked.method;
-    // this.queryParameters = unchecked.queryParameters;
-    // this.cookies = unchecked.cookies;
-    // this.basicAuth = unchecked.basicAuth;
-    // this.bodyPatterns = unchecked.bodyPatterns;
-    // this.customMatcher = unchecked.customMatcher;
-    //
-    // return this;
   }
 }

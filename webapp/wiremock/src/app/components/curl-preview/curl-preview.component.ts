@@ -1,31 +1,23 @@
-import {
-  AfterContentChecked,
-  AfterViewInit,
-  Component, ElementRef,
-  OnChanges,
-  OnInit,
-  SimpleChanges, ViewChild
-} from '@angular/core';
-import {Curl, CurlExtractor} from '../../services/curl-extractor';
-import {CodeEditorComponent} from '../code-editor/code-editor.component';
-import {UtilService} from '../../services/util.service';
-import {Message, MessageService, MessageType} from '../message/message.service';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import { Curl } from "../../services/curl-extractor";
+import { CodeEditorComponent } from "../code-editor/code-editor.component";
+import { UtilService } from "../../services/util.service";
+import { Message, MessageService, MessageType } from "../message/message.service";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'wm-curl-preview',
-  templateUrl: './curl-preview.component.html',
-  styleUrls: [ './curl-preview.component.scss' ]
+  selector: "wm-curl-preview",
+  templateUrl: "./curl-preview.component.html",
+  styleUrls: ["./curl-preview.component.scss"],
 })
-export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, AfterContentChecked {
+export class CurlPreviewComponent implements AfterViewInit {
+  @ViewChild("editor")
+  private codeEditor!: CodeEditorComponent;
 
-  @ViewChild('editor')
-  private codeEditor: CodeEditorComponent;
+  private _curl?: Curl;
+  curlString = "";
 
-  private _curl: Curl;
-  curlString: string;
-
-  private visible: boolean;
+  private visible = false;
 
   set curl(value: Curl) {
     const toString = value.toString();
@@ -36,22 +28,20 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
     }
   }
 
-  constructor(private elementRef: ElementRef, private messageService: MessageService, public activeModal: NgbActiveModal) {
-  }
-
-  ngOnInit() {
-  }
-
+  constructor(
+    private elementRef: ElementRef,
+    private messageService: MessageService,
+    public activeModal: NgbActiveModal
+  ) {}
   copyCurl() {
     this.activeModal.dismiss();
-    if (UtilService.copyToClipboard(this.codeEditor.getCode())) {
-      this.messageService.setMessage(new Message('Curl copied to clipboard', MessageType.INFO, 3000));
-    } else {
-      this.messageService.setMessage(new Message('Was not able to copy. Details in log', MessageType.ERROR, 10000));
-    }
-  }
+    const code = this.codeEditor.getCode();
 
-  ngOnChanges(changes: SimpleChanges): void {
+    if (code && UtilService.copyToClipboard(code)) {
+      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO, 3000));
+    } else {
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
+    }
   }
 
   ngAfterViewInit(): void {
@@ -61,8 +51,5 @@ export class CurlPreviewComponent implements OnInit, OnChanges, AfterViewInit, A
       this.visible = true;
       this.codeEditor.resize();
     }
-  }
-
-  ngAfterContentChecked(): void {
   }
 }

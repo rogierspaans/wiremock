@@ -1,41 +1,31 @@
 export class ResponseDefinition {
-  status: number;
-  statusMessage: string;
-  body: string;
-  jsonBody: string;
-  base64Body: string;
-  bodyFileName: string;
-  headers: any;
-  additionalProxyRequestHeaders: any;
-  fixedDelayMilliseconds: number;
+  status!: number;
+  statusMessage!: string;
+  body?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsonBody?: any;
+  base64Body?: string;
+  bodyFileName?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  headers!: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  additionalProxyRequestHeaders?: any;
+  fixedDelayMilliseconds?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   delayDistribution: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   chunkedDribbleDelay: any;
-  proxyBaseUrl: string;
-  proxyUrlPrefixToRemove: string;
+  proxyBaseUrl?: string;
+  proxyUrlPrefixToRemove?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fault: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transformers: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transformerParameters: any;
-  fromConfiguredStub: Boolean;
+  fromConfiguredStub?: boolean;
 
   deserialize(unchecked: ResponseDefinition): ResponseDefinition {
     return unchecked;
-    // this.status = unchecked.status;
-    // this.statusMessage = unchecked.statusMessage;
-    // this.body = unchecked.body;
-    // this.jsonBody = unchecked.jsonBody;
-    // this.base64Body = unchecked.base64Body;
-    // this.bodyFileName = unchecked.bodyFileName;
-    // this.headers = unchecked.headers;
-    // this.additionalProxyRequestHeaders = unchecked.additionalProxyRequestHeaders;
-    // this.fixedDelayMilliseconds = unchecked.fixedDelayMilliseconds;
-    // this.delayDistribution = unchecked.delayDistribution;
-    // this.proxyBaseUrl = unchecked.proxyBaseUrl;
-    // this.fault = unchecked.fault;
-    // this.transformers = unchecked.transformers;
-    // this.transformerParameters = unchecked.transformerParameters;
-    // this.fromConfiguredStub = unchecked.fromConfiguredStub;
-    //
-    // return this;
   }
-
 }

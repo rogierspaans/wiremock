@@ -10,7 +10,6 @@
 }
 
 .wmContainer {
-  padding: 0.25em;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -35,6 +34,10 @@
 
 form {
   margin-bottom: 0;
+}
+
+.http-method-wrapper {
+  padding: 0;
 }
 
 .http-method {

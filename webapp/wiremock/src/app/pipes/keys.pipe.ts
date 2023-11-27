@@ -1,13 +1,12 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {UtilService} from '../services/util.service';
+import { Pipe, PipeTransform } from "@angular/core";
+import { UtilService } from "../services/util.service";
 
 @Pipe({
-  name: 'keys'
+  name: "keys",
 })
 export class KeysPipe implements PipeTransform {
-
-  transform(value: any, args?: any): any {
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  transform(value: any): any {
     const result: KeyValue[] = [];
 
     if (UtilService.isUndefined(value)) {
@@ -15,29 +14,20 @@ export class KeysPipe implements PipeTransform {
     }
 
     for (const key in value) {
-      if (value.hasOwnProperty(key) && !key.startsWith('_')) {
-
+      if (Object.prototype.hasOwnProperty.call(value, key) && !key.startsWith("_") && value[key]) {
         result.push(new KeyValue(key, value[key]));
-        // if (args === null || typeof args === 'undefined' || this.checkArgs(args, value[key])) {
-        // }
       }
     }
     return result;
-
-    // return Object.keys(value); // .map(key => value[key]);
   }
-
-  // private checkArgs(args: any, value: any) {
-  //   return args ? typeof value === 'object' : typeof value !== 'object';
-  // }
-
 }
 
 export class KeyValue {
   key: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(key: string, value: any) {
     this.key = key;
     this.value = value;
