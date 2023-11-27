@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
+<nav class="navbar navbar-expand-sm">
   <a class="navbar-brand" href="https://wiremock.org" target="_blank">
     <img id="wmLogo" alt="WireMock" [src]="'assets/img/wiremock-concept-icon-01.png'" />Wiremock</a
   >
@@ -35,6 +35,30 @@
       *ngIf="currentRecordingStatus === RecordingStatus.Recording">
       <fa-icon icon="dot-circle"></fa-icon>
       Recording
+    </div>
+    <div
+      id="wmThemeSwitcherButton"
+      ngbDropdown
+      [placement]="window.innerWidth < 576 ? 'bottom-left' : 'bottom-right'"
+      class="nav-item dropdown"
+      display="dynamic">
+      <a id="wmThemeSwitcher" class="nav-link dropdown-toggle" ngbDropdownToggle>
+        <fa-icon [icon]="theme === 'auto' ? 'circle-half-stroke' : theme === 'dark' ? 'moon' : 'sun'"></fa-icon>
+      </a>
+      <div ngbDropdownMenu id="wmThemeSwitcherMenu">
+        <button type="button" class="dropdown-item" (click)="changeTheme('auto')">
+          <fa-icon class="fa-sm" icon="circle-half-stroke"></fa-icon>
+          Auto
+        </button>
+        <button type="button" class="dropdown-item" (click)="changeTheme('light')">
+          <fa-icon class="fa-sm" icon="sun"></fa-icon>
+          Light
+        </button>
+        <button type="button" class="dropdown-item" (click)="changeTheme('dark')">
+          <fa-icon class="fa-sm" icon="moon"></fa-icon>
+          Dark
+        </button>
+      </div>
     </div>
     <div
       id="wmSettingsButton"

@@ -127,7 +127,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   private loadMappings() {
     this.wiremockService.getProxyConfig().subscribe({
       next: proxyData => {
-        this.loadActualMappings(new ProxyConfig().deserialze(proxyData));
+        this.loadActualMappings(new ProxyConfig().deserialize(proxyData));
       },
       error: () => {
         console.log("Could not load proxy config. Proxy feature deactivated");

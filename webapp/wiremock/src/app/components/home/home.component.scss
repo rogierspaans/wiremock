@@ -5,7 +5,7 @@
   margin-right: 10px;
 }
 
-#wmSettings {
+#wmSettings, #wmThemeSwitcher {
   cursor: pointer;
 }
 
@@ -38,4 +38,24 @@ nav {
 .navbar-brand {
   display: flex;
   align-items: center;
+}
+
+#wmThemeSwitcherButton {
+  margin-right: 1rem;
+  padding-top: $nav-link-padding-y;
+  padding-bottom: $nav-link-padding-y;
+}
+
+#wmThemeSwitcherMenu {
+  button {
+    display: flex;
+    align-items: center;
+  }
+
+  fa-icon {
+    display: flex;
+    align-items: center;
+    width: 21px;
+    height: 21px;
+  }
 }

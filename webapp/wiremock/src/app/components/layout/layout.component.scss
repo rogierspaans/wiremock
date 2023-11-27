@@ -5,13 +5,12 @@
   margin-top: -1px;
 }
 
-#wmContainer {
+#wmLayoutContainer {
   width: 70%;
-  background-color: $light-bg-subtle;
 }
 
-#wmContainer,
-#wmControlContainer {
+#wmLayoutContainer,
+#wmLayoutControlContainer {
   display: flex;
   flex-direction: column;
 }

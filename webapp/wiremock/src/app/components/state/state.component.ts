@@ -65,7 +65,7 @@ export class StateComponent implements OnInit, OnDestroy {
   private loadScenarios() {
     this.wiremockService.getProxyConfig().subscribe({
       next: proxyData => {
-        this.loadActualScenarios(new ProxyConfig().deserialze(proxyData));
+        this.loadActualScenarios(new ProxyConfig().deserialize(proxyData));
       },
       error: () => {
         console.log("Could not load proxy config. Proxy feature deactivated");

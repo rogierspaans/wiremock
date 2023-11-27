@@ -25,6 +25,7 @@ import {
   faCheck,
   faChevronDown,
   faChevronRight,
+  faCircleHalfStroke,
   faClock,
   faCog,
   faCopy,
@@ -34,6 +35,7 @@ import {
   faFolder,
   faLink,
   faList,
+  faMoon,
   faPencilAlt,
   faPlay,
   faPlus,
@@ -41,6 +43,7 @@ import {
   faSave,
   faSearch,
   faStop,
+  faSun,
   faSyncAlt,
   faTimes,
   faTrash,
@@ -179,5 +182,8 @@ export class AppModule {
     library.addIcons(faChevronRight);
     library.addIcons(faChevronDown);
     library.addIcons(faList);
+    library.addIcons(faSun);
+    library.addIcons(faMoon);
+    library.addIcons(faCircleHalfStroke);
   }
 }

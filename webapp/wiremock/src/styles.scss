@@ -83,6 +83,7 @@ body {
 .wmTabs > .tab-content > .tab-pane {
   display: flex;
   flex: 1;
+
   &.column {
     flex-direction: column;
   }
@@ -94,6 +95,7 @@ body {
   flex-grow: 1;
   overflow: auto;
   position: relative;
+
   > * {
     position: absolute;
     width: 100%;
@@ -209,4 +211,37 @@ body {
 
 .modal-dialog {
   height: calc(100% - 2 * 1.75rem);
+}
+
+// Dark mode needs some global styles so moved some things here. At least in case it is color related
+
+// TreeView
+.wmFolderContainer {
+  height: 30px;
+  background-color: lighten($info, 50%);
+}
+
+.wmFolderContainer:hover {
+  background-color: lighten($info, 30%);
+}
+
+@include color-mode(dark) {
+  .wmFolderContainer {
+    background-color: $info;
+  }
+
+  .wmFolderContainer:hover {
+    background-color: darken($info, 20%);
+  }
+}
+
+// StateMachine
+#wmStateMachine {
+  background-color: $light-bg-subtle;
+}
+
+@include color-mode(dark) {
+  #wmStateMachine {
+    background-color: $dark-bg-subtle-dark;
+  }
 }

@@ -1,7 +1,7 @@
 <div class="p-1" *ngIf="activeItem">
-  <div class="card text-black bg-success mb-3">
-    <div class="card-header">General</div>
-    <div class="card-body bg-light text-dark">
+  <div class="card bg-success mb-3">
+    <div class="card-header text-black">General</div>
+    <div class="card-body">
       <table class="table table-sm mb-0">
         <tbody>
           <tr *ngIf="isServeEvent(activeItem)">
@@ -31,11 +31,11 @@
   </div>
 
   <ng-container *ngFor="let property of activeItem | keys | isObject; let i = index">
-    <div *ngIf="isObject(property.value)" class="card {{ color[i] }} text-black mb-3">
-      <div class="card-header">
+    <div *ngIf="isObject(property.value)" class="card {{ color[i] }} mb-3">
+      <div class="card-header text-black">
         {{ property.key | capitalizeFirst }}
       </div>
-      <div class="card-body bg-light text-dark">
+      <div class="card-body">
         <table class="table table-sm mb-0">
           <tbody>
             <ng-container *ngFor="let subProperty of property.value | keys">
@@ -68,9 +68,9 @@
   </ng-container>
 
   <ng-container *ngIf="xWwwFormUrlEncodedParams">
-    <div class="card bg-light text-white mb-3">
-      <div class="card-header text-dark">x-www-form-urlencoded</div>
-      <div class="card-body bg-light text-dark">
+    <div class="card mb-3">
+      <div class="card-header text-black">x-www-form-urlencoded</div>
+      <div class="card-body">
         <table class="table table-sm mb-0">
           <tbody>
             <tr>

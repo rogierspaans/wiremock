@@ -12,6 +12,7 @@ import { Subject } from "rxjs/internal/Subject";
 import { WebSocketService } from "../../services/web-socket.service";
 import { debounceTime, takeUntil } from "rxjs/operators";
 import { AutoRefreshService } from "../../services/auto-refresh.service";
+import { Theme, ThemeService } from "../../services/theme.service";
 
 @Component({
   selector: "wm-home",
@@ -20,6 +21,8 @@ import { AutoRefreshService } from "../../services/auto-refresh.service";
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @HostBinding("class") classes = "wmHolyGrailBody column";
+
+  protected readonly window = window;
 
   private ngUnsubscribe: Subject<boolean> = new Subject();
 
@@ -31,6 +34,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   autoRefreshEnabled = true;
 
+  theme: Theme = "auto";
+
   constructor(
     private wiremockService: WiremockService,
     private messageService: MessageService,
@@ -38,7 +43,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private autoRefreshService: AutoRefreshService,
     private modalService: NgbModal,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit() {
@@ -54,17 +60,20 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
 
     this.loadRecordingStatus();
+
+    this.themeService.setTheme(this.themeService.getPreferredTheme());
+    this.theme = this.themeService.getPreferredTheme();
   }
 
   private loadRecordingStatus() {
-    this.wiremockService.getRecordingStatus().subscribe(
-      data => {
+    this.wiremockService.getRecordingStatus().subscribe({
+      next: data => {
         this.currentRecordingStatus = data;
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
-    );
+      },
+    });
   }
 
   isActive(url: string): boolean {
@@ -72,14 +81,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   resetAll() {
-    this.wiremockService.resetAll().subscribe(
-      () => {
+    this.wiremockService.resetAll().subscribe({
+      next: () => {
         this.messageService.setMessage(new Message("Reset all successful", MessageType.INFO, 3000));
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
-    );
+      },
+    });
   }
 
   startRecording() {
@@ -98,19 +107,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     const recordSpec: RecordSpec = new RecordSpec();
     recordSpec.targetBaseUrl = url;
 
-    this.wiremockService.startRecording(recordSpec).subscribe(
-      () => {
+    this.wiremockService.startRecording(recordSpec).subscribe({
+      next: () => {
         this.messageService.setMessage(new Message("Recording started", MessageType.INFO, 3000));
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
-    );
+      },
+    });
   }
 
   stopRecording() {
-    this.wiremockService.stopRecording().subscribe(
-      results => {
+    this.wiremockService.stopRecording().subscribe({
+      next: results => {
         if (UtilService.isDefined(results) && UtilService.isDefined(results.getIds()) && results.getIds().length > 0) {
           const result = results.getIds().join("|");
 
@@ -129,15 +138,15 @@ export class HomeComponent implements OnInit, OnDestroy {
           );
         }
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
-    );
+      },
+    });
   }
 
   snapshot() {
-    this.wiremockService.snapshot().subscribe(
-      results => {
+    this.wiremockService.snapshot().subscribe({
+      next: results => {
         if (UtilService.isDefined(results) && UtilService.isDefined(results.mappings) && results.getIds().length > 0) {
           const result = results.getIds().join("|");
 
@@ -156,10 +165,10 @@ export class HomeComponent implements OnInit, OnDestroy {
           );
         }
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
-    );
+      },
+    });
   }
 
   setAutoRefresh(enabled: boolean) {
@@ -167,14 +176,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   shutdown() {
-    this.wiremockService.shutdown().subscribe(
-      () => {
+    this.wiremockService.shutdown().subscribe({
+      next: () => {
         this.messageService.setMessage(new Message("Shutdown successful", MessageType.INFO, 3000));
       },
-      err => {
+      error: err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
-    );
+      },
+    });
   }
 
   ngOnDestroy(): void {
@@ -182,5 +191,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  protected readonly window = window;
+  changeTheme(theme: Theme) {
+    this.themeService.setTheme(theme);
+    this.theme = this.themeService.getPreferredTheme();
+  }
 }

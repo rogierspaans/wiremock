@@ -1,10 +1,12 @@
 $primary: #f58e00 !default;
-$secondary: #ced4da !default;
+//$secondary: #ced4da !default;
+$info: #17a2b8 !default;
 $component-active-color: white !default;
-//$navbar-light-color: $primary !default;
 $navbar-dark-active-color: $primary !default;
 $navbar-light-active-color: $primary !default;
 $spacer: 1.5rem;
 
 @import "bootstrap/scss/functions";
+@import "bootstrap/scss/mixins";
 @import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";

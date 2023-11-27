@@ -7,7 +7,7 @@
           [id]="node.value.getId()"
           class="list-group-item wmListItem"
           [class.active]="node.value === activeItem"
-          [class.folder]="!node.isLeaf()"
+          [class.wmFolderContainer]="!node.isLeaf()"
           [ngClass]="['depth-' + node.depth]"
           (click)="selectActiveItem(node)"
           *ngIf="node !== rootNode && !node.isHidden()">

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from "@angular/core";
+import { Component, ElementRef, HostListener, Input, OnChanges, OnInit, ViewChild } from "@angular/core";
 import * as joint from "jointjs";
 import { dia } from "jointjs";
 import dagre from "dagre";
@@ -8,6 +8,7 @@ import { UtilService } from "../../services/util.service";
 import { StateLink } from "../../model/state-link";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Scenario } from "../../model/wiremock/scenario";
+import { ThemeService } from "../../services/theme.service";
 import Paper = dia.Paper;
 import Element = dia.Element;
 import LinkView = dia.LinkView;
@@ -18,7 +19,7 @@ import Graph = dia.Graph;
   templateUrl: "./state-machine.component.html",
   styleUrls: ["./state-machine.component.scss"],
 })
-export class StateMachineComponent implements OnChanges {
+export class StateMachineComponent implements OnInit, OnChanges {
   private static readonly ANY = "{{ANY}}";
 
   @Input()
@@ -45,8 +46,17 @@ export class StateMachineComponent implements OnChanges {
 
   constructor(
     private container: ElementRef,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private themeService: ThemeService
   ) {}
+
+  ngOnInit(): void {
+    this.themeService.changes$.subscribe({
+      next: theme => {
+        this.ngOnChanges();
+      },
+    });
+  }
 
   ngOnChanges(): void {
     if (UtilService.isUndefined(this.item) || UtilService.isUndefined(this.item.mappings)) {
@@ -151,8 +161,16 @@ export class StateMachineComponent implements OnChanges {
   }
 
   private addLinksToGraph(links: StateLink[], states: Map<string, dia.Element>) {
+    const lineColor = this.themeService.getPreferredResolvedTheme() === "dark" ? "white" : "black";
+
     links.forEach(data => {
-      const link = new joint.shapes.standard.Link();
+      const link = new joint.shapes.standard.Link({
+        attrs: {
+          line: {
+            stroke: lineColor,
+          },
+        },
+      });
       const source = states.get(data.source);
       const target = states.get(data.target);
 
