@@ -16,8 +16,9 @@ import {
 import { UtilService } from "../../services/util.service";
 import { Subject } from "rxjs";
 import * as ace from "ace-builds";
-import { takeUntil } from "rxjs/operators";
 import { Ace } from "ace-builds";
+import { takeUntil } from "rxjs/operators";
+import { ThemeService } from "../../services/theme.service";
 import Editor = Ace.Editor;
 
 @Component({
@@ -91,13 +92,20 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   @Output()
   valueChange = new EventEmitter<string>();
 
-  constructor(private zone: NgZone) {}
+  constructor(
+    private zone: NgZone,
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
     // debounce fast changes which occur in copy / paste scenarios and make ace crash if value is changed during paste scenario.
     this.editorChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
       this._code = value;
       this.valueChange.emit(this._code);
+    });
+
+    this.themeService.changes$.subscribe(theme => {
+      this.setTheme();
     });
   }
 
@@ -162,7 +170,7 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
       this.editor = ace.edit(this.editorCanvas.nativeElement);
-      this.editor.setTheme("ace/theme/monokai");
+      this.setTheme();
       this.editor.container.style.lineHeight = "1.5";
       this.setOptions();
       this.editor.session.setMode("ace/mode/" + this.language);
@@ -183,5 +191,17 @@ export class CodeEditorComponent implements OnInit, OnChanges, AfterViewInit, On
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
+  }
+
+  setTheme() {
+    if (this.editor) {
+      const theme = this.themeService.getPreferredResolvedTheme();
+
+      if (theme === "dark") {
+        this.editor.setTheme("ace/theme/github_dark");
+      } else {
+        this.editor.setTheme("ace/theme/github");
+      }
+    }
   }
 }

@@ -1,0 +1,53 @@
+.ace-github {
+  background-color: #f8f9fa !important;
+
+  .ace_variable {
+    color: #116329 !important;
+  }
+
+  .ace_boolean {
+    color: #d73a49 !important;
+  }
+
+  .ace_string {
+    color: #032f62 !important;
+  }
+
+  .ace_numeric {
+    color: #005cc5 !important;
+  }
+
+  .ace_fold {
+    background-color: #3E6485 !important;
+  }
+
+  .ace_marker-layer .ace_active-line {
+    background: transparent !important;
+  }
+}
+
+.ace-github-dark {
+  background-color: #1a1d20 !important;
+
+  .ace_variable {
+    color: #7ee787 !important;
+  }
+
+  .ace_boolean {
+    color: #ff7b72 !important;
+  }
+
+  .ace_numeric {
+    color: #79c0ff !important;
+  }
+
+  .ace_fold {
+    background-color: #3E6485 !important;
+  }
+
+  .ace_marker-layer .ace_active-line {
+    background: transparent !important;
+  }
+
+}
+

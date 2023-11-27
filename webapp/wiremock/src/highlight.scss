@@ -1,0 +1,18 @@
+.hljs {
+  background-color: #f8f9fa !important;
+}
+
+.hljs-attr {
+  color: #116329 !important;
+}
+
+@include color-mode(dark) {
+  .hljs {
+    background-color: #1a1d20 !important;
+  }
+
+  .hljs-attr {
+    color: #7ee787 !important;
+  }
+}
+

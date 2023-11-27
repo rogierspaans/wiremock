@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
+import { HighlightLoader } from "ngx-highlightjs";
 
 export type Theme = "light" | "dark" | "auto";
 
@@ -9,7 +10,7 @@ export type Theme = "light" | "dark" | "auto";
 export class ThemeService {
   changes$ = new BehaviorSubject<Theme>("auto");
 
-  constructor() {}
+  constructor(private hljsLoader: HighlightLoader) {}
 
   private getStoredTheme(): Theme {
     const theme = localStorage.getItem("theme");
@@ -27,6 +28,14 @@ export class ThemeService {
       localStorage.removeItem("theme");
     }
     this.changes$.next(theme);
+
+    const actualTheme = this.getPreferredResolvedTheme();
+
+    if (actualTheme === "dark") {
+      this.hljsLoader.setTheme("assets/highlightjs/styles/github-dark.css");
+    } else {
+      this.hljsLoader.setTheme("assets/highlightjs/styles/github.css");
+    }
   }
 
   public getPreferredResolvedTheme() {

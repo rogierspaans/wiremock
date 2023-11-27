@@ -1,4 +1,6 @@
 @import "bootstrapCustom";
+@import "highlight";
+@import "ace";
 
 .tab-pane {
   display: flex !important;
@@ -113,7 +115,6 @@ body {
 
 .pagination {
   flex-wrap: wrap;
-  border-top: 1px solid $border-color;
   margin: 0 0 -1px;
 }
 
@@ -245,3 +246,17 @@ body {
     background-color: $dark-bg-subtle-dark;
   }
 }
+
+// NavBar
+#wmNavBar {
+  background-color: $gray-100;
+  border-bottom: 1px solid $navbar-light-toggler-border-color;
+}
+
+@include color-mode(dark) {
+  #wmNavBar {
+    background-color: $dark-bg-subtle-dark;
+    border-bottom: 1px solid $navbar-dark-toggler-border-color;
+  }
+}
+

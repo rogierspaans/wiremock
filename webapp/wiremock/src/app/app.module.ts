@@ -147,7 +147,7 @@ import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
           xml: () => import("highlight.js/lib/languages/xml"),
           http: () => import("highlight.js/lib/languages/http"),
         },
-        themePath: "assets/highlightjs/styles/monokai.css",
+        themePath: "assets/highlightjs/styles/github.css",
       },
     },
   ],

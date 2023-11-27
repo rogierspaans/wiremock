@@ -29,26 +29,25 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
               {
-                "glob": "monokai.css",
+                "glob": "github.css",
                 "input": "./node_modules/highlight.js/styles",
                 "output": "./assets/highlightjs/styles"
               },
               {
-                "glob": "monokai.css",
-                "input": "./node_modules/ace-builds/css",
-                "output": "./assets/ace/themes"
+                "glob": "github-dark.css",
+                "input": "./node_modules/highlight.js/styles",
+                "output": "./assets/highlightjs/styles"
               },
               {
                 "glob": "**/*",
                 "input": "./node_modules/ace-builds/src-min",
                 "output": "./assets/ace"
-              }
+              },
+              "src/assets"
             ],
             "styles": ["src/styles.scss"],
             "scripts": [],
-            "aot": true,
             "baseHref": "/__admin/webapp/"
           },
           "configurations": {

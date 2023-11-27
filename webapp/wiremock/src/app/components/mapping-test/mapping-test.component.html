@@ -28,11 +28,10 @@
           <input [formControl]="url" type="url" class="form-control" id="play-url" />
         </div>
         <div class="form-group mb-2">
-          <label for="header" class="form-label">Headers</label>
+          <label class="form-label">Headers</label>
           <div class="wmEditorContainer">
             <wm-code-editor
               #headerContent
-              id="header"
               [code]="headerCode"
               [language]="'json'"
               [options]="codeOptions"
@@ -40,14 +39,9 @@
           </div>
         </div>
         <div class="form-group mb-2">
-          <label for="body" class="form-label">Body</label>
+          <label class="form-label">Body</label>
           <div class="wmEditorContainer">
-            <wm-code-editor
-              #bodyContent
-              id="body"
-              [code]="''"
-              [language]="language"
-              [options]="codeOptions"></wm-code-editor>
+            <wm-code-editor #bodyContent [code]="''" [language]="language" [options]="codeOptions"></wm-code-editor>
           </div>
         </div>
         <button type="submit" class="btn btn-primary" (click)="run()">
@@ -84,7 +78,7 @@
         </div>
 
         <div class="form-group">
-          <label for="body">Body</label>
+          <label>Body</label>
           <div class="wmEditorContainer wmEditorResponseContainer">
             <wm-code-editor
               [code]="responseBody"
