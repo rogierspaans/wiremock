@@ -20,8 +20,17 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "allowedCommonJsDependencies": ["dagre", "graphlib"],
-            "outputPath": "../../src/main/resources/assets/webapp",
+            "allowedCommonJsDependencies": [
+              "dagre",
+              "graphlib",
+              "ace-builds",
+              "mime-db",
+              "vkbeautify",
+              "moment",
+              "jquery",
+              "backbone"
+            ],
+            "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -29,6 +38,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/assets",
               {
                 "glob": "github.css",
                 "input": "./node_modules/highlight.js/styles",
@@ -43,8 +53,7 @@
                 "glob": "**/*",
                 "input": "./node_modules/ace-builds/src-min",
                 "output": "./assets/ace"
-              },
-              "src/assets"
+              }
             ],
             "styles": ["src/styles.scss"],
             "scripts": [],
@@ -63,15 +72,7 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              ]
             }
           }
         },
@@ -107,9 +108,19 @@
               "src/favicon.ico",
               "src/assets",
               {
-                "glob": "monokai.css",
+                "glob": "github.css",
                 "input": "./node_modules/highlight.js/styles",
                 "output": "./assets/highlightjs/styles"
+              },
+              {
+                "glob": "github-dark.css",
+                "input": "./node_modules/highlight.js/styles",
+                "output": "./assets/highlightjs/styles"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/ace-builds/src-min",
+                "output": "./assets/ace"
               }
             ]
           }

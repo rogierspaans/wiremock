@@ -25,13 +25,13 @@ group = 'org.wiremock'
 
 project.ext {
   versions = [
-    handlebars     : '4.3.1',
-    jetty          : '11.0.18',
-    guava          : '32.1.3-jre',
-    jackson        : '2.15.3',
-    xmlUnit        : '2.9.1',
-    jsonUnit       : '2.38.0',
-    junitJupiter   : '5.10.0'
+    handlebars  : '4.3.1',
+    jetty       : '11.0.18',
+    guava       : '32.1.3-jre',
+    jackson     : '2.15.3',
+    xmlUnit     : '2.9.1',
+    jsonUnit    : '2.38.0',
+    junitJupiter: '5.10.0'
   ]
 }
 
@@ -65,9 +65,9 @@ dependencies {
   }
   api platform("com.fasterxml.jackson:jackson-bom:$versions.jackson")
   api "com.fasterxml.jackson.core:jackson-core",
-      "com.fasterxml.jackson.core:jackson-annotations",
-      "com.fasterxml.jackson.core:jackson-databind",
-      "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    "com.fasterxml.jackson.core:jackson-annotations",
+    "com.fasterxml.jackson.core:jackson-databind",
+    "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
   api "org.apache.httpcomponents.client5:httpclient5:5.2.1"
   api "org.xmlunit:xmlunit-core:$versions.xmlUnit"
   api "org.xmlunit:xmlunit-legacy:$versions.xmlUnit", {
@@ -99,7 +99,7 @@ dependencies {
     exclude group: 'org.mozilla', module: 'rhino'
   }
 
-  api 'commons-fileupload:commons-fileupload:1.5',  {
+  api 'commons-fileupload:commons-fileupload:1.5', {
     exclude group: 'commons-io', module: 'commons-io'
   }
   api "commons-io:commons-io:2.15.0"
@@ -133,7 +133,7 @@ dependencies {
   testRuntimeOnly "ch.qos.logback:logback-classic:1.4.0"
   testRuntimeOnly files('src/test/resources/classpath file source/classpathfiles.zip', 'src/test/resources/classpath-filesource.jar')
 
-  testImplementation ('net.jockx:littleproxy:1.1.3') {
+  testImplementation('net.jockx:littleproxy:1.1.3') {
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.commons', module: 'commons-lang3'
     exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -184,7 +184,7 @@ allprojects {
   ext {
     runningOnCI = System.getenv('CI') == 'true'
 
-    repoUser =     this.hasProperty('sonatypeUser')     ? sonatypeUser : 'default'
+    repoUser = this.hasProperty('sonatypeUser') ? sonatypeUser : 'default'
     repoPassword = this.hasProperty('sonatypePassword') ? sonatypePassword : 'default'
 
     pomInfo = {
@@ -447,11 +447,19 @@ task generateWebapp(type: Exec) {
   }
 }
 
-jar.dependsOn generateWebapp
-processResources.dependsOn generateWebapp
+task finalizeWebapp(type: Copy) {
+  dependsOn generateWebapp
+  // Because of: https://github.com/angular/angular-cli/issues/26304
+  // we need to copy some things around.
+  from 'webapp/wiremock/dist/browser'
+  into 'src/main/resources/assets/webapp'
+}
+
+jar.dependsOn finalizeWebapp
+processResources.dependsOn finalizeWebapp
 
 task deleteGeneratedWebapp(type: Delete) {
-  delete "src/main/resources/assets/webapp"
+  delete 'src/main/resources/assets/webapp'
 }
 
 clean.dependsOn deleteGeneratedWebapp
@@ -557,7 +565,7 @@ tasks.withType(JavaCompile) {
 
 eclipse.classpath.file {
   whenMerged {
-    entries.find{ it.path ==~ '.*JRE_CONTAINER.*' }.each {
+    entries.find { it.path ==~ '.*JRE_CONTAINER.*' }.each {
       it.entryAttributes['module'] = true
       it.entryAttributes['add-exports'] = 'java.base/sun.security.x509=ALL-UNNAMED'
     }
