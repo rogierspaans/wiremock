@@ -4,7 +4,7 @@ import { UtilService } from '../../services/util.service';
 @Component({
   selector: 'wm-code-entry',
   templateUrl: './code-entry.component.html',
-  styleUrls: ['./code-entry.component.scss'],
+  styleUrls: [ './code-entry.component.scss' ],
 })
 export class CodeEntryComponent {
   @HostBinding('class') classes = 'wmHolyGrailBody';
@@ -12,12 +12,16 @@ export class CodeEntryComponent {
   _code?: string;
   @Input()
   set code(value: string | undefined) {
-    this._code = UtilService.prettify(String(value));
-    // this._code =  String(value);
+    if (value) {
+      this._code = UtilService.prettify(String(value));
+    } else {
+      this._code = undefined;
+    }
   }
 
   @Input()
   language?: string;
 
-  constructor() {}
+  constructor() {
+  }
 }

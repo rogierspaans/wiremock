@@ -16,7 +16,10 @@ import {
   NgbPopoverModule,
   NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from '@fortawesome/angular-fontawesome';
 import {
   faAlignJustify,
   faAngleDoubleUp,
@@ -144,11 +147,11 @@ import { HIGHLIGHT_OPTIONS, HighlightModule } from 'ngx-highlightjs';
           xml: () => import('highlight.js/lib/languages/xml'),
           http: () => import('highlight.js/lib/languages/http'),
         },
-        themePath: 'assets/github.css',
+        themePath: 'assets/highlightjs/styles/monokai.css',
       },
     },
   ],
-  bootstrap: [ AppComponent ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(library: FaIconLibrary) {
