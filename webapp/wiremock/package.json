@@ -16,8 +16,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
-    "prettier": "prettier --write .",
-    "e2e": "ng e2e"
+    "prettier": "prettier --write ."
   },
   "private": true,
   "dependencies": {
@@ -75,17 +74,18 @@
     "@typescript-eslint/parser": "6.11.0",
     "codelyzer": "6.0.2",
     "eslint": "^8.53.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-unused-imports": "^3.0.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier": "5.0.1",
+    "eslint-plugin-unused-imports": "3.0.0",
+    "eslint-plugin-prefer-arrow": "1.2.3",
     "jasmine-core": "5.1.1",
     "karma": "6.4.2",
     "karma-chrome-launcher": "3.2.0",
     "karma-coverage": "2.2.1",
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.1.0",
-    "prettier": "^3.1.0",
-    "prettier-eslint": "^16.1.2",
+    "prettier": "3.1.0",
+    "prettier-eslint": "16.1.2",
     "typescript": "5.2.2"
   }
 }

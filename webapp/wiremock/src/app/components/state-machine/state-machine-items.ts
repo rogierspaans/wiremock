@@ -32,7 +32,7 @@ class InfoButton extends joint.linkTools.Button {
       ],
       distance: "50%",
       offset: 0,
-      action: function () {
+      action: () => {
         const modalRef = modalService.open(StateMappingInfoComponent, {
           size: "lg",
           windowClass: "modal-h70",

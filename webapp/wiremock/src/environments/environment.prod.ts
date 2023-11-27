@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  getWebSocket: function (): WebSocket {
+  getWebSocket: (): WebSocket => {
     const loc = window.location;
     let new_uri;
     if (loc.protocol === "https:") {
