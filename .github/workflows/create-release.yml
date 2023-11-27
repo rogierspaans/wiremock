@@ -46,7 +46,7 @@ jobs:
       - name: Set up node using nvm
         uses: dcodeIO/setup-node-nvm@v5
         with:
-          node-version: 16.16.0
+          node-version: 20.10.0
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
