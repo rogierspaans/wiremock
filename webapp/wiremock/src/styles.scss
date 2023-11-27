@@ -260,3 +260,24 @@ body {
   }
 }
 
+// SubMappingLink
+#wmSeparatedStubMapping {
+  background-color: $gray-100;
+}
+
+@include color-mode(dark) {
+  #wmSeparatedStubMapping {
+    background-color: $dark-bg-subtle-dark;
+  }
+}
+
+// Pagination
+ngb-pagination {
+  border-bottom: 1px solid $navbar-light-toggler-border-color;
+}
+
+@include color-mode(dark) {
+  ngb-pagination {
+    border-bottom: 1px solid $navbar-dark-toggler-border-color;
+  }
+}

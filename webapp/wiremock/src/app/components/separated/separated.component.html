@@ -6,7 +6,7 @@
         <tbody>
           <tr *ngIf="isServeEvent(activeItem)">
             <td class="wmTableColumnKey">stubMapping</td>
-            <td>
+            <td id="wmSeparatedStubMapping">
               <a
                 [routerLink]="['/mappings']"
                 [queryParams]="{

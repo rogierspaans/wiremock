@@ -1,30 +1,32 @@
-<ul
-  ngbNav
-  #nav="ngbNav"
-  [(activeId)]="activeId"
-  (activeIdChange)="onActiveIdChange($event)"
-  [animation]="false"
-  class="nav-tabs">
-  <li [ngbNavItem]="RAW" [disabled]="rawDisabled">
-    <a ngbNavLink>Raw</a>
-    <ng-template ngbNavContent>
-      <ng-content select="wm-raw-separated-raw"></ng-content>
-    </ng-template>
-  </li>
-  <li [ngbNavItem]="SEPARATED" [disabled]="separatedDisabled">
-    <a ngbNavLink>Separated</a>
-    <ng-template ngbNavContent>
-      <ng-content select="wm-raw-separated-separated"></ng-content>
-    </ng-template>
-  </li>
-  <li [ngbNavItem]="TEST" *ngIf="!testHidden" [disabled]="testDisabled">
-    <a ngbNavLink>
-      <fa-icon icon="play"></fa-icon>
-      Test</a
-    >
-    <ng-template ngbNavContent>
-      <ng-content select="wm-raw-separated-test"></ng-content>
-    </ng-template>
-  </li>
-</ul>
-<div [ngbNavOutlet]="nav" class="navPaneContainer wmHolyGrailBody"></div>
+<div class="wmHolyGrailBody container-fluid column">
+  <ul
+    ngbNav
+    #nav="ngbNav"
+    [(activeId)]="activeId"
+    (activeIdChange)="onActiveIdChange($event)"
+    [animation]="false"
+    class="nav-tabs">
+    <li [ngbNavItem]="RAW" [disabled]="rawDisabled">
+      <a ngbNavLink>Raw</a>
+      <ng-template ngbNavContent>
+        <ng-content select="wm-raw-separated-raw"></ng-content>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="SEPARATED" [disabled]="separatedDisabled">
+      <a ngbNavLink>Separated</a>
+      <ng-template ngbNavContent>
+        <ng-content select="wm-raw-separated-separated"></ng-content>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="TEST" *ngIf="!testHidden" [disabled]="testDisabled">
+      <a ngbNavLink>
+        <fa-icon icon="play"></fa-icon>
+        Test</a
+      >
+      <ng-template ngbNavContent>
+        <ng-content select="wm-raw-separated-test"></ng-content>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="nav" class="navPaneContainer wmHolyGrailBody"></div>
+</div>
