@@ -50,7 +50,6 @@ public final class Json {
           objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
           objectMapper.registerModule(new JavaTimeModule());
           objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-          objectMapper.setDefaultPrettyPrinter(new JsonPrettyPrinter());
           return objectMapper;
         }
       };

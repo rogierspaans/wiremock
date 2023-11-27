@@ -62,7 +62,7 @@ public class JsonFileMappingsSource implements MappingsSource {
       // we use gui folder definition to change path as sub directory from root.
       // Only when not saved yet.
       // TODO: This allows async between folder definition and actual file. Not sure if good or bad
-      //  yet.
+      // yet.
       final String folderDefinition = getFolderDefinition(stubMapping);
       if (folderDefinition != null) {
         fileMetadata =
