@@ -5,7 +5,7 @@ Extends [WireMock](http://wiremock.org) with a graphical user interface
 [![Release](https://img.shields.io/github/v/release/holomekc/wiremock)](https://github.com/holomekc/wiremock/releases)
 [![Main](https://github.com/holomekc/wiremock/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/holomekc/wiremock/actions/workflows/build-and-test.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/holomekc/wiremock-gui.svg)](https://hub.docker.com/r/holomekc/wiremock-gui/)
-![Docker Image Version (https://img.shields.io/docker/v/holomekc/wiremock-gui)](https://hub.docker.com/r/holomekc/wiremock-gui/)
+[![Docker Image Version](https://img.shields.io/docker/v/holomekc/wiremock-gui)](https://hub.docker.com/r/holomekc/wiremock-gui/)
 
 ## Key Features
 
