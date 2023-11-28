@@ -1,8 +1,14 @@
 # WireMock with GUI
 
-Extends WireMock with a graphical user interface
+Extends [WireMock](http://wiremock.org) with a graphical user interface
+
+[![Release](https://img.shields.io/github/v/release/holomekc/wiremock)](https://github.com/holomekc/wiremock/releases)
+[![Main](https://github.com/holomekc/wiremock/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/holomekc/wiremock/actions/workflows/build-and-test.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/holomekc/wiremock-gui.svg)](https://hub.docker.com/r/holomekc/wiremock-gui/)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/holomekc/wiremock-gui)
 
 ## Key Features
+
 - Mappings
   - A paginated list or folder view of all mappings
   - Search for mappings
@@ -33,29 +39,35 @@ Extends WireMock with a graphical user interface
 - Auto refresh when mappings or requests changes
 
 ## Where do I find the GUI?
+
 The gui is part of the Wiremock admin interface. Therefore, just open the following URL:
 
 \<Wiremock baseUrl\>/__admin/webapp
 
 ## Folder view
+
 Since 2.32.0.2
 
 For mappings the folder view is selected by default. It is still possible to switch easier list view as well.
 
-If mappings are stored on a drive in different directories this structure will be extracted and mappings metadata will be updated so that wiremock-gui can show the same folder structure.
+If mappings are stored on a drive in different directories this structure will be extracted and mappings metadata will
+be updated so that wiremock-gui can show the same folder structure.
 
-You can also manually update mapping metadata to create a structure. This helps if you do not store mappings but load them via http, or if you do not want to place the file in different directories.
+You can also manually update mapping metadata to create a structure. This helps if you do not store mappings but load
+them via http, or if you do not want to place the file in different directories.
 
 metadata structure:
+
 ```json
 {
-     "metadata": {
-          "wiremock-gui": {
-               "folder": "/some/folder"
-          }
-     }
+  "metadata": {
+    "wiremock-gui": {
+      "folder": "/some/folder"
+    }
+  }
 }
 ```
+
 will create following structure in gui:
 
 ![alt folder-image](./images/folder.png)
@@ -63,16 +75,22 @@ will create following structure in gui:
 In general functions when editing a mapping you can add the metadata structure via "add Folder".
 
 ### drag-and-drop
-drag-and-drop into folders is currently <b>not</b> supported. It is a more complex topic, as it is currently not possible to sort mappings.
 
-There is a branch on which drag-and-drop is implemented. So if you are interested you can test it there. Due to the mentioned not supported sorting mappings might jump to a different location after reloading.
+drag-and-drop into folders is currently <b>not</b> supported. It is a more complex topic, as it is currently not
+possible to sort mappings.
+
+There is a branch on which drag-and-drop is implemented. So if you are interested you can test it there. Due to the
+mentioned not supported sorting mappings might jump to a different location after reloading.
 
 # Test mappings
+
 Since 2.32.0.2
 
-Allows testing of mappings via an HTTP request. This feature tries to extract url and content-type from mapping information. The prefilled data highly depends on how the request in the mapping is defined.
+Allows testing of mappings via an HTTP request. This feature tries to extract url and content-type from mapping
+information. The prefilled data highly depends on how the request in the mapping is defined.
 
-When executing the request the response is shown and also a badge which indicates if the selected mapping answered the request. If this is the case the following is shown:
+When executing the request the response is shown and also a badge which indicates if the selected mapping answered the
+request. If this is the case the following is shown:
 
 ![alt test-match](./images/test-matches.png)
 
@@ -80,26 +98,32 @@ If another mapping answered the request no match is shown and a link to the mapp
 
 ![alt test-no-match](./images/test-no-match.png)
 
-Keep in mind this feature will never be as powerful as tools like Postman, Insomnia, etc. So the overall idea is to provide a quick way to test if your mapping is properly setup.
+Keep in mind this feature will never be as powerful as tools like Postman, Insomnia, etc. So the overall idea is to
+provide a quick way to test if your mapping is properly setup.
 
 ## Features except gui
+
 Custom Handlebars helpers
 
-| Name          | Parameter     | Description   |
-| ------------- | ------------- | ------------- |
-| JWT           | algo          | Signing algorithm. Check jsonwebtoken for SignatureAlgorithm. E.g. RS256 |
-|               | key           | Base64 encoded key to use. Kind of key depends on used algo |
-|               | claims        | a json string which describes the claims to use. Must not be null in case no payload is defined |
-|               | payload       | a json string which contains the content of the jwt. Must not be null in case no claims are defined |
-|               | header        | a json string which contains the header to use |
+| Name | Parameter | Description                                                                                         |
+|------|-----------|-----------------------------------------------------------------------------------------------------|
+| JWT  | algo      | Signing algorithm. Check jsonwebtoken for SignatureAlgorithm. E.g. RS256                            |
+|      | key       | Base64 encoded key to use. Kind of key depends on used algo                                         |
+|      | claims    | a json string which describes the claims to use. Must not be null in case no payload is defined     |
+|      | payload   | a json string which contains the content of the jwt. Must not be null in case no claims are defined |
+|      | header    | a json string which contains the header to use                                                      |
 
 ## Docker
+
 ### Breaking Change > 2.35.0.1
+
 The docker images are based on the official [wiremock](https://hub.docker.com/r/wiremock/wiremock) images now.
 Therefore, check the official guide regarding configuration etc. The docker compose example below is alread updated.
 
 ### Docker Compose
+
 A short example of a compose file
+
 ```
 version: "3"
 services:
@@ -119,22 +143,32 @@ services:
 ```
 
 ### Docker Images
+
 [Docker Hub](https://hub.docker.com/r/holomekc/wiremock-gui)
 
 In the past only alpine images existed. New versioning concept is:
 
 holomekc/wiremock-gui:{version} or holomekc/wiremock-gui:latest
+
 - linux/amd64
 - linux/arm/v7
 - linux/arm64
 
 holomekc/wiremock-gui:{version}-alpine or holomekc/wiremock-gui:latest-alpine
+
 - linux/amd64
 
 #### Mac M[1-2]
-In case you want to use this Docker image on an Apple Mac with M1 or M2 processor you cannot use the alpine image. The docker images are baces on the official wiremock docker images. I only replace the build jar file in the image. The official wiremock docker images uses eclipse-temurin as base image for the alpine and none alpine version. Sadly the alpine version of temurin does not support arm yet. See: https://github.com/adoptium/containers/issues/158. Theoretically, I could switch to a different base image, but this would create increased maintenance. I hope temurin is updated soon-ish. Please use the none alpine version on a Mac for the time being.
+
+In case you want to use this Docker image on an Apple Mac with M1 or M2 processor you cannot use the alpine image. The
+docker images are baces on the official wiremock docker images. I only replace the build jar file in the image. The
+official wiremock docker images uses eclipse-temurin as base image for the alpine and none alpine version. Sadly the
+alpine version of temurin does not support arm yet. See: https://github.com/adoptium/containers/issues/158.
+Theoretically, I could switch to a different base image, but this would create increased maintenance. I hope temurin is
+updated soon-ish. Please use the none alpine version on a Mac for the time being.
 
 #### Images
+
 [Mappings](./images/mappings.png)
 
 [Separated View](./images/mappings-separated.png)
