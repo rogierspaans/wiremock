@@ -215,7 +215,7 @@ allprojects {
     mavenCentral()
   }
 
-  version = '3.3.1.0'
+  version = '3.3.1.1'
 
 
   sourceCompatibility = 11
@@ -448,15 +448,16 @@ task generateWebapp(type: Exec) {
 }
 
 task finalizeWebapp(type: Copy) {
-  mustRunAfter generateWebapp
+  dependsOn generateWebapp
   // Because of: https://github.com/angular/angular-cli/issues/26304
   // we need to copy some things around.
   from 'webapp/wiremock/dist/browser'
   into 'src/main/resources/assets/webapp'
 }
 
-jar.dependsOn generateWebapp
-processResources.dependsOn generateWebapp
+jar.dependsOn finalizeWebapp
+processResources.dependsOn finalizeWebapp
+check.dependsOn -= finalizeWebapp
 
 task deleteGeneratedWebapp(type: Delete) {
   delete 'src/main/resources/assets/webapp'
