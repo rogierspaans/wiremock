@@ -153,7 +153,8 @@ public abstract class JettyHttpServer implements HttpServer {
     handlers.setHandlers(
         ArrayUtils.addAll(extensionHandlers(), adminContext, asyncTimeoutSettingHandler));
 
-    // We prepend the rewrite handle for the wiremock gui web app to make sure that we route the requests properly
+    // We prepend the rewrite handle for the wiremock gui web app to make sure that we route the
+    // requests properly
     final RewriteHandler rewriteHandler = webAppRewriteContext(adminContext);
     handlers.prependHandler(rewriteHandler);
 
@@ -396,10 +397,10 @@ public abstract class JettyHttpServer implements HttpServer {
 
     // Include wiremock-gui websocket into admin context
     JakartaWebSocketServletContainerInitializer.configure(
-      adminContext,
-      (servletContext, serverContainer) -> {
-        serverContainer.addEndpoint(WebSocketEndpoint.class);
-      });
+        adminContext,
+        (servletContext, serverContainer) -> {
+          serverContainer.addEndpoint(WebSocketEndpoint.class);
+        });
 
     decorateAdminServiceContextAfterConfig(adminContext);
 
@@ -413,8 +414,8 @@ public abstract class JettyHttpServer implements HttpServer {
       ServletContextHandler adminServiceContext) {}
 
   /**
-   * Rewrite web app. We use Angular. We must rewrite every /__admin/webapp path to the index.html of our
-   * single page application.
+   * Rewrite web app. We use Angular. We must rewrite every /__admin/webapp path to the index.html
+   * of our single page application.
    *
    * @param adminContextHandler admin context handler is used to provide the static file content
    * @return the rewrite handler
@@ -425,7 +426,7 @@ public abstract class JettyHttpServer implements HttpServer {
     rewrite.setRewritePathInfo(true);
 
     RewriteRegexRule rewriteRule = new RewriteRegexRule();
-    rewriteRule.setRegex("/__admin/webapp/(mappings|matched|unmatched|state).*");
+    rewriteRule.setRegex("/__admin/webapp/(mappings|matched|unmatched|state|files).*");
     rewriteRule.setReplacement("/__admin/webapp/index.html");
     rewrite.addRule(rewriteRule);
 
