@@ -1,38 +1,27 @@
 import { Component } from "@angular/core";
-import { Message, MessageService } from "./message.service";
+import { Message, MessageService, MessageType } from "./message.service";
 
 @Component({
-  // selector: 'wm-message',
   selector: "wm-message",
   templateUrl: "./message.component.html",
   styleUrls: ["./message.component.scss"],
 })
 export class MessageComponent {
-  // @HostBinding('class') classes = 'wmAlert';
 
-  message?: Message;
+  messages: Message[] = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  timeout?: any;
+  type = MessageType;
 
   constructor(private messageService: MessageService) {
-    this.message = undefined;
-
+    this.messages = [];
     this.messageService.getSubject().subscribe(next => {
-      this.message = next;
-
-      if (next && next.duration) {
-        if (this.timeout) {
-          clearTimeout(this.timeout);
-        }
-        this.timeout = setTimeout(() => {
-          this.closeAlert();
-        }, next.duration);
+      if (next) {
+        this.messages.push(next);
       }
     });
   }
 
-  closeAlert() {
-    this.message = undefined;
+  remove(message: Message) {
+    this.messages = this.messages.filter(m => m != message);
   }
 }

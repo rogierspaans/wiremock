@@ -24,6 +24,7 @@ public enum Message {
   MATCHED("matched"),
   RECORDING("recording"),
   SCENARIO("scenario"),
+  FILES("files"),
   ;
 
   private final String message;

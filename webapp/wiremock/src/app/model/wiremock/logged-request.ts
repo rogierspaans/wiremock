@@ -73,4 +73,16 @@ export class LoggedRequest extends Proxy implements Item {
 
     return this;
   }
+
+  getBodyFileName(): string | undefined {
+    return undefined;
+  }
+
+  hasFile(): boolean {
+    return false;
+  }
+
+  isPersistent(): boolean {
+    return false;
+  }
 }

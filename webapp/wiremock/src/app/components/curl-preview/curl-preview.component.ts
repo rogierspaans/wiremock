@@ -31,16 +31,18 @@ export class CurlPreviewComponent implements AfterViewInit {
   constructor(
     private elementRef: ElementRef,
     private messageService: MessageService,
-    public activeModal: NgbActiveModal
-  ) {}
+    public activeModal: NgbActiveModal,
+  ) {
+  }
+
   copyCurl() {
     this.activeModal.dismiss();
     const code = this.codeEditor.getCode();
 
     if (code && UtilService.copyToClipboard(code)) {
-      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR));
     }
   }
 

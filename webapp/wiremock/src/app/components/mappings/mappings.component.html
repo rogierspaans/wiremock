@@ -101,6 +101,28 @@
           </div>
         </div>
 
+        <div ngbDropdown class="btn-group" role="group">
+          <button id="wmFileEditDrop" type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle>
+            File
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu">
+            <button type="button" class="dropdown-item" (click)="downloadFile()" [disabled]="!bodyFileName">
+              <fa-icon icon="download"></fa-icon>
+              Download
+            </button>
+            <input type="file" class="file-input hidden"
+                   (change)="uploadFile($event)" #fileUpload>
+            <button type="button" class="dropdown-item" (click)="fileUpload.click()">
+              <fa-icon icon="upload"></fa-icon>
+              Upload
+            </button>
+            <button type="button" class="dropdown-item" (click)="deleteFile()" [disabled]="!bodyFileName">
+              <fa-icon icon="trash"></fa-icon>
+              Delete
+            </button>
+          </div>
+        </div>
+
         <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
           <fa-icon icon="times"></fa-icon>
           Cancel
@@ -152,6 +174,17 @@
             <button type="button" class="dropdown-item" (click)="resetAllScenarios()">
               <fa-icon icon="sync-alt"></fa-icon>
               Reset all Scenarios
+            </button>
+          </div>
+        </div>
+        <div ngbDropdown class="btn-group" role="group">
+          <button id="wmFileDrop" type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle>
+            File
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu">
+            <button type="button" class="dropdown-item" (click)="downloadFile()" [disabled]="!bodyFileName">
+              <fa-icon icon="download"></fa-icon>
+              Download
             </button>
           </div>
         </div>

@@ -14,6 +14,7 @@ import {
   NgbNavModule,
   NgbPaginationModule,
   NgbPopoverModule,
+  NgbToastModule,
   NgbTooltipModule,
 } from "@ng-bootstrap/ng-bootstrap";
 import { FaIconLibrary, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -30,12 +31,14 @@ import {
   faCog,
   faCopy,
   faDotCircle,
+  faDownload,
   faExchangeAlt,
   faFileAlt,
   faFolder,
   faLink,
   faList,
   faMoon,
+  faPaperclip,
   faPencilAlt,
   faPlay,
   faPlus,
@@ -47,6 +50,7 @@ import {
   faSyncAlt,
   faTimes,
   faTrash,
+  faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import { ListViewComponent } from "./components/list-view/list-view.component";
 import { MatchedComponent } from "./components/matched/matched.component";
@@ -80,6 +84,8 @@ import { MappingTestComponent } from "./components/mapping-test/mapping-test.com
 import { TestDirective } from "./components/raw-separated/test.directive";
 import { TreeViewComponent } from "./components/tree-view/tree-view.component";
 import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
+import { FilesComponent } from "./components/files/files.component";
+import { FileNameComponent } from "./dialogs/file-name/file-name.component";
 
 @NgModule({
   declarations: [
@@ -111,6 +117,8 @@ import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
     CurlPreviewComponent,
     MappingTestComponent,
     TreeViewComponent,
+    FileNameComponent,
+    FilesComponent,
   ],
   imports: [
     BrowserModule,
@@ -128,6 +136,7 @@ import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
     NgbTooltipModule,
     NgbPopoverModule,
     NgbPaginationModule,
+    NgbToastModule,
     HighlightModule,
   ],
   providers: [
@@ -185,5 +194,8 @@ export class AppModule {
     library.addIcons(faSun);
     library.addIcons(faMoon);
     library.addIcons(faCircleHalfStroke);
+    library.addIcons(faPaperclip);
+    library.addIcons(faUpload);
+    library.addIcons(faDownload);
   }
 }

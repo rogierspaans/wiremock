@@ -41,3 +41,13 @@
   padding: 7px;
   font-size: 14px;
 }
+
+
+.wmBodyFileName {
+  display: flex;
+  align-items: center;
+
+  button {
+    border-radius: 0;
+  }
+}

@@ -14,4 +14,10 @@ export interface Item {
   hasFolderDefinition(): boolean;
 
   getFolderName(): string | undefined;
+
+  hasFile(): boolean;
+
+  getBodyFileName(): string | undefined;
+
+  isPersistent(): boolean;
 }

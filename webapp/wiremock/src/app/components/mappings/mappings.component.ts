@@ -5,7 +5,7 @@ import { UtilService } from "../../services/util.service";
 import { StubMapping } from "../../model/wiremock/stub-mapping";
 import { WebSocketService } from "../../services/web-socket.service";
 import { WebSocketListener } from "../../interfaces/web-socket-listener";
-import { debounceTime, filter, takeUntil } from "rxjs/operators";
+import { debounceTime, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { MappingHelperService } from "./mapping-helper.service";
 import { Message, MessageService, MessageType } from "../message/message.service";
 import { Item } from "../../model/wiremock/item";
@@ -14,6 +14,9 @@ import { ProxyConfig } from "../../model/wiremock/proxy-config";
 import { Tab, TabSelectionService } from "../../services/tab-selection.service";
 import { AutoRefreshService } from "../../services/auto-refresh.service";
 import { CodeEditorComponent } from "../code-editor/code-editor.component";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { FileNameComponent } from "../../dialogs/file-name/file-name.component";
+import { fromPromise } from "rxjs/internal/observable/innerFrom";
 
 @Component({
   selector: "wm-mappings",
@@ -33,6 +36,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   result?: ListStubMappingsResult;
 
   activeItemId?: string;
+  bodyFileName?: string;
 
   editorText?: string;
   currentMappingText?: string;
@@ -40,59 +44,8 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   editMode?: State;
   State = State;
 
-  codeOptions = {
-    selectionStyle: "text",
-    highlightActiveLine: true,
-    highlightSelectedWord: true,
-    readOnly: false,
-    cursorStyle: "ace",
-    mergeUndoDeltas: "true",
-    behavioursEnabled: true,
-    wrapBehavioursEnabled: true,
-    copyWithEmptySelection: true,
-    autoScrollEditorIntoView: true, // we need that
-    useSoftTabs: true,
-    // ...
-    highlightGutterLine: false,
-    showPrintMargin: false,
-    printMarginColumn: false,
-    printMargin: false,
-    showGutter: true,
-    displayIndentGuides: true,
-    fontSize: 14,
-    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-    showLineNumbers: true,
-    // ..
-    wrap: true,
-    enableMultiselect: true,
-  };
-
-  codeReadOnlyOptions = {
-    selectionStyle: "text",
-    highlightActiveLine: true, // readOnly
-    highlightSelectedWord: true,
-    readOnly: true, // readOnly
-    cursorStyle: "ace",
-    mergeUndoDeltas: "true",
-    behavioursEnabled: true,
-    wrapBehavioursEnabled: true,
-    copyWithEmptySelection: true,
-    autoScrollEditorIntoView: true, // we need that
-    useSoftTabs: true,
-    // ...
-    highlightGutterLine: false,
-    showPrintMargin: false,
-    printMarginColumn: false,
-    printMargin: false,
-    showGutter: true,
-    displayIndentGuides: true,
-    fontSize: 14,
-    fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-    showLineNumbers: true,
-    // ..
-    wrap: true,
-    enableMultiselect: true,
-  };
+  codeOptions = UtilService.aceWriteOptions();
+  codeReadOnlyOptions = UtilService.aceReadOnlyOptions();
 
   RAW = Tab.RAW;
 
@@ -105,8 +58,10 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     private webSocketService: WebSocketService,
     private messageService: MessageService,
     private tabSelectionService: TabSelectionService,
-    private autoRefreshService: AutoRefreshService
-  ) {}
+    private autoRefreshService: AutoRefreshService,
+    private modalService: NgbModal,
+  ) {
+  }
 
   ngOnInit() {
     this.webSocketService
@@ -114,7 +69,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100)
+        debounceTime(100),
       )
       .subscribe(() => {
         this.loadMappings();
@@ -163,7 +118,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       this.wiremockService.saveNewMapping(this.editorText).subscribe({
         next: data => {
           this.activeItemId = data.getId();
-          this.messageService.setMessage(new Message("save successful", MessageType.INFO, 2000));
+          this.messageService.setMessage(new Message("save successful", MessageType.INFO));
         },
         error: err => {
           UtilService.showErrorMessage(this.messageService, err);
@@ -185,7 +140,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       this.wiremockService.saveMapping(item.getId(), this.editorText).subscribe({
         next: data => {
           this.activeItemId = data.getId();
-          this.messageService.setMessage(new Message("save successful", MessageType.INFO, 2000));
+          this.messageService.setMessage(new Message("save successful", MessageType.INFO));
         },
         error: err => {
           UtilService.showErrorMessage(this.messageService, err);
@@ -198,8 +153,10 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   onActiveItemChange(item: Item) {
     if (item) {
       this.editorText = item.getCode();
+      this.bodyFileName = item.getBodyFileName();
     } else {
       this.editorText = "";
+      this.bodyFileName = undefined;
     }
     this.editMode = State.NORMAL;
   }
@@ -240,7 +197,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   removeAllMappings() {
     this.wiremockService.deleteAllMappings().subscribe({
       next: () => {
-        this.messageService.setMessage(new Message("All mappings removed", MessageType.INFO, 3000));
+        this.messageService.setMessage(new Message("All mappings removed", MessageType.INFO));
       },
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);
@@ -251,7 +208,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   resetAllScenarios() {
     this.wiremockService.resetScenarios().subscribe({
       next: () => {
-        this.messageService.setMessage(new Message("Reset of all scenarios successful", MessageType.INFO, 3000));
+        this.messageService.setMessage(new Message("Reset of all scenarios successful", MessageType.INFO));
       },
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);
@@ -270,8 +227,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       new Message(
         err.name + ": message=" + err.message + ", lineNumber=" + err.lineNumber + ", columnNumber=" + err.columnNumber,
         MessageType.ERROR,
-        10000
-      )
+      ),
     );
   }
 
@@ -326,7 +282,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       this.setMappingForHelper(MappingHelperService.helperToJsonBody(this.getMappingForHelper()));
     } catch (err) {
       this.messageService.setMessage(
-        new Message(MappingsComponent.ACTION_FAILURE_PREFIX + "Probably no json", MessageType.ERROR, 10000)
+        new Message(MappingsComponent.ACTION_FAILURE_PREFIX + "Probably no json", MessageType.ERROR),
       );
     }
   }
@@ -354,25 +310,25 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
 
   helpersCopyJsonPath() {
     if (UtilService.copyToClipboard("{{jsonPath request.body '$.'}}")) {
-      this.messageService.setMessage(new Message("jsonPath copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("jsonPath copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR));
     }
   }
 
   helpersCopyXpath() {
     if (UtilService.copyToClipboard("{{xPath request.body '/'}}")) {
-      this.messageService.setMessage(new Message("xPath copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("xPath copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR));
     }
   }
 
   helpersCopySoap() {
     if (UtilService.copyToClipboard("{{soapXPath request.body '/'}}")) {
-      this.messageService.setMessage(new Message("soapXPath copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("soapXPath copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message(MappingsComponent.COPY_FAILURE, MessageType.ERROR));
     }
   }
 
@@ -412,6 +368,71 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
   cancelEditing() {
     this.editMode = State.NORMAL;
     this.editorText = this.currentMappingText;
+  }
+
+  downloadFile() {
+    if (this.bodyFileName) {
+      this.wiremockService.downloadFile(this.bodyFileName).subscribe({
+        error: err => {
+          this.messageService.setMessage(new Message(`Download failed.\n${err.message}`, MessageType.ERROR));
+        },
+      });
+    }
+  }
+
+  uploadFile(event: any) {
+    const fileList = event.target.files as FileList;
+
+    if (fileList && fileList.length > 0) {
+      const file = fileList[0];
+
+      const dialog = this.modalService.open(FileNameComponent);
+      dialog.componentInstance.fileName = file.name;
+
+      fromPromise(dialog.result).pipe(switchMap(fileName => this.wiremockService.uploadFile(file, fileName)
+          .pipe(map(() => fileName))),
+        tap(fileName => {
+          if (this.editorText) {
+            this.setMappingForHelper(
+              MappingHelperService.helperSetBodyFileName(this.getMappingForHelper(), fileName),
+            );
+          }
+        })).subscribe({
+        next: () => {
+          this.messageService.setMessage(
+            new Message(`File "${file.name}" uploaded.`, MessageType.INFO),
+          );
+        },
+        error: err => {
+          this.messageService.setMessage(
+            new Message(`File upload failed.\n${err.message || err}`, MessageType.ERROR),
+          );
+        },
+      });
+    }
+
+  }
+
+  deleteFile() {
+    if (this.bodyFileName) {
+      this.wiremockService.deleteFile(this.bodyFileName).subscribe({
+        next: () => {
+          this.messageService.setMessage(
+            new Message(`File "${this.bodyFileName}" deleted.`, MessageType.INFO),
+          );
+          if (this.editorText) {
+            this.setMappingForHelper(
+              MappingHelperService.helperRemoveBodyFileName(this.getMappingForHelper()),
+            );
+          }
+        },
+        error: err => {
+          this.messageService.setMessage(
+            new Message(`File deletion failed.\n${err.message || err}`, MessageType.ERROR),
+          );
+        },
+      });
+    }
   }
 }
 

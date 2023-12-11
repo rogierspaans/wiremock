@@ -3,8 +3,9 @@ import { Item } from "../wiremock/item";
 export class Folder implements Item {
   constructor(
     private id: string,
-    private name: string
-  ) {}
+    private name: string,
+  ) {
+  }
 
   getCode(): string {
     return "";
@@ -35,6 +36,18 @@ export class Folder implements Item {
   }
 
   hasFolderDefinition(): boolean {
+    return false;
+  }
+
+  getBodyFileName(): string | undefined {
+    return undefined;
+  }
+
+  hasFile(): boolean {
+    return false;
+  }
+
+  isPersistent(): boolean {
     return false;
   }
 }

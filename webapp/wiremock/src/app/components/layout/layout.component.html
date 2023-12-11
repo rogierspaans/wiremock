@@ -1,5 +1,5 @@
 <div id="wmListView" class="wmHolyGrailBody">
-  <div *ngIf="supportsTreeView" class="wmHolyGrailBody column mt-1">
+  <div *ngIf="supportsTreeView && supportsListView" class="wmHolyGrailBody column mt-1">
     <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs" [animation]="false">
       <li [ngbNavItem]="0">
         <a ngbNavLink class="wmNavLink">
@@ -28,6 +28,11 @@
     </ul>
     <div id="wmTabContent" [ngbNavOutlet]="nav"></div>
   </div>
+  <wm-tree-view
+    *ngIf="!supportsListView"
+    [items]="filteredItems"
+    [activeItem]="activeItem"
+    (activeItemChange)="onActiveItemChange($event)"></wm-tree-view>
   <wm-list-view
     *ngIf="!supportsTreeView"
     [items]="filteredItems"

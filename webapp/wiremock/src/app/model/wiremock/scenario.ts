@@ -74,4 +74,16 @@ export class Scenario implements Item {
   isProxyEnabled(): boolean {
     return false;
   }
+
+  getBodyFileName(): string | undefined {
+    return undefined;
+  }
+
+  hasFile(): boolean {
+    return false;
+  }
+
+  isPersistent(): boolean {
+    return false;
+  }
 }

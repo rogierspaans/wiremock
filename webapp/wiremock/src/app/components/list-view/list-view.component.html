@@ -19,45 +19,49 @@
           <div class="wmListItemTitle">{{ item.getTitle() }}</div>
           <div class="wmListItemSubtitle">{{ item.getSubtitle() }}</div>
         </div>
-        <div *ngIf="item.isProxy()">
+        <div class="wmIndicatorContainer">
+          <fa-icon icon="paperclip" *ngIf="item.hasFile()"></fa-icon>
+          <fa-icon icon="save" *ngIf="item.isPersistent()"></fa-icon>
+        </div>
+        <form *ngIf="item.isProxy()" class="wmProxyContainer">
           <div class="btn-group wmProxyGroup" role="group">
             <input
               type="radio"
               class="btn-check"
               name="wmProxy"
-              id="wmProxyEnable"
+              [id]="item.getId() + '-wmProxyEnable'"
               autocomplete="off"
               [checked]="item.isProxyEnabled()"
               (click)="enableProxy(item)" />
             <label
               class="btn btn-outline-info wmProxyEnable"
-              for="wmProxyEnable"
+              [for]="item.getId() + '-wmProxyEnable'"
               popoverTitle="Proxying"
               ngbPopover="Restore proxying and forward requests to specified url"
               triggers="mouseenter:mouseleave"
               placement="bottom-right"
-              >I</label
+            >I</label
             >
 
             <input
               type="radio"
               class="btn-check"
               name="wmProxy"
-              id="wmProxyDisable"
+              [id]="item.getId() + '-wmProxyDisable'"
               autocomplete="off"
               [checked]="!item.isProxyEnabled()"
               (click)="disableProxy(item)" />
             <label
               class="btn btn-outline-info wmProxyDisable"
-              for="wmProxyDisable"
+              [for]="item.getId() + '-wmProxyDisable'"
               popoverTitle="Proxying"
               ngbPopover="Disable proxying and use mapping response"
               triggers="mouseenter:mouseleave"
               placement="bottom-right"
-              >0</label
+            >0</label
             >
           </div>
-        </div>
+        </form>
       </li>
     </ul>
   </div>

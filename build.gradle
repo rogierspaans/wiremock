@@ -19,6 +19,7 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '8.1.0'
   id "org.sonarqube" version "4.4.1.3373"
   id 'jacoco'
+  id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 group = 'org.wiremock'
@@ -65,9 +66,9 @@ dependencies {
   }
   api platform("com.fasterxml.jackson:jackson-bom:$versions.jackson")
   api "com.fasterxml.jackson.core:jackson-core",
-      "com.fasterxml.jackson.core:jackson-annotations",
-      "com.fasterxml.jackson.core:jackson-databind",
-      "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    "com.fasterxml.jackson.core:jackson-annotations",
+    "com.fasterxml.jackson.core:jackson-databind",
+    "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
   api "org.apache.httpcomponents.client5:httpclient5:5.2.1"
   api "org.xmlunit:xmlunit-core:$versions.xmlUnit"
   api "org.xmlunit:xmlunit-legacy:$versions.xmlUnit", {
@@ -215,7 +216,7 @@ allprojects {
     mavenCentral()
   }
 
-  version = '3.3.1.1'
+  version = '3.3.1.2'
 
 
   sourceCompatibility = 11
@@ -277,8 +278,6 @@ task testJar(type: Jar, dependsOn: testClasses) {
   archiveClassifier.set('tests')
   from sourceSets.test.output
 }
-
-final DOCS_DIR = project(':').rootDir.getAbsolutePath() + '/docs-v2'
 
 jar {
   archiveBaseName.set('wiremock')
@@ -426,25 +425,20 @@ task addGitTag {
   }
 }
 
-final WEBAPP_DIR = project(':').rootDir.getAbsolutePath() + '/webapp/wiremock'
-
-task npmInstallWebapp(type: Exec) {
-  workingDir WEBAPP_DIR
-  if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-    commandLine 'cmd', '/c', 'npm', 'i'
-  } else {
-    commandLine 'npm', 'i'
-  }
+node {
+  version = "20.10.0"
+  npmVersion = "10.2.5"
+  nodeProjectDir = file(project(':').rootDir.getAbsolutePath() + '/webapp/wiremock')
+  download = true
 }
 
-task generateWebapp(type: Exec) {
+task npmInstallWebapp(type: NpmTask) {
+  args = ['install']
+}
+
+task generateWebapp(type: NpmTask) {
   dependsOn npmInstallWebapp
-  workingDir WEBAPP_DIR
-  if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-    commandLine 'cmd', '/c', 'npm', 'run', 'prod'
-  } else {
-    commandLine 'npm', 'run', 'prod'
-  }
+  args = ['run', 'prod']
 }
 
 task finalizeWebapp(type: Copy) {

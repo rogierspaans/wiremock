@@ -4,6 +4,7 @@ import { MappingsComponent } from "./components/mappings/mappings.component";
 import { MatchedComponent } from "./components/matched/matched.component";
 import { UnmatchedComponent } from "./components/unmatched/unmatched.component";
 import { StateComponent } from "./components/state/state.component";
+import { FilesComponent } from "./components/files/files.component";
 
 const routes: Routes = [
   {
@@ -27,10 +28,15 @@ const routes: Routes = [
     path: "state",
     component: StateComponent,
   },
+  {
+    path: "files",
+    component: FilesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

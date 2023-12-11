@@ -7,7 +7,8 @@ import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 export class MessageService {
   private message = new BehaviorSubject<Message | undefined>(undefined);
 
-  constructor() {}
+  constructor() {
+  }
 
   getSubject(): BehaviorSubject<Message | undefined> {
     return this.message;
@@ -24,11 +25,17 @@ export class Message {
   type: MessageType;
   duration: number;
 
-  constructor(message: string, type: MessageType, duration: number, html?: string) {
+  constructor(message: string, type: MessageType, duration?: number, html?: string) {
     this.message = message;
     this.html = html;
     this.type = type;
-    this.duration = duration;
+    if (duration) {
+      this.duration = duration;
+    } else if (type === MessageType.ERROR) {
+      this.duration = 6000;
+    } else {
+      this.duration = 3000;
+    }
   }
 }
 

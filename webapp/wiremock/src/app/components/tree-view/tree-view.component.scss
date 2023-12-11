@@ -89,3 +89,16 @@ $color-mode-type: data;
     border-top-right-radius: $btn-border-radius !important;
   }
 }
+
+.wmIndicatorContainer {
+  padding-left: 4px;
+  padding-right: 4px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wmProxyContainer {
+  align-self: flex-start;
+}

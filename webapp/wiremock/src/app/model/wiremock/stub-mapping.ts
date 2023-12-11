@@ -117,4 +117,16 @@ export class StubMapping extends Proxy implements Item {
     }
     return undefined;
   }
+
+  getBodyFileName(): string | undefined {
+    return this.response.bodyFileName;
+  }
+
+  hasFile(): boolean {
+    return this.response.bodyFileName !== undefined;
+  }
+
+  isPersistent(): boolean {
+    return this.persistent;
+  }
 }

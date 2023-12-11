@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h4 class="modal-title">Wiremock File</h4>
+  <button
+    type="button"
+    class="btn-close"
+    tabindex="-1"
+    aria-label="Close"
+    (click)="activeModal.dismiss('canceled')"></button>
+</div>
+<div class="modal-body">
+  <input class="form-control" type="text" placeholder="File name" [(ngModel)]="fileName" />
+  <small>You can define folders by using /. E.g.: some/folder/structured/file.txt</small>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(fileName)">Upload</button>
+  <button type="button" class="btn btn-outline" (click)="activeModal.dismiss('canceled')">Cancel</button>
+</div>

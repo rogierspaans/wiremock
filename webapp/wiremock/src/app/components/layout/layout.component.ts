@@ -48,6 +48,9 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   supportsTreeView = false;
 
   @Input()
+  supportsListView = true;
+
+  @Input()
   activeItemId?: string;
 
   @Output()
@@ -65,8 +68,9 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private searchService: SearchService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) {}
+    private router: Router,
+  ) {
+  }
 
   ngOnInit() {
     this.search.valueChanges.pipe(takeUntil(this.ngUnsubscribe), debounceTime(200)).subscribe(next => {

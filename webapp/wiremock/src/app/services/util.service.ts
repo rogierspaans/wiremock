@@ -69,7 +69,7 @@ export class UtilService {
         messageService.setMessage(new Message(message, MessageType.ERROR, 10000));
       } else {
         messageService.setMessage(
-          new Message(err.statusText + ": status=" + err.status + ", message=", MessageType.ERROR, 10000, err.message)
+          new Message(err.statusText + ": status=" + err.status + ", message=", MessageType.ERROR, 10000, err.message),
         );
       }
     } else {
@@ -303,7 +303,8 @@ export class UtilService {
     return uuidv4();
   }
 
-  constructor() {}
+  constructor() {
+  }
 
   static getActiveItem(items?: Item[], activeItemId?: string): Item | undefined {
     if (items && items.length > 0) {
@@ -342,5 +343,73 @@ export class UtilService {
         });
       }, 0);
     }
+  }
+
+  public static downloadFileContent(fileName: string, content: string) {
+    const blob = new Blob([content]);
+
+    const downloadURL = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadURL;
+    link.download = fileName;
+    link.click();
+  }
+
+  public static aceReadOnlyOptions() {
+    return {
+      selectionStyle: "text",
+      highlightActiveLine: true, // readOnly
+      highlightSelectedWord: true,
+      readOnly: true, // readOnly
+      cursorStyle: "ace",
+      mergeUndoDeltas: "true",
+      behavioursEnabled: true,
+      wrapBehavioursEnabled: true,
+      copyWithEmptySelection: true,
+      autoScrollEditorIntoView: true, // we need that
+      useSoftTabs: true,
+      // ...
+      highlightGutterLine: false,
+      showPrintMargin: false,
+      printMarginColumn: false,
+      printMargin: false,
+      showGutter: true,
+      displayIndentGuides: true,
+      fontSize: 14,
+      fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+      showLineNumbers: true,
+      // ..
+      wrap: true,
+      enableMultiselect: true,
+    };
+  }
+
+  public static aceWriteOptions() {
+    return {
+      selectionStyle: "text",
+      highlightActiveLine: true,
+      highlightSelectedWord: true,
+      readOnly: false,
+      cursorStyle: "ace",
+      mergeUndoDeltas: "true",
+      behavioursEnabled: true,
+      wrapBehavioursEnabled: true,
+      copyWithEmptySelection: true,
+      autoScrollEditorIntoView: true, // we need that
+      useSoftTabs: true,
+      // ...
+      highlightGutterLine: false,
+      showPrintMargin: false,
+      printMarginColumn: false,
+      printMargin: false,
+      showGutter: true,
+      displayIndentGuides: true,
+      fontSize: 14,
+      fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+      showLineNumbers: true,
+      // ..
+      wrap: true,
+      enableMultiselect: true,
+    };
   }
 }

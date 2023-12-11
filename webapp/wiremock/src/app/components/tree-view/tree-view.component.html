@@ -23,45 +23,47 @@
             <div class="wmListItemTitle">{{ node.value.getTitle() }}</div>
             <div class="wmListItemSubtitle">{{ node.value.getSubtitle() }}</div>
           </div>
-          <div *ngIf="node.value.isProxy()">
-            <div class="btn-group wmProxyGroup" role="group">
+          <div class="wmIndicatorContainer">
+            <fa-icon icon="paperclip" *ngIf="node.value.hasFile()"></fa-icon>
+            <fa-icon icon="save" *ngIf="node.value.isPersistent()"></fa-icon>
+          </div>
+          <form *ngIf="node.value.isProxy()" class="wmProxyContainer">
+            <div class="btn-group wmProxyGroup" role="group" aria-label="proxy-btn-group">
               <input
                 type="radio"
                 class="btn-check"
                 name="wmProxy"
-                id="wmProxyEnable"
+                [id]="node.value.getId() + '-wmProxyEnable'"
                 autocomplete="off"
                 [checked]="node.value.isProxyEnabled()"
                 (click)="enableProxy(node.value)" />
               <label
                 class="btn btn-outline-info wmProxyEnable"
-                for="wmProxyEnable"
+                [for]="node.value.getId() + '-wmProxyEnable'"
                 popoverTitle="Proxying"
                 ngbPopover="Restore proxying and forward requests to specified url"
                 triggers="mouseenter:mouseleave"
                 placement="bottom-right"
-                >I</label
-              >
+              >I</label>
 
               <input
                 type="radio"
                 class="btn-check"
                 name="wmProxy"
-                id="wmProxyDisable"
+                [id]="node.value.getId() + '-wmProxyDisable'"
                 autocomplete="off"
                 [checked]="!node.value.isProxyEnabled()"
                 (click)="disableProxy(node.value)" />
               <label
                 class="btn btn-outline-info wmProxyDisable"
-                for="wmProxyDisable"
+                [for]="node.value.getId() + '-wmProxyDisable'"
                 popoverTitle="Proxying"
                 ngbPopover="Disable proxying and use mapping response"
                 triggers="mouseenter:mouseleave"
                 placement="bottom-right"
-                >0</label
-              >
+              >0</label>
             </div>
-          </div>
+          </form>
         </li>
       </ng-container>
     </ul>

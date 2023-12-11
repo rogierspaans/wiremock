@@ -129,4 +129,20 @@ export class MappingHelperService {
     }
     return undefined;
   }
+
+  static helperSetBodyFileName(mapping?: StubMapping, fileName?: string): StubMapping | undefined {
+    if (mapping && mapping.response) {
+      mapping.response.bodyFileName = fileName || "some-file.txt";
+      return mapping;
+    }
+    return undefined;
+  }
+
+  static helperRemoveBodyFileName(mapping?: StubMapping): StubMapping | undefined {
+    if (mapping && mapping.response && mapping.response.bodyFileName) {
+      delete mapping.response.bodyFileName;
+      return mapping;
+    }
+    return undefined;
+  }
 }

@@ -20,6 +20,7 @@ export class SeparatedComponent implements OnChanges {
 
   color: string[] = ["bg-info", "bg-warning", "bg-danger", "bg-primary", "bg-secondary", "bg-dark"];
 
+  bodyFileName?: string;
   bodyFileData?: string;
   bodyGroupKey?: string;
 
@@ -36,7 +37,8 @@ export class SeparatedComponent implements OnChanges {
     }
   }
 
-  constructor(private wiremockService: WiremockService) {}
+  constructor(private wiremockService: WiremockService) {
+  }
 
   ngOnChanges(): void {
     if (this._activeItem) {
@@ -51,12 +53,21 @@ export class SeparatedComponent implements OnChanges {
         responseDefinition = undefined;
       }
 
+      this.bodyFileName = responseDefinition?.bodyFileName;
+
       // body from file
       if (responseDefinition && responseDefinition.bodyFileName) {
         this.wiremockService
-          .getFileBody(responseDefinition.bodyFileName)
+          .getFile(responseDefinition.bodyFileName)
           .pipe(debounceTime(500))
-          .subscribe(body => (this.bodyFileData = body));
+          .subscribe({
+            next: body => {
+              this.bodyFileData = body;
+            },
+            error: (err: Error) => {
+              this.bodyFileData = `An error occurred while requesting file content:\n${err.message}`;
+            },
+          });
       } else {
         this.bodyFileData = undefined;
         this.bodyGroupKey = undefined;
@@ -97,5 +108,9 @@ export class SeparatedComponent implements OnChanges {
 
   asServeEvent(item: Item): ServeEvent {
     return <ServeEvent>item;
+  }
+
+  downloadFile() {
+    this.wiremockService.downloadFile(this.bodyFileName!).subscribe();
   }
 }

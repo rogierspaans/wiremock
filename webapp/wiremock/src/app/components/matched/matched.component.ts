@@ -29,8 +29,9 @@ export class MatchedComponent implements OnInit, OnDestroy {
     private webSocketService: WebSocketService,
     private messageService: MessageService,
     private autoRefreshService: AutoRefreshService,
-    private modalService: NgbModal
-  ) {}
+    private modalService: NgbModal,
+  ) {
+  }
 
   ngOnInit() {
     this.webSocketService
@@ -38,7 +39,7 @@ export class MatchedComponent implements OnInit, OnDestroy {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100)
+        debounceTime(100),
       )
       .subscribe(() => {
         this.loadMappings();
@@ -54,15 +55,15 @@ export class MatchedComponent implements OnInit, OnDestroy {
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
+      },
     );
   }
 
   copyCurl(request: ServeEvent) {
     if (UtilService.copyToClipboard(CurlExtractor.copyCurl(request))) {
-      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR));
     }
   }
 
@@ -82,7 +83,7 @@ export class MatchedComponent implements OnInit, OnDestroy {
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
+      },
     );
   }
 

@@ -18,14 +18,23 @@ package com.github.tomakehurst.wiremock.store.files;
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 import static com.github.tomakehurst.wiremock.common.LocalNotifier.notifier;
 
-import com.github.tomakehurst.wiremock.common.*;
-import com.github.tomakehurst.wiremock.store.BlobStore;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.stream.Stream;
+
 import org.wiremock.annotations.Beta;
+
+import com.github.tomakehurst.wiremock.common.FileSource;
+import com.github.tomakehurst.wiremock.common.InputStreamSource;
+import com.github.tomakehurst.wiremock.common.Json;
+import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
+import com.github.tomakehurst.wiremock.common.StreamSources;
+import com.github.tomakehurst.wiremock.common.TextFile;
+import com.github.tomakehurst.wiremock.jetty.websockets.Message;
+import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
+import com.github.tomakehurst.wiremock.store.BlobStore;
 
 @Beta(justification = "Externalized State API: https://github.com/wiremock/wiremock/issues/2144")
 public class FileSourceBlobStore implements BlobStore, PathBased {
@@ -46,8 +55,7 @@ public class FileSourceBlobStore implements BlobStore, PathBased {
       return Optional.of(fileSource.getBinaryFileNamed(key).getStream());
     } catch (Exception exception) {
       if (!(exception instanceof FileNotFoundException)) {
-        notifier()
-            .error("Error when working with FileSource:\n" + Json.write(exception.getMessage()));
+        notifier().error("Error when working with FileSource:\n" + Json.write(exception.getMessage()));
         return Optional.of(throwUnchecked(exception, InputStream.class));
       } else {
         return Optional.empty();
@@ -63,9 +71,8 @@ public class FileSourceBlobStore implements BlobStore, PathBased {
   @Override
   public Stream<String> getAllKeys() {
     final String rootPath = new File(fileSource.getUri().getSchemeSpecificPart()).getPath();
-    return fileSource.listFilesRecursively().stream()
-        .map(TextFile::getPath)
-        .map(path -> path.substring(rootPath.length() + 1));
+    return fileSource.listFilesRecursively().stream().map(TextFile::getPath)
+      .map(path -> path.substring(rootPath.length() + 1));
   }
 
   @Override
@@ -74,8 +81,7 @@ public class FileSourceBlobStore implements BlobStore, PathBased {
       return Optional.of(fileSource.getBinaryFileNamed(key).readContents());
     } catch (Exception exception) {
       if (!(exception instanceof FileNotFoundException)) {
-        notifier()
-            .error("Error when working with FileSource:\n" + Json.write(exception.getMessage()));
+        notifier().error("Error when working with FileSource:\n" + Json.write(exception.getMessage()));
         return Optional.of(throwUnchecked(exception, byte[].class));
       } else {
         return Optional.empty();
@@ -86,16 +92,19 @@ public class FileSourceBlobStore implements BlobStore, PathBased {
   @Override
   public void put(String key, byte[] content) {
     fileSource.writeBinaryFile(key, content);
+    WebSocketEndpoint.broadcast(Message.FILES);
   }
 
   @Override
   public void remove(String key) {
     fileSource.deleteFile(key);
+    WebSocketEndpoint.broadcast(Message.FILES);
   }
 
   @Override
   public void clear() {
     fileSource.listFilesRecursively().forEach(file -> fileSource.deleteFile(file.getPath()));
+    WebSocketEndpoint.broadcast(Message.FILES);
   }
 
   public FileSource getFileSource() {

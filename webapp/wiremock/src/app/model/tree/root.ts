@@ -2,7 +2,8 @@ import { Item } from "../wiremock/item";
 import { UtilService } from "../../services/util.service";
 
 export class Root implements Item {
-  constructor(private id = UtilService.generateUUID()) {}
+  constructor(private id = UtilService.generateUUID()) {
+  }
 
   getCode(): string {
     return "";
@@ -33,6 +34,18 @@ export class Root implements Item {
   }
 
   hasFolderDefinition(): boolean {
+    return false;
+  }
+
+  getBodyFileName(): string | undefined {
+    return undefined;
+  }
+
+  hasFile(): boolean {
+    return false;
+  }
+
+  isPersistent(): boolean {
     return false;
   }
 }

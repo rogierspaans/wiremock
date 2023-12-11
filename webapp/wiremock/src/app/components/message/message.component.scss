@@ -21,3 +21,12 @@
 .wmAlertText {
   white-space: pre-wrap;
 }
+
+img {
+  height: 16px;
+}
+
+.wmMessageHeader {
+  display: flex;
+  align-items: center;
+}

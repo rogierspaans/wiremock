@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="WebApp lint" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/webapp/wiremock/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="lint" />
+    </scripts>
+    <node-interpreter value="$PROJECT_DIR$/.gradle/nodejs/node-v20.10.0-darwin-arm64/bin/node" />
+    <package-manager value="$PROJECT_DIR$/.gradle/npm/npm-v10.2.5/lib/node_modules/npm/bin/npm-cli.js" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

@@ -57,4 +57,16 @@ export class ServeEvent extends Proxy implements Item {
 
     return this;
   }
+
+  getBodyFileName(): string | undefined {
+    return this.responseDefinition.bodyFileName;
+  }
+
+  hasFile(): boolean {
+    return this.responseDefinition.bodyFileName !== undefined;
+  }
+
+  isPersistent(): boolean {
+    return this.stubMapping.persistent;
+  }
 }

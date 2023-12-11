@@ -60,7 +60,8 @@ bin
 
 # WIREMOCK #
 #################
-/mappings/
+mappings/
+__files
 src/main/resources/assets/webapp/
 
 scripts/client-cert.*

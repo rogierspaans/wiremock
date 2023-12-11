@@ -48,3 +48,16 @@
     border-top-right-radius: $btn-border-radius !important;
   }
 }
+
+.wmFileIconContainer {
+  padding-left: 4px;
+  padding-right: 4px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wmProxyContainer {
+  align-self: flex-start;
+}

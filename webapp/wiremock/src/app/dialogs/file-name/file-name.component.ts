@@ -2,11 +2,15 @@ import { Component } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: "wm-dialog-recording",
-  templateUrl: "./dialog-recording.component.html",
-  styleUrls: ["./dialog-recording.component.scss"],
+  selector: "wm-file-name",
+  templateUrl: "./file-name.component.html",
+  styleUrl: "./file-name.component.scss",
 })
-export class DialogRecordingComponent {
+export class FileNameComponent {
+
+  fileName!: string;
+
   constructor(public activeModal: NgbActiveModal) {
   }
+
 }

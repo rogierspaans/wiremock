@@ -7,8 +7,9 @@ const PROXY_CONFIG = [
       "/__admin/proxy",
       "/__admin/scenarios",
       "/__admin/shutdown",
+      "/__admin/files",
     ],
-    target: "http://127.0.0.1:8089",
+    target: "http://127.0.0.1:8088",
     secure: false,
   },
 ];

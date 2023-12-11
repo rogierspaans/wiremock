@@ -29,8 +29,9 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
     private webSocketService: WebSocketService,
     private messageService: MessageService,
     private autoRefreshService: AutoRefreshService,
-    private modalService: NgbModal
-  ) {}
+    private modalService: NgbModal,
+  ) {
+  }
 
   ngOnInit() {
     this.webSocketService
@@ -38,7 +39,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100)
+        debounceTime(100),
       )
       .subscribe(() => {
         this.loadMappings();
@@ -54,7 +55,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
+      },
     );
   }
 
@@ -77,9 +78,9 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
 
   copyCurl(request: LoggedRequest) {
     if (UtilService.copyToClipboard(CurlExtractor.copyCurl(request))) {
-      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("Curl copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR));
     }
   }
 
@@ -94,19 +95,19 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
 
   private copyMappingTemplateToClipboard(message?: string) {
     if (message && UtilService.copyToClipboard(message)) {
-      this.messageService.setMessage(new Message("Mapping template copied to clipboard", MessageType.INFO, 3000));
+      this.messageService.setMessage(new Message("Mapping template copied to clipboard", MessageType.INFO));
     } else {
-      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR, 10000));
+      this.messageService.setMessage(new Message("Was not able to copy. Details in log", MessageType.ERROR));
     }
   }
 
   private createMapping(request: LoggedRequest): string {
     return UtilService.prettify(
-      '{"request": {"method": "' +
-        request.method +
-        '","url": "' +
-        request.url +
-        '"},"response": {"status": 200,"body": "","headers": {"Content-Type": "text/plain"}}}'
+      "{\"request\": {\"method\": \"" +
+      request.method +
+      "\",\"url\": \"" +
+      request.url +
+      "\"},\"response\": {\"status\": 200,\"body\": \"\",\"headers\": {\"Content-Type\": \"text/plain\"}}}",
     );
   }
 
@@ -153,19 +154,19 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       } else {
         first = false;
       }
-      printedNamespaces += '"' + key + '": "' + nameSpaces[key] + '"';
+      printedNamespaces += "\"" + key + "\": \"" + nameSpaces[key] + "\"";
     }
 
     let message =
-      '{"request": {"method": "' +
+      "{\"request\": {\"method\": \"" +
       method +
-      '","url": "' +
+      "\",\"url\": \"" +
       url +
-      '","bodyPatterns": [{"matchesXPath": "' +
+      "\",\"bodyPatterns\": [{\"matchesXPath\": \"" +
       xPath +
-      '","xPathNamespaces": {' +
+      "\",\"xPathNamespaces\": {" +
       printedNamespaces +
-      '}}]},"response": {"status": 200,"body": "","headers": {"Content-Type": "text/xml"}}}';
+      "}}]},\"response\": {\"status\": 200,\"body\": \"\",\"headers\": {\"Content-Type\": \"text/xml\"}}}";
     message = UtilService.prettify(message);
 
     return message;
@@ -178,7 +179,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      }
+      },
     );
   }
 
