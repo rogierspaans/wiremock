@@ -33,8 +33,7 @@ export class WiremockService {
     return typeof body === "string" ? body : UtilService.toJson(body);
   }
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   resetAll(): Observable<ResponseDefinition> {
     return this.defaultPipe(this.http.post<ResponseDefinition>(WiremockService.getUrl("reset"), null));
@@ -58,13 +57,13 @@ export class WiremockService {
 
   saveMapping(id: string, mapping: string): Observable<StubMapping> {
     return this.defaultPipe(
-      this.http.put<StubMapping>(WiremockService.getUrl("mappings/" + id), WiremockService.mapBody(mapping)),
+      this.http.put<StubMapping>(WiremockService.getUrl("mappings/" + id), WiremockService.mapBody(mapping))
     ).pipe(map(editedMapping => new StubMapping().deserialize(editedMapping)));
   }
 
   saveNewMapping(mapping: string): Observable<StubMapping> {
     return this.defaultPipe(
-      this.http.post<StubMapping>(WiremockService.getUrl("mappings"), WiremockService.mapBody(mapping)),
+      this.http.post<StubMapping>(WiremockService.getUrl("mappings"), WiremockService.mapBody(mapping))
     ).pipe(map(newMapping => new StubMapping().deserialize(newMapping)));
   }
 
@@ -96,20 +95,20 @@ export class WiremockService {
     return this.defaultPipe(
       this.http.post<ResponseDefinition>(
         WiremockService.getUrl("recordings/start"),
-        WiremockService.mapBody(recordSpec),
-      ),
+        WiremockService.mapBody(recordSpec)
+      )
     );
   }
 
   stopRecording(): Observable<SnapshotRecordResult> {
     return this.defaultPipe(this.http.post<SnapshotRecordResult>(WiremockService.getUrl("recordings/stop"), null)).pipe(
-      map(data => new SnapshotRecordResult().deserialize(data)),
+      map(data => new SnapshotRecordResult().deserialize(data))
     );
   }
 
   snapshot(): Observable<SnapshotRecordResult> {
     return this.defaultPipe(
-      this.http.post<SnapshotRecordResult>(WiremockService.getUrl("recordings/snapshot"), null),
+      this.http.post<SnapshotRecordResult>(WiremockService.getUrl("recordings/snapshot"), null)
     ).pipe(map(snapshot => new SnapshotRecordResult().deserialize(snapshot)));
   }
 
@@ -142,8 +141,9 @@ export class WiremockService {
   }
 
   getAllFiles(): Observable<FileList> {
-    return this.defaultPipe(this.http.get<string[]>(WiremockService.getUrl("files")))
-      .pipe(map(result => new FileList(result.map(f => new WmFile(f)))));
+    return this.defaultPipe(this.http.get<string[]>(WiremockService.getUrl("files"))).pipe(
+      map(result => new FileList(result.map(f => new WmFile(f))))
+    );
   }
 
   getFile(fileName: string): Observable<string> {
@@ -151,17 +151,21 @@ export class WiremockService {
   }
 
   downloadFile(fileName: string): Observable<string> {
-    return this.defaultPipe(this.http.get<string>(WiremockService.getUrl("files/" + fileName))).pipe(tap(body => {
-      UtilService.downloadFileContent(fileName, body);
-    }));
+    return this.defaultPipe(this.http.get<string>(WiremockService.getUrl("files/" + fileName))).pipe(
+      tap(body => {
+        UtilService.downloadFileContent(fileName, body);
+      })
+    );
   }
 
   uploadFile(file: File, fileName?: string): Observable<any> {
-    return this.defaultPipe(this.fileToByteArray(file).pipe(
-      switchMap(data => {
-        return this.http.put<any>(WiremockService.getUrl("files/" + fileName || file.name), data);
-      }),
-    ));
+    return this.defaultPipe(
+      this.fileToByteArray(file).pipe(
+        switchMap(data => {
+          return this.http.put<any>(WiremockService.getUrl("files/" + fileName || file.name), data);
+        })
+      )
+    );
   }
 
   private fileToByteArray(file: File): Observable<any> {
@@ -178,7 +182,7 @@ export class WiremockService {
     method: string,
     body: any | undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    headers: { [header: string]: string | string[] },
+    headers: { [header: string]: string | string[] }
   ): Observable<HttpEvent<any>> {
     path = path.charAt(0) === "/" ? path.substring(1) : path;
     const url = environment.wiremockUrl + path;
@@ -206,7 +210,7 @@ export class WiremockService {
           console.log(`Attempt ${count}: retrying in ${count * delay}ms`);
           return timer(count * delay);
         },
-      }),
+      })
     );
   }
 }

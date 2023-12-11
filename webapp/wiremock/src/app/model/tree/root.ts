@@ -2,8 +2,7 @@ import { Item } from "../wiremock/item";
 import { UtilService } from "../../services/util.service";
 
 export class Root implements Item {
-  constructor(private id = UtilService.generateUUID()) {
-  }
+  constructor(private id = UtilService.generateUUID()) {}
 
   getCode(): string {
     return "";

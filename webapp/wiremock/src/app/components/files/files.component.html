@@ -4,12 +4,9 @@
   (activeItemChange)="onActiveItemChange($event)"
   [supportsTreeView]="true"
   [supportsListView]="false">
-
-
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
-      <input type="file" class="file-input hidden"
-             (change)="uploadFile($event)" #fileUpload>
+      <input type="file" class="file-input hidden" (change)="uploadFile($event)" #fileUpload />
       <button type="button" class="btn btn-secondary" (click)="fileUpload.click()">
         <fa-icon icon="upload"></fa-icon>
         Upload
@@ -39,5 +36,4 @@
         (valueChange)="editorValueChange($event)"></wm-code-editor>
     </div>
   </ng-template>
-
 </wm-layout>

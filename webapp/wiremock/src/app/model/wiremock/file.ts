@@ -1,7 +1,6 @@
 import { Item } from "./item";
 
 export class File implements Item {
-
   name!: string;
   fileName!: string;
   folderName?: string;

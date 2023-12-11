@@ -7,8 +7,7 @@ import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 export class MessageService {
   private message = new BehaviorSubject<Message | undefined>(undefined);
 
-  constructor() {
-  }
+  constructor() {}
 
   getSubject(): BehaviorSubject<Message | undefined> {
     return this.message;

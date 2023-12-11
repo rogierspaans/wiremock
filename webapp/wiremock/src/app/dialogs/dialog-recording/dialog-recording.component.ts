@@ -7,6 +7,5 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./dialog-recording.component.scss"],
 })
 export class DialogRecordingComponent {
-  constructor(public activeModal: NgbActiveModal) {
-  }
+  constructor(public activeModal: NgbActiveModal) {}
 }

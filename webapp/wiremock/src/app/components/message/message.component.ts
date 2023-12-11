@@ -7,7 +7,6 @@ import { Message, MessageService, MessageType } from "./message.service";
   styleUrls: ["./message.component.scss"],
 })
 export class MessageComponent {
-
   messages: Message[] = [];
 
   type = MessageType;

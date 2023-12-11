@@ -44,9 +44,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private autoRefreshService: AutoRefreshService,
     private modalService: NgbModal,
     private router: Router,
-    private themeService: ThemeService,
-  ) {
-  }
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
     this.autoRefreshService.autoRefresh$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(enabled => {
@@ -100,7 +99,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       () => {
         // nothing to do
-      },
+      }
     );
   }
 
@@ -131,11 +130,11 @@ export class HomeComponent implements OnInit, OnDestroy {
             },
             () => {
               // do nothing
-            },
+            }
           );
         } else {
           this.messageService.setMessage(
-            new Message("Recording stopped but no new mappings created", MessageType.INFO),
+            new Message("Recording stopped but no new mappings created", MessageType.INFO)
           );
         }
       },
@@ -158,12 +157,10 @@ export class HomeComponent implements OnInit, OnDestroy {
             },
             () => {
               // do nothing
-            },
+            }
           );
         } else {
-          this.messageService.setMessage(
-            new Message("Snapshot taken but no new mappings created", MessageType.INFO),
-          );
+          this.messageService.setMessage(new Message("Snapshot taken but no new mappings created", MessageType.INFO));
         }
       },
       error: err => {

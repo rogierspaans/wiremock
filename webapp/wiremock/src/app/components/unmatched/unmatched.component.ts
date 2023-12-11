@@ -29,9 +29,8 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
     private webSocketService: WebSocketService,
     private messageService: MessageService,
     private autoRefreshService: AutoRefreshService,
-    private modalService: NgbModal,
-  ) {
-  }
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
     this.webSocketService
@@ -39,7 +38,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100),
+        debounceTime(100)
       )
       .subscribe(() => {
         this.loadMappings();
@@ -55,7 +54,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      },
+      }
     );
   }
 
@@ -103,11 +102,11 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
 
   private createMapping(request: LoggedRequest): string {
     return UtilService.prettify(
-      "{\"request\": {\"method\": \"" +
-      request.method +
-      "\",\"url\": \"" +
-      request.url +
-      "\"},\"response\": {\"status\": 200,\"body\": \"\",\"headers\": {\"Content-Type\": \"text/plain\"}}}",
+      '{"request": {"method": "' +
+        request.method +
+        '","url": "' +
+        request.url +
+        '"},"response": {"status": 200,"body": "","headers": {"Content-Type": "text/plain"}}}'
     );
   }
 
@@ -154,19 +153,19 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       } else {
         first = false;
       }
-      printedNamespaces += "\"" + key + "\": \"" + nameSpaces[key] + "\"";
+      printedNamespaces += '"' + key + '": "' + nameSpaces[key] + '"';
     }
 
     let message =
-      "{\"request\": {\"method\": \"" +
+      '{"request": {"method": "' +
       method +
-      "\",\"url\": \"" +
+      '","url": "' +
       url +
-      "\",\"bodyPatterns\": [{\"matchesXPath\": \"" +
+      '","bodyPatterns": [{"matchesXPath": "' +
       xPath +
-      "\",\"xPathNamespaces\": {" +
+      '","xPathNamespaces": {' +
       printedNamespaces +
-      "}}]},\"response\": {\"status\": 200,\"body\": \"\",\"headers\": {\"Content-Type\": \"text/xml\"}}}";
+      '}}]},"response": {"status": 200,"body": "","headers": {"Content-Type": "text/xml"}}}';
     message = UtilService.prettify(message);
 
     return message;
@@ -179,7 +178,7 @@ export class UnmatchedComponent implements OnInit, OnDestroy {
       },
       err => {
         UtilService.showErrorMessage(this.messageService, err);
-      },
+      }
     );
   }
 

@@ -69,7 +69,7 @@ export class UtilService {
         messageService.setMessage(new Message(message, MessageType.ERROR, 10000));
       } else {
         messageService.setMessage(
-          new Message(err.statusText + ": status=" + err.status + ", message=", MessageType.ERROR, 10000, err.message),
+          new Message(err.statusText + ": status=" + err.status + ", message=", MessageType.ERROR, 10000, err.message)
         );
       }
     } else {
@@ -303,8 +303,7 @@ export class UtilService {
     return uuidv4();
   }
 
-  constructor() {
-  }
+  constructor() {}
 
   static getActiveItem(items?: Item[], activeItemId?: string): Item | undefined {
     if (items && items.length > 0) {
@@ -376,7 +375,7 @@ export class UtilService {
       showGutter: true,
       displayIndentGuides: true,
       fontSize: 14,
-      fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+      fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       showLineNumbers: true,
       // ..
       wrap: true,
@@ -405,7 +404,7 @@ export class UtilService {
       showGutter: true,
       displayIndentGuides: true,
       fontSize: 14,
-      fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+      fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       showLineNumbers: true,
       // ..
       wrap: true,

@@ -34,12 +34,13 @@ export class FilesComponent implements OnInit, OnDestroy {
   codeOptions = UtilService.aceWriteOptions();
   codeReadOnlyOptions = UtilService.aceReadOnlyOptions();
 
-
-  constructor(private wiremockService: WiremockService, private messageService: MessageService,
-              private webSocketService: WebSocketService,
-              private autoRefreshService: AutoRefreshService,
-              private modalService: NgbModal) {
-  }
+  constructor(
+    private wiremockService: WiremockService,
+    private messageService: MessageService,
+    private webSocketService: WebSocketService,
+    private autoRefreshService: AutoRefreshService,
+    private modalService: NgbModal
+  ) {}
 
   onActiveItemChange(item: Item) {
     if (item) {
@@ -63,7 +64,7 @@ export class FilesComponent implements OnInit, OnDestroy {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100),
+        debounceTime(100)
       )
       .subscribe(() => {
         this.loadFiles();
@@ -114,20 +115,18 @@ export class FilesComponent implements OnInit, OnDestroy {
       const dialog = this.modalService.open(FileNameComponent);
       dialog.componentInstance.fileName = file.name;
 
-      fromPromise(dialog.result).pipe(switchMap(fileName => this.wiremockService.uploadFile(file, fileName)
-        .pipe(map(() => fileName))),
-      ).subscribe({
-        next: () => {
-          this.messageService.setMessage(
-            new Message(`File "${file.name}" uploaded.`, MessageType.INFO),
-          );
-        },
-        error: err => {
-          this.messageService.setMessage(
-            new Message(`File upload failed.\n${err.message || err}`, MessageType.ERROR),
-          );
-        },
-      });
+      fromPromise(dialog.result)
+        .pipe(switchMap(fileName => this.wiremockService.uploadFile(file, fileName).pipe(map(() => fileName))))
+        .subscribe({
+          next: () => {
+            this.messageService.setMessage(new Message(`File "${file.name}" uploaded.`, MessageType.INFO));
+          },
+          error: err => {
+            this.messageService.setMessage(
+              new Message(`File upload failed.\n${err.message || err}`, MessageType.ERROR)
+            );
+          },
+        });
     }
   }
 
@@ -142,14 +141,10 @@ export class FilesComponent implements OnInit, OnDestroy {
   deleteFile(item: WmFile) {
     this.wiremockService.deleteFile(item.getBodyFileName()!).subscribe({
       next: () => {
-        this.messageService.setMessage(
-          new Message(`File "${item.getBodyFileName()}" deleted.`, MessageType.INFO),
-        );
+        this.messageService.setMessage(new Message(`File "${item.getBodyFileName()}" deleted.`, MessageType.INFO));
       },
       error: err => {
-        this.messageService.setMessage(
-          new Message(`File deletion failed.\n${err.message || err}`, MessageType.ERROR),
-        );
+        this.messageService.setMessage(new Message(`File deletion failed.\n${err.message || err}`, MessageType.ERROR));
       },
     });
   }

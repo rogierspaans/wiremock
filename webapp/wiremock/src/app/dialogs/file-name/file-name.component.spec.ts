@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FileNameComponent } from './file-name.component';
+import { FileNameComponent } from "./file-name.component";
 
-describe('FileNameComponent', () => {
+describe("FileNameComponent", () => {
   let component: FileNameComponent;
   let fixture: ComponentFixture<FileNameComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FileNameComponent]
-    })
-    .compileComponents();
-    
+      imports: [FileNameComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(FileNameComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

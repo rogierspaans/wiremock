@@ -38,7 +38,6 @@ export class Tree {
   insert(parentId: string, value: Item): TreeNode | undefined {
     for (const node of this.preOrderTraversal()) {
       if (node.value.getId() === parentId) {
-        // tslint:disable-next-line:no-non-null-assertion
         const newNode = new TreeNode(value, this.find(parentId)!.depth + 1, node);
         node.children.push(newNode);
         return newNode;

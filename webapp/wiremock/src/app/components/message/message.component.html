@@ -1,9 +1,18 @@
 <div class="toast-container top-0 end-0 p-3">
-  <ngb-toast *ngFor="let message of messages"
-             [autohide]="true" [delay]="message.duration || 5000"
-             [class]="message.type === type.INFO ? 'bg-info-subtle' : message.type === type.WARN ?
-              'bg-warning-subtle' : message.type === type.ERROR ? 'bg-danger-subtle' : ''"
-             (hidden)="remove(message)">
+  <ngb-toast
+    *ngFor="let message of messages"
+    [autohide]="true"
+    [delay]="message.duration || 5000"
+    [class]="
+      message.type === type.INFO
+        ? 'bg-info-subtle'
+        : message.type === type.WARN
+          ? 'bg-warning-subtle'
+          : message.type === type.ERROR
+            ? 'bg-danger-subtle'
+            : ''
+    "
+    (hidden)="remove(message)">
     <ng-template ngbToastHeader>
       <div class="wmMessageHeader me-auto">
         <img alt="WireMock" [src]="'assets/img/wiremock-concept-icon-01.png'" />

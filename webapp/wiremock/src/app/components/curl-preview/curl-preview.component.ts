@@ -31,9 +31,8 @@ export class CurlPreviewComponent implements AfterViewInit {
   constructor(
     private elementRef: ElementRef,
     private messageService: MessageService,
-    public activeModal: NgbActiveModal,
-  ) {
-  }
+    public activeModal: NgbActiveModal
+  ) {}
 
   copyCurl() {
     this.activeModal.dismiss();

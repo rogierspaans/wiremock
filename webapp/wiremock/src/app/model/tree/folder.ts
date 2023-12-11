@@ -3,9 +3,8 @@ import { Item } from "../wiremock/item";
 export class Folder implements Item {
   constructor(
     private id: string,
-    private name: string,
-  ) {
-  }
+    private name: string
+  ) {}
 
   getCode(): string {
     return "";

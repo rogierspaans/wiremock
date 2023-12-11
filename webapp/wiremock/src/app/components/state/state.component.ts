@@ -33,9 +33,8 @@ export class StateComponent implements OnInit, OnDestroy {
     private webSocketService: WebSocketService,
     private messageService: MessageService,
     private tabSelectionService: TabSelectionService,
-    private autoRefreshService: AutoRefreshService,
-  ) {
-  }
+    private autoRefreshService: AutoRefreshService
+  ) {}
 
   ngOnInit() {
     this.webSocketService
@@ -43,7 +42,7 @@ export class StateComponent implements OnInit, OnDestroy {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100),
+        debounceTime(100)
       )
       .subscribe(() => {
         this.loadScenarios();
@@ -54,7 +53,7 @@ export class StateComponent implements OnInit, OnDestroy {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100),
+        debounceTime(100)
       )
       .subscribe(() => {
         this.loadScenarios();

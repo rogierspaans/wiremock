@@ -88,7 +88,6 @@ export class StateMachineComponent implements OnInit, OnChanges {
     }
 
     if (this.paperPos) {
-      // tslint:disable-next-line:no-non-null-assertion
       this.paper.translate(this.paperPos.x, this.paperPos.y);
     }
 

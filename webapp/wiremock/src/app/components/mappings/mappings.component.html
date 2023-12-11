@@ -110,8 +110,7 @@
               <fa-icon icon="download"></fa-icon>
               Download
             </button>
-            <input type="file" class="file-input hidden"
-                   (change)="uploadFile($event)" #fileUpload>
+            <input type="file" class="file-input hidden" (change)="uploadFile($event)" #fileUpload />
             <button type="button" class="dropdown-item" (click)="fileUpload.click()">
               <fa-icon icon="upload"></fa-icon>
               Upload

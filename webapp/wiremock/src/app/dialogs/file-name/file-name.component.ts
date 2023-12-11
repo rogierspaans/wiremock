@@ -7,10 +7,7 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrl: "./file-name.component.scss",
 })
 export class FileNameComponent {
-
   fileName!: string;
 
-  constructor(public activeModal: NgbActiveModal) {
-  }
-
+  constructor(public activeModal: NgbActiveModal) {}
 }

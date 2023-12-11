@@ -37,8 +37,7 @@ export class SeparatedComponent implements OnChanges {
     }
   }
 
-  constructor(private wiremockService: WiremockService) {
-  }
+  constructor(private wiremockService: WiremockService) {}
 
   ngOnChanges(): void {
     if (this._activeItem) {

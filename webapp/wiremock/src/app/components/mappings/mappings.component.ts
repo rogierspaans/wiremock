@@ -59,9 +59,8 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     private messageService: MessageService,
     private tabSelectionService: TabSelectionService,
     private autoRefreshService: AutoRefreshService,
-    private modalService: NgbModal,
-  ) {
-  }
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
     this.webSocketService
@@ -69,7 +68,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       .pipe(
         filter(() => this.autoRefreshService.isAutoRefreshEnabled()),
         takeUntil(this.ngUnsubscribe),
-        debounceTime(100),
+        debounceTime(100)
       )
       .subscribe(() => {
         this.loadMappings();
@@ -226,8 +225,8 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     this.messageService.setMessage(
       new Message(
         err.name + ": message=" + err.message + ", lineNumber=" + err.lineNumber + ", columnNumber=" + err.columnNumber,
-        MessageType.ERROR,
-      ),
+        MessageType.ERROR
+      )
     );
   }
 
@@ -282,7 +281,7 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       this.setMappingForHelper(MappingHelperService.helperToJsonBody(this.getMappingForHelper()));
     } catch (err) {
       this.messageService.setMessage(
-        new Message(MappingsComponent.ACTION_FAILURE_PREFIX + "Probably no json", MessageType.ERROR),
+        new Message(MappingsComponent.ACTION_FAILURE_PREFIX + "Probably no json", MessageType.ERROR)
       );
     }
   }
@@ -389,46 +388,42 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
       const dialog = this.modalService.open(FileNameComponent);
       dialog.componentInstance.fileName = file.name;
 
-      fromPromise(dialog.result).pipe(switchMap(fileName => this.wiremockService.uploadFile(file, fileName)
-          .pipe(map(() => fileName))),
-        tap(fileName => {
-          if (this.editorText) {
-            this.setMappingForHelper(
-              MappingHelperService.helperSetBodyFileName(this.getMappingForHelper(), fileName),
+      fromPromise(dialog.result)
+        .pipe(
+          switchMap(fileName => this.wiremockService.uploadFile(file, fileName).pipe(map(() => fileName))),
+          tap(fileName => {
+            if (this.editorText) {
+              this.setMappingForHelper(
+                MappingHelperService.helperSetBodyFileName(this.getMappingForHelper(), fileName)
+              );
+            }
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.messageService.setMessage(new Message(`File "${file.name}" uploaded.`, MessageType.INFO));
+          },
+          error: err => {
+            this.messageService.setMessage(
+              new Message(`File upload failed.\n${err.message || err}`, MessageType.ERROR)
             );
-          }
-        })).subscribe({
-        next: () => {
-          this.messageService.setMessage(
-            new Message(`File "${file.name}" uploaded.`, MessageType.INFO),
-          );
-        },
-        error: err => {
-          this.messageService.setMessage(
-            new Message(`File upload failed.\n${err.message || err}`, MessageType.ERROR),
-          );
-        },
-      });
+          },
+        });
     }
-
   }
 
   deleteFile() {
     if (this.bodyFileName) {
       this.wiremockService.deleteFile(this.bodyFileName).subscribe({
         next: () => {
-          this.messageService.setMessage(
-            new Message(`File "${this.bodyFileName}" deleted.`, MessageType.INFO),
-          );
+          this.messageService.setMessage(new Message(`File "${this.bodyFileName}" deleted.`, MessageType.INFO));
           if (this.editorText) {
-            this.setMappingForHelper(
-              MappingHelperService.helperRemoveBodyFileName(this.getMappingForHelper()),
-            );
+            this.setMappingForHelper(MappingHelperService.helperRemoveBodyFileName(this.getMappingForHelper()));
           }
         },
         error: err => {
           this.messageService.setMessage(
-            new Message(`File deletion failed.\n${err.message || err}`, MessageType.ERROR),
+            new Message(`File deletion failed.\n${err.message || err}`, MessageType.ERROR)
           );
         },
       });
