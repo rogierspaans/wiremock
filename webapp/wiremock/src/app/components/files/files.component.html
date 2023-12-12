@@ -6,33 +6,65 @@
   [supportsListView]="false">
   <ng-template #actions let-activeItem>
     <div class="btn-group" role="group">
-      <input type="file" class="file-input hidden" (change)="uploadFile($event)" #fileUpload />
-      <button type="button" class="btn btn-secondary" (click)="fileUpload.click()">
-        <fa-icon icon="upload"></fa-icon>
-        Upload
-      </button>
-      <button type="button" class="btn btn-secondary" (click)="downloadFile(activeItem)">
-        <fa-icon icon="download"></fa-icon>
-        Download
-      </button>
-      <button type="button" class="btn btn-secondary" (click)="copyBodyFileName(activeItem)">
-        <fa-icon icon="copy"></fa-icon>
-        Copy BodyFileName
-      </button>
-      <button type="button" class="btn btn-secondary" (click)="deleteFile(activeItem)">
-        <fa-icon icon="trash"></fa-icon>
-        Delete
-      </button>
+      <ng-container *ngIf="state === State.NEW">
+        <button type="button" class="btn btn-secondary" (click)="saveNewFile()">
+          <fa-icon icon="save"></fa-icon>
+          Save
+        </button>
+      </ng-container>
+      <ng-container *ngIf="state === State.EDIT">
+        <button type="button" class="btn btn-secondary" (click)="saveEditFile(activeItem)">
+          <fa-icon icon="save"></fa-icon>
+          Save
+        </button>
+      </ng-container>
+      <ng-container *ngIf="state === State.NORMAL">
+        <button type="button" class="btn btn-secondary" (click)="addNewFile()">
+          <fa-icon icon="add"></fa-icon>
+          New
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="editFile(activeItem)"
+                [disabled]="!activeItem">
+          <fa-icon icon="pencil"></fa-icon>
+          Edit
+        </button>
+        <input type="file" class="file-input hidden" (change)="uploadFile($event)" #fileUpload />
+        <button type="button" class="btn btn-secondary" (click)="fileUpload.click()">
+          <fa-icon icon="upload"></fa-icon>
+          Upload
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="downloadFile(activeItem)"
+                [disabled]="!activeItem">
+          <fa-icon icon="download"></fa-icon>
+          Download
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="copyBodyFileName(activeItem)"
+                [disabled]="!activeItem">
+          <fa-icon icon="copy"></fa-icon>
+          Copy BodyFileName
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="deleteFile(activeItem)"
+                [disabled]="!activeItem">
+          <fa-icon icon="trash"></fa-icon>
+          Delete
+        </button>
+      </ng-container>
+      <ng-container *ngIf="state === State.EDIT || state === State.NEW">
+        <button type="button" class="btn btn-secondary" (click)="cancelEditing(activeItem)">
+          <fa-icon icon="times"></fa-icon>
+          Cancel
+        </button>
+      </ng-container>
     </div>
   </ng-template>
   <ng-template #content let-activeItem>
-    <div *ngIf="activeItem" id="wmFileContent" class="container-fluid column">
+    <div id="wmFileContent" class="container-fluid column">
       Code
       <wm-code-editor
         #editor
-        [code]="fileContent"
-        [language]="language"
-        [options]="codeReadOnlyOptions"
+        [code]="editorContent"
+        [language]="editorLanguage"
+        [options]="state === State.NORMAL ? codeReadOnlyOptions : codeOptions"
         (valueChange)="editorValueChange($event)"></wm-code-editor>
     </div>
   </ng-template>

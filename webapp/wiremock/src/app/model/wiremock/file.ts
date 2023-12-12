@@ -6,6 +6,9 @@ export class File implements Item {
   folderName?: string;
   extension!: string;
 
+  _content?: any;
+  _language?: string;
+
   constructor(name: string) {
     this.name = name;
     const lastIndexOf = name.lastIndexOf("/");
@@ -39,7 +42,7 @@ export class File implements Item {
   }
 
   hasFile(): boolean {
-    return true;
+    return false;
   }
 
   hasFolderDefinition(): boolean {

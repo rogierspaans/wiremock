@@ -171,6 +171,10 @@ export class WiremockService {
     );
   }
 
+  uploadFileByData(data: any, fileName: string): Observable<any> {
+    return this.defaultPipe(this.http.put<any>(WiremockService.getUrl("files/" + fileName), data));
+  }
+
   private fileToByteArray(file: File): Observable<any> {
     return fromPromise(file.arrayBuffer());
   }

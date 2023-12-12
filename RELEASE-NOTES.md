@@ -1,11 +1,10 @@
 ## Feature
 
-- New Files page allows to upload, download, delete files.
-- Allow to upload a file when editing a mapping. The bodyFileName is automatically set. Don't forget to press save.
-- Allow to delete a file when editing a mapping. The bodyFileName is automatically removed. Don't forget to press save.
-- Allow to download a file in raw and separated view in case a file is used.
-- Add indicator in tree and list view to show mappings with files and if they are persistent.
+- Files can be created, edited and moved via the "Files" page.
+- Tree and List view indicators moved to the right side.
+- Version is shown in the settings dropdown menu.
 
 ## Fix
 
-- Some layout issues fixed due to dark mode and more
+- Some layout issues
+- Some routing issues

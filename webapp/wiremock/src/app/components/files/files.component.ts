@@ -11,6 +11,7 @@ import { Subject } from "rxjs/internal/Subject";
 import { FileNameComponent } from "../../dialogs/file-name/file-name.component";
 import { fromPromise } from "rxjs/internal/observable/innerFrom";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { of } from "rxjs";
 
 @Component({
   selector: "wm-files",
@@ -28,8 +29,11 @@ export class FilesComponent implements OnInit, OnDestroy {
 
   activeItemId?: string;
 
-  fileContent?: any;
-  language: string = "text";
+  editorContent?: any;
+  editorLanguage: string = "text";
+
+  state?: State = State.NORMAL;
+  State = State;
 
   codeOptions = UtilService.aceWriteOptions();
   codeReadOnlyOptions = UtilService.aceReadOnlyOptions();
@@ -43,16 +47,21 @@ export class FilesComponent implements OnInit, OnDestroy {
   ) {}
 
   onActiveItemChange(item: Item) {
-    if (item) {
+    if (item && !(item as WmFile)._content) {
       this.wiremockService.getFile(item.getBodyFileName()!).subscribe({
         next: content => {
-          this.fileContent = content;
-          this.language = this.determineLanguage(item as WmFile);
+          (item as WmFile)._content = content;
+          (item as WmFile)._language = this.determineLanguage(item as WmFile);
+
+          this.activeItemId = (item as WmFile).getId();
+          this.updateEditorContent(item as WmFile);
         },
       });
+    } else if(item) {
+      this.activeItemId = (item as WmFile).getId();
+      this.updateEditorContent(item as WmFile);
     } else {
-      this.fileContent = undefined;
-      this.language = "text";
+      this.updateEditorContent();
     }
   }
 
@@ -79,8 +88,13 @@ export class FilesComponent implements OnInit, OnDestroy {
     });
   }
 
-  editorValueChange($event: string) {
-    // not yet. Maybe later.
+  updateEditorContent(file?: WmFile) {
+    this.editorContent = file?._content || "";
+    this.editorLanguage = file?._language || "text";
+  }
+
+  editorValueChange(value: string) {
+    this.editorContent = value;
   }
 
   private determineLanguage(item: WmFile) {
@@ -106,6 +120,77 @@ export class FilesComponent implements OnInit, OnDestroy {
     return result;
   }
 
+  addNewFile() {
+    this.updateEditorContent();
+    this.state = State.NEW;
+  }
+
+  saveNewFile() {
+    this.saveNewOrEditedFile();
+    this.state = State.NORMAL;
+  }
+
+  editFile(activeItem: WmFile) {
+    // clone for new copy
+    this.editorContent = UtilService.prettify(activeItem._content);
+    this.editorLanguage = activeItem._language || "text";
+    this.state = State.EDIT;
+  }
+
+  saveEditFile(activeItem: WmFile) {
+    this.saveNewOrEditedFile(activeItem);
+    this.state = State.NORMAL;
+  }
+
+  cancelEditing(activeItem?: WmFile) {
+    this.updateEditorContent(activeItem);
+    this.state = State.NORMAL;
+  }
+
+  private saveNewOrEditedFile(activeItem?: WmFile) {
+    const dialog = this.modalService.open(FileNameComponent);
+    dialog.componentInstance.fileName = activeItem?.getId();
+
+    fromPromise(dialog.result).pipe(
+      switchMap(fileName => this.wiremockService.uploadFileByData(this.editorContent, fileName)
+        .pipe(
+          switchMap(() => {
+            if (activeItem && activeItem.getId() !== fileName) {
+              // moved file. Remove old.
+              return this.wiremockService.deleteFile(activeItem.getId()).pipe(map(() => fileName));
+            }
+            return of(fileName);
+          }),
+          )
+      )
+    ).subscribe({
+      next: fileName => {
+        const operation = activeItem ? "updated" : "created";
+        this.messageService.setMessage(
+          new Message(`File "${fileName}" ${operation}.`, MessageType.INFO)
+        );
+        this.activeItemId = fileName;
+      },
+      error: err => {
+        const operation = activeItem ? "update" : "creation";
+        this.messageService.setMessage(
+          new Message(`File ${operation} failed.\n${err.message || err}`, MessageType.ERROR)
+        );
+
+        if (this.files) {
+          // in case of a new file we have no activeItem yet. So we fall back of the currently selected one.
+          this.files?.forEach(file => {
+            if (this.activeItemId === file.getId()) {
+              this.cancelEditing(file);
+            }
+          });
+        } else {
+          this.cancelEditing(activeItem);
+        }
+      },
+    });
+  }
+
   uploadFile(event: any) {
     const fileList = event.target.files as FileList;
 
@@ -118,8 +203,9 @@ export class FilesComponent implements OnInit, OnDestroy {
       fromPromise(dialog.result)
         .pipe(switchMap(fileName => this.wiremockService.uploadFile(file, fileName).pipe(map(() => fileName))))
         .subscribe({
-          next: () => {
-            this.messageService.setMessage(new Message(`File "${file.name}" uploaded.`, MessageType.INFO));
+          next: fileName => {
+            this.messageService.setMessage(new Message(`File "${fileName}" uploaded.`, MessageType.INFO));
+            this.activeItemId = fileName;
           },
           error: err => {
             this.messageService.setMessage(
@@ -161,4 +247,10 @@ export class FilesComponent implements OnInit, OnDestroy {
       this.messageService.setMessage(new Message(FilesComponent.COPY_FAILURE, MessageType.ERROR));
     }
   }
+}
+
+export enum State {
+  NORMAL,
+  EDIT,
+  NEW,
 }
