@@ -25,10 +25,10 @@ import com.github.tomakehurst.wiremock.common.url.PathParams;
 import com.github.tomakehurst.wiremock.core.Admin;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class VersionTask implements AdminTask {
 
@@ -36,8 +36,8 @@ public class VersionTask implements AdminTask {
 
   static {
     try {
-      Path path = Paths.get("./version.json");
-      String json = Files.readString(path);
+      InputStream inputStream = VersionTask.class.getResourceAsStream("/version.json");
+      String json = readFromInputStream(inputStream);
       versionResult = Json.read(json, VersionResult.class);
     } catch (IOException e) {
       versionResult = new VersionResult("unknown", "unknown");
@@ -53,5 +53,16 @@ public class VersionTask implements AdminTask {
         .withBody(Json.write(versionResult))
         .withHeader("Content-Type", "application/json")
         .build();
+  }
+
+  private static String readFromInputStream(InputStream inputStream) throws IOException {
+    StringBuilder resultStringBuilder = new StringBuilder();
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        resultStringBuilder.append(line).append("\n");
+      }
+    }
+    return resultStringBuilder.toString();
   }
 }

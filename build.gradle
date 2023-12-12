@@ -430,7 +430,7 @@ task addGitTag {
 node {
   version = "20.10.0"
   npmVersion = "10.2.5"
-  nodeProjectDir = file(project(':').rootDir.getAbsolutePath() + '/webapp/wiremock')
+  nodeProjectDir = file(projectDir.getAbsolutePath() + '/webapp/wiremock')
   download = true
 }
 
@@ -446,7 +446,7 @@ task generateWebapp(type: NpmTask) {
 task versionTxt()  {
   dependsOn generateWebapp
   doLast {
-    new File(projectDir, "version.json").text = """{
+    new File(projectDir.getAbsolutePath() + "/src/main/resources", "version.json").text = """{
   "version": "$version",
   "buildTime": "${new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date())}"
 }

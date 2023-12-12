@@ -63,7 +63,7 @@ bin
 mappings/
 __files
 src/main/resources/assets/webapp/
-version.json
+src/main/resources/version.json
 
 scripts/client-cert.*
 !scripts/client-cert.conf
