@@ -114,9 +114,11 @@ export class WiremockService {
   }
 
   getRecordingStatus(): Observable<RecordingStatus> {
-    return this.defaultPipe(this.http.get<RecordingStatus>(WiremockService.getUrl("recordings/status")))
+    return (
+      this.defaultPipe(this.http.get<RecordingStatus>(WiremockService.getUrl("recordings/status")))
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .pipe(map((status: any) => (<any>RecordingStatus)[status.status]));
+        .pipe(map((status: any) => (<any>RecordingStatus)[status.status]))
+    );
   }
 
   getVersion(): Observable<Version> {

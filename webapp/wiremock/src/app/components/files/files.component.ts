@@ -57,7 +57,7 @@ export class FilesComponent implements OnInit, OnDestroy {
           this.updateEditorContent(item as WmFile);
         },
       });
-    } else if(item) {
+    } else if (item) {
       this.activeItemId = (item as WmFile).getId();
       this.updateEditorContent(item as WmFile);
     } else {
@@ -151,44 +151,44 @@ export class FilesComponent implements OnInit, OnDestroy {
     const dialog = this.modalService.open(FileNameComponent);
     dialog.componentInstance.fileName = activeItem?.getId();
 
-    fromPromise(dialog.result).pipe(
-      switchMap(fileName => this.wiremockService.uploadFileByData(this.editorContent, fileName)
-        .pipe(
-          switchMap(() => {
-            if (activeItem && activeItem.getId() !== fileName) {
-              // moved file. Remove old.
-              return this.wiremockService.deleteFile(activeItem.getId()).pipe(map(() => fileName));
-            }
-            return of(fileName);
-          }),
+    fromPromise(dialog.result)
+      .pipe(
+        switchMap(fileName =>
+          this.wiremockService.uploadFileByData(this.editorContent, fileName).pipe(
+            switchMap(() => {
+              if (activeItem && activeItem.getId() !== fileName) {
+                // moved file. Remove old.
+                return this.wiremockService.deleteFile(activeItem.getId()).pipe(map(() => fileName));
+              }
+              return of(fileName);
+            })
           )
+        )
       )
-    ).subscribe({
-      next: fileName => {
-        const operation = activeItem ? "updated" : "created";
-        this.messageService.setMessage(
-          new Message(`File "${fileName}" ${operation}.`, MessageType.INFO)
-        );
-        this.activeItemId = fileName;
-      },
-      error: err => {
-        const operation = activeItem ? "update" : "creation";
-        this.messageService.setMessage(
-          new Message(`File ${operation} failed.\n${err.message || err}`, MessageType.ERROR)
-        );
+      .subscribe({
+        next: fileName => {
+          const operation = activeItem ? "updated" : "created";
+          this.messageService.setMessage(new Message(`File "${fileName}" ${operation}.`, MessageType.INFO));
+          this.activeItemId = fileName;
+        },
+        error: err => {
+          const operation = activeItem ? "update" : "creation";
+          this.messageService.setMessage(
+            new Message(`File ${operation} failed.\n${err.message || err}`, MessageType.ERROR)
+          );
 
-        if (this.files) {
-          // in case of a new file we have no activeItem yet. So we fall back of the currently selected one.
-          this.files?.forEach(file => {
-            if (this.activeItemId === file.getId()) {
-              this.cancelEditing(file);
-            }
-          });
-        } else {
-          this.cancelEditing(activeItem);
-        }
-      },
-    });
+          if (this.files) {
+            // in case of a new file we have no activeItem yet. So we fall back of the currently selected one.
+            this.files?.forEach(file => {
+              if (this.activeItemId === file.getId()) {
+                this.cancelEditing(file);
+              }
+            });
+          } else {
+            this.cancelEditing(activeItem);
+          }
+        },
+      });
   }
 
   uploadFile(event: any) {

@@ -12,6 +12,8 @@
   <small>You can define folders by using /. E.g.: some/folder/structured/file.txt</small>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="activeModal.close(fileName)" [disabled]="!fileName">Upload</button>
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(fileName)" [disabled]="!fileName">
+    Upload
+  </button>
   <button type="button" class="btn btn-outline" (click)="activeModal.dismiss('canceled')">Cancel</button>
 </div>
