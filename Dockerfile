@@ -5,7 +5,7 @@ RUN apt-get update && apt-get upgrade -y
 
 ARG WIREMOCK_VERSION
 
-COPY version.txt /var/wiremock/lib/version.txt
+COPY version.json /var/wiremock/lib/version.json
 
 # we remove the official standalone jar to reduce image size and download our own file
 RUN rm /var/wiremock/lib/*.jar && \
