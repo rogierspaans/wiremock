@@ -447,8 +447,8 @@ task versionTxt()  {
   dependsOn generateWebapp
   doLast {
     new File(projectDir.getAbsolutePath() + "/src/main/resources", "version.json").text = """{
-  "version": "$version",
-  "buildTime": "${new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date())}"
+  "buildTime": "${new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date())}",
+  "version": "$version"
 }
 """
   }
