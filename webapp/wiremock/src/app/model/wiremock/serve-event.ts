@@ -19,11 +19,16 @@ export class ServeEvent extends Proxy implements Item {
   }
 
   getTitle(): string {
-    return this.request.url;
+    return this.stubMapping.name || this.request.url;
   }
 
   getSubtitle(): string {
-    return this.request.getSubtitle() + ", status=" + this.response.status;
+    let url = "";
+    if (this.stubMapping.name) {
+      url = `, url=${this.request.url}`;
+    }
+
+    return `${this.request.getSubtitle()}, status=${this.response.status}${url}`;
   }
 
   getId(): string {
@@ -68,5 +73,12 @@ export class ServeEvent extends Proxy implements Item {
 
   isPersistent(): boolean {
     return this.stubMapping.persistent;
+  }
+
+  isHighPrio(): boolean {
+    return this.stubMapping.priority !== undefined && this.stubMapping.priority < 5;
+  }
+  isLowPrio(): boolean {
+    return this.stubMapping.priority !== undefined && this.stubMapping.priority > 5;
   }
 }

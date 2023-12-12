@@ -63,6 +63,8 @@
             </div>
           </form>
           <div class="wmIndicatorContainer">
+            <fa-icon icon="arrow-up" *ngIf="node.value.isHighPrio()" ngbTooltip="Higher priority"></fa-icon>
+            <fa-icon icon="arrow-down" *ngIf="node.value.isLowPrio()" ngbTooltip="Lower priority"></fa-icon>
             <fa-icon icon="paperclip" *ngIf="node.value.hasFile()" ngbTooltip="File body"></fa-icon>
             <fa-icon icon="save" *ngIf="node.value.isPersistent()" ngbTooltip="Persistent"></fa-icon>
           </div>

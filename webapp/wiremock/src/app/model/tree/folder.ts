@@ -49,4 +49,11 @@ export class Folder implements Item {
   isPersistent(): boolean {
     return false;
   }
+
+  isHighPrio(): boolean {
+    return false;
+  }
+  isLowPrio(): boolean {
+    return false;
+  }
 }

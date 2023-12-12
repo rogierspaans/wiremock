@@ -21,6 +21,8 @@ import { FaIconLibrary, FontAwesomeModule } from "@fortawesome/angular-fontaweso
 import {
   faAlignJustify,
   faAngleDoubleUp,
+  faArrowDown,
+  faArrowUp,
   faBars,
   faCamera,
   faCheck,
@@ -197,5 +199,7 @@ export class AppModule {
     library.addIcons(faPaperclip);
     library.addIcons(faUpload);
     library.addIcons(faDownload);
+    library.addIcons(faArrowUp);
+    library.addIcons(faArrowDown);
   }
 }

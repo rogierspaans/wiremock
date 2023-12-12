@@ -67,15 +67,41 @@ export class StubMapping extends Proxy implements Item {
   }
 
   getTitle(): string {
-    return (this.request.url ||
+    return (this.name ||
+      this.request.url ||
       this.request.urlPattern ||
       this.request.urlPath ||
       this.request.urlPathPattern) as string;
   }
 
   getSubtitle(): string {
-    let soap;
+    const soapResult = this.extractSoapResult();
+    let result = "";
+    if (soapResult.length > 0) {
+      result = soapResult;
+    } else {
+      result = "method=" + this.request.method;
+    }
+
+    result = result + `, status=${this.response.status}`;
+
+    if (this.name) {
+      if (this.request.url) {
+        result = result + `, url=${this.request.url}`;
+      } else if (this.request.urlPattern) {
+        result = result + `, urlPattern=${this.request.urlPattern}`;
+      } else if (this.request.urlPath) {
+        result = result + `, urlPath=${this.request.urlPath}`;
+      } else if (this.request.urlPathPattern) {
+        result = result + `, url=${this.request.urlPathPattern}`;
+      }
+    }
+    return result;
+  }
+
+  private extractSoapResult(): string {
     let soapResult = "";
+    let soap: RegExpExecArray | null;
     if (this.request && this.request.bodyPatterns && this.request.bodyPatterns) {
       for (const bodyPattern of this.request.bodyPatterns) {
         if (
@@ -90,13 +116,7 @@ export class StubMapping extends Proxy implements Item {
         }
       }
     }
-    let result = "";
-    if (soapResult.length > 0) {
-      result = soapResult;
-    } else {
-      result = "method=" + this.request.method;
-    }
-    return result + ", status=" + this.response.status;
+    return soapResult;
   }
 
   getId(): string {
@@ -128,5 +148,12 @@ export class StubMapping extends Proxy implements Item {
 
   isPersistent(): boolean {
     return this.persistent;
+  }
+
+  isHighPrio(): boolean {
+    return this.priority !== undefined && this.priority < 5;
+  }
+  isLowPrio(): boolean {
+    return this.priority !== undefined && this.priority > 5;
   }
 }

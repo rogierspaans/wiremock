@@ -20,4 +20,8 @@ export interface Item {
   getBodyFileName(): string | undefined;
 
   isPersistent(): boolean;
+
+  isHighPrio(): boolean;
+
+  isLowPrio(): boolean;
 }
