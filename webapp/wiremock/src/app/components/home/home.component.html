@@ -15,7 +15,6 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isCollapsed">
     <ul id="wmNavigation" class="navbar-nav">
-      <!--<li class="nav-item active">-->
       <li class="nav-item">
         <a class="nav-link" routerLink="/mappings" routerLinkActive="active">Mappings</a>
       </li>
@@ -113,9 +112,16 @@
           <fa-icon icon="power-off"></fa-icon>
           Shutdown
         </button>
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header" [ngbTooltip]="versionTooltipContent">{{version}}</h6>
       </div>
     </div>
   </div>
 </nav>
 <wm-message></wm-message>
 <router-outlet></router-outlet>
+<ng-template #versionTooltipContent>
+  <pre class="text-wrap mb-0">
+  {{ versionTooltip }}
+  </pre>
+</ng-template>

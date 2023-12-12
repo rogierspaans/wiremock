@@ -83,7 +83,9 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
 
     this.activatedRoute.queryParams.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: Params) => {
       this.activeItemId = params["active"];
-      this.setActiveItemById(this.activeItemId, UtilService.isDefined(this.activeItemId));
+      if (this.items && this.items?.length > 0) {
+        this.setActiveItemById(this.activeItemId, UtilService.isDefined(this.activeItemId));
+      }
     });
 
     this.searchService.search$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(newSearch => {
@@ -131,7 +133,8 @@ export class LayoutComponent implements OnInit, OnChanges, OnDestroy {
     if (!changes) {
       return;
     }
-    if (changes["items"] && (changes["items"].currentValue || changes["items"].previousValue)) {
+    if (changes["items"] && !changes["items"].firstChange &&
+      (changes["items"].currentValue || changes["items"].previousValue)) {
       // We only update filteredItems when actual items changed. activeItemId can be set but it is only a suggestion. This component
       // is responsible for selecting items
       this.onSearchChanged(new SearchEvent(this.lastSearch, this.caseSensitiveSearchEnabled));

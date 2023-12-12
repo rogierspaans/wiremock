@@ -91,14 +91,21 @@ $color-mode-type: data;
 }
 
 .wmIndicatorContainer {
-  padding-left: 4px;
-  padding-right: 4px;
+  margin-left: 4px;
   align-self: flex-start;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  fa-icon {
+    font-size: 10px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .wmProxyContainer {
+  margin-left: 4px;
   align-self: flex-start;
 }

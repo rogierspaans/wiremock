@@ -29,6 +29,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   isCollapsed = true;
 
   currentRecordingStatus?: RecordingStatus;
+  version?: string;
+  versionTooltip?: string;
 
   RecordingStatus = RecordingStatus;
 
@@ -60,6 +62,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
 
     this.loadRecordingStatus();
+    this.loadVersion();
 
     this.themeService.setTheme(this.themeService.getPreferredTheme());
     this.theme = this.themeService.getPreferredTheme();
@@ -73,6 +76,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       error: err => {
         UtilService.showErrorMessage(this.messageService, err);
       },
+    });
+  }
+
+  private loadVersion() {
+    this.wiremockService.getVersion().subscribe({
+      next: version => {
+        this.version = `Version: ${version.version}`;
+        this.versionTooltip = `WireMock: ${version.version.substring(0, version.version.lastIndexOf("."))}\nBuildTime: ${version.buildTime}`;
+      }
     });
   }
 

@@ -19,10 +19,6 @@
           <div class="wmListItemTitle">{{ item.getTitle() }}</div>
           <div class="wmListItemSubtitle">{{ item.getSubtitle() }}</div>
         </div>
-        <div class="wmIndicatorContainer">
-          <fa-icon icon="paperclip" *ngIf="item.hasFile()"></fa-icon>
-          <fa-icon icon="save" *ngIf="item.isPersistent()"></fa-icon>
-        </div>
         <form *ngIf="item.isProxy()" class="wmProxyContainer">
           <div class="btn-group wmProxyGroup" role="group">
             <input
@@ -62,6 +58,10 @@
             >
           </div>
         </form>
+        <div class="wmIndicatorContainer">
+          <fa-icon icon="paperclip" *ngIf="item.hasFile()" ngbTooltip="File body"></fa-icon>
+          <fa-icon icon="save" *ngIf="item.isPersistent()" ngbTooltip="Persistent"></fa-icon>
+        </div>
       </li>
     </ul>
   </div>

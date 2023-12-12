@@ -18,6 +18,7 @@ import { ScenarioResult } from "../model/wiremock/scenario-result";
 import { fromPromise } from "rxjs/internal/observable/innerFrom";
 import { FileList } from "../model/wiremock/file-list";
 import { File as WmFile } from "../model/wiremock/file";
+import { Version } from "../model/wiremock/version";
 
 @Injectable()
 export class WiremockService {
@@ -113,11 +114,13 @@ export class WiremockService {
   }
 
   getRecordingStatus(): Observable<RecordingStatus> {
-    return (
-      this.defaultPipe(this.http.get<RecordingStatus>(WiremockService.getUrl("recordings/status")))
+    return this.defaultPipe(this.http.get<RecordingStatus>(WiremockService.getUrl("recordings/status")))
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .pipe(map((status: any) => (<any>RecordingStatus)[status.status]))
-    );
+        .pipe(map((status: any) => (<any>RecordingStatus)[status.status]));
+  }
+
+  getVersion(): Observable<Version> {
+    return this.defaultPipe(this.http.get<Version>(WiremockService.getUrl("version")));
   }
 
   shutdown(): Observable<ResponseDefinition> {

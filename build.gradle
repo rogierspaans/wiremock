@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
   repositories {
     maven {
@@ -441,8 +443,19 @@ task generateWebapp(type: NpmTask) {
   args = ['run', 'prod']
 }
 
-task finalizeWebapp(type: Copy) {
+task versionTxt()  {
   dependsOn generateWebapp
+  doLast {
+    new File(projectDir, "version.json").text = """{
+  "version": "$version",
+  "buildTime": "${new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date())}"
+}
+"""
+  }
+}
+
+task finalizeWebapp(type: Copy) {
+  dependsOn versionTxt
   // Because of: https://github.com/angular/angular-cli/issues/26304
   // we need to copy some things around.
   from 'webapp/wiremock/dist/browser'
