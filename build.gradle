@@ -465,6 +465,7 @@ task finalizeWebapp(type: Copy) {
 jar.dependsOn finalizeWebapp
 processResources.dependsOn finalizeWebapp
 check.dependsOn -= finalizeWebapp
+spotlessGroovyGradle.dependsOn finalizeWebapp
 
 task deleteGeneratedWebapp(type: Delete) {
   delete 'src/main/resources/assets/webapp'
