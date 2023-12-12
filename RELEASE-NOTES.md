@@ -1,10 +1,5 @@
 ## Feature
 
-- Files can be created, edited and moved via the "Files" page.
-- Tree and List view indicators moved to the right side.
-- Version is shown in the settings dropdown menu.
-
-## Fix
-
-- Some layout issues
-- Some routing issues
+- Use StubMapping name in case it is present. This applies for Mappings and Matched view. Otherwise, the url is shown.
+- Show url in as subtitle in case the StubMapping name is present.
+- Indicator for lower or higher priority than 5, which is the default.
