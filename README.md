@@ -19,6 +19,9 @@ Extends [WireMock](http://wiremock.org) with a graphical user interface
   - Separated view improve readability
   - Test mapping
     - Allows to quickly test the mapping by sending http requests.
+- Files
+  - Upload, Download files
+  - Create or edit files
 - Matched
   - A paginated list of all requests which could be handled by Wiremock
   - Copy cUrl
@@ -161,8 +164,8 @@ holomekc/wiremock-gui:{version}-alpine or holomekc/wiremock-gui:latest-alpine
 #### Mac M[1-2]
 
 In case you want to use this Docker image on an Apple Mac with M1 or M2 processor you cannot use the alpine image. The
-docker images are baces on the official wiremock docker images. I only replace the build jar file in the image. The
-official wiremock docker images uses eclipse-temurin as base image for the alpine and none alpine version. Sadly the
+docker images are based on the official wiremock docker images. I only replace the wiremock jar file in the image. The
+official wiremock docker images use eclipse-temurin as base image for the alpine and none alpine version. Sadly the
 alpine version of temurin does not support arm yet. See: https://github.com/adoptium/containers/issues/158.
 Theoretically, I could switch to a different base image, but this would create increased maintenance. I hope temurin is
 updated soon-ish. Please use the none alpine version on a Mac for the time being.
