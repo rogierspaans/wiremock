@@ -51,12 +51,12 @@ The gui is part of the Wiremock admin interface. Therefore, just open the follow
 
 Since 2.32.0.2
 
-For mappings the folder view is selected by default. It is still possible to switch easier list view as well.
+For mappings the folder view is selected by default. It is still possible to switch to the flat list view.
 
-If mappings are stored on a drive in different directories this structure will be extracted and mappings metadata will
-be updated so that wiremock-gui can show the same folder structure.
+If mappings are stored on a drive in different directories, this structure will be extracted and mappings metadata will
+be updated automatically, so that wiremock-gui can show the same folder structure.
 
-You can also manually update mapping metadata to create a structure. This helps if you do not store mappings but load
+You can also update mapping metadata to create a structure manually. This helps if you do not store mappings, but load
 them via http, or if you do not want to place the file in different directories.
 
 metadata structure:
@@ -71,11 +71,11 @@ metadata structure:
 }
 ```
 
-will create following structure in gui:
+will create following structure in the gui:
 
 ![alt folder-image](./images/folder.png)
 
-In general functions when editing a mapping you can add the metadata structure via "add Folder".
+While editing a mapping you can add the metadata structure for a folde via "general functions" -> "add Folder".
 
 ### drag-and-drop
 
@@ -92,12 +92,12 @@ Since 2.32.0.2
 Allows testing of mappings via an HTTP request. This feature tries to extract url and content-type from mapping
 information. The prefilled data highly depends on how the request in the mapping is defined.
 
-When executing the request the response is shown and also a badge which indicates if the selected mapping answered the
+When executing the request the response is shown. A badge indicates if the selected mapping answered the
 request. If this is the case the following is shown:
 
 ![alt test-match](./images/test-matches.png)
 
-If another mapping answered the request no match is shown and a link to the mapping which answered the request:
+If another mapping answered the request a link to the mapping, which answered the request is shown:
 
 ![alt test-no-match](./images/test-no-match.png)
 
