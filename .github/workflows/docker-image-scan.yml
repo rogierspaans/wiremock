@@ -20,6 +20,15 @@ jobs:
           sha=$(gh api -H "${headers}" "${endpoint}" | jq --raw-output "${jqFilter}")
           echo "Trivy DB sha256:${sha}"
           echo "::set-output name=sha::${sha}"
+
+      - id: ignore-policies
+        name: Ignore some policies
+        run: |
+          cat > .trivyignore << EOL
+          # Ignore gosu issue. They say they are not affected. Issue will be removed as soon
+          # as wiremock image updates to a newer gosu verion, which removed runc.
+          CVE-2023-27561
+          EOL
       - uses: actions/cache@v3
         with:
           path: .trivy
@@ -33,6 +42,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          hide-progress: true
           cache-dir: .trivy
       - name: Fix .trivy permissions
         run: sudo chown -R $(stat . -c %u:%g) .trivy
