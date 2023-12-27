@@ -24,4 +24,3 @@ updates:
     open-pull-requests-limit: 20
     assignees:
       - Author
-    versioning-strategy: increase
