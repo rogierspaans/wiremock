@@ -71,5 +71,5 @@ jobs:
           timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/files; do sleep 1; done'
           docker container rm -f test
 
-#      - name: Push wiremock-gui image to Docker HUB
-#        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ inputs.version }} --platform ${{ matrix.versions.PLATFORMS }} --push
+      - name: Push wiremock-gui image to Docker HUB
+        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ inputs.version }} --platform ${{ matrix.versions.PLATFORMS }} --push
