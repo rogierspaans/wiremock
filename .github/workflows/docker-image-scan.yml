@@ -47,6 +47,7 @@ jobs:
       - name: Fix .trivy permissions
         run: sudo chown -R $(stat . -c %u:%g) .trivy
 
-      - id: Check result
+      - name: Check result
+        id: trivy-result
         run: |
           cat result.json
