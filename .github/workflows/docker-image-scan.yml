@@ -60,7 +60,7 @@ jobs:
     if: jobs.scan.outputs.result != 0
     uses: ./docker-release.yml
     with:
-      version: ${{ needs.build.outputs.version }}
+      version: 3.3.1.4
     secrets:
       dockerUsername: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerToken: ${{ secrets.DOCKERHUB_TOKEN }}
