@@ -6,7 +6,7 @@ on:
 
 jobs:
   scan:
-    name: Build
+    name: DockerImageScan
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.trivy-result.outputs.result }}
