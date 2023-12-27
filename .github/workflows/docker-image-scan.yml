@@ -3,9 +3,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  scan:
     name: Build
     runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.trivy-result.outputs.result }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -50,4 +52,15 @@ jobs:
       - name: Check result
         id: trivy-result
         run: |
-          cat result.json
+          jq -e 'select((.Results[].Vulnerabilities | length) > 0)' result.json && code=$? || code=$?
+          echo "result=${code}" >> $GITHUB_OUTPUT
+
+  docker:
+    needs: [scan]
+    if: jobs.scan.outputs.result != 0
+    uses: ./docker-release.yml
+    with:
+      version: ${{ needs.build.outputs.version }}
+    secrets:
+      dockerUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerToken: ${{ secrets.DOCKERHUB_TOKEN }}
