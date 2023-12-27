@@ -21,7 +21,7 @@ jobs:
       - name: Print version
         run: |
           tag=${{ steps.last_release.outputs.release }}
-          echo "version=${%-*}" >> $GITHUB_OUTPUT
+          echo "version=${tag%-*}" >> $GITHUB_OUTPUT
 
       - id: trivy-db
         name: Check trivy db sha
