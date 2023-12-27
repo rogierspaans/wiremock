@@ -11,6 +11,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Extract latest release
+        id: last_release
+        uses: InsonusK/get-latest-release@v1.0.1
+        with:
+          myToken: ${{ github.token }}
+          exclude_types: "draft|prerelease"
+          view_top: 1
+      - name: Print version
+        run: |
+          echo "id: ${{ steps.last_release.outputs.id }}"
+
       - id: trivy-db
         name: Check trivy db sha
         env:
