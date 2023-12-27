@@ -58,7 +58,7 @@ jobs:
   docker:
     needs: [scan]
     if: jobs.scan.outputs.result != 0
-    uses: ./docker-release.yml
+    uses: ./.github/workflows/docker-release.yml
     with:
       version: 3.3.1.4
     secrets:

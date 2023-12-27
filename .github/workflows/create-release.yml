@@ -73,7 +73,7 @@ jobs:
           asset_name: wiremock-standalone-${{ steps.vars.outputs.version }}.jar
           asset_content_type: application/java-archive
   docker:
-    uses: ./docker-release.yml
+    uses: ./.github/workflows/docker-release.yml
     with:
       version: ${{ needs.build.outputs.version }}
     secrets:
