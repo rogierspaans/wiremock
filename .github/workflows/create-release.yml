@@ -73,62 +73,9 @@ jobs:
           asset_name: wiremock-standalone-${{ steps.vars.outputs.version }}.jar
           asset_content_type: application/java-archive
   docker:
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    strategy:
-      matrix:
-        versions:
-          - IMAGES:
-              - holomekc/wiremock-gui:latest-alpine
-              - holomekc/wiremock-gui:${{ needs.build.outputs.version }}-alpine
-            CONTEXT: alpine
-            PLATFORMS: linux/amd64
-          - IMAGES:
-              - holomekc/wiremock-gui:latest
-              - holomekc/wiremock-gui:${{ needs.build.outputs.version }}
-            CONTEXT: .
-            PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
-    steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Checkout sources
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 0
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build Wiremock Docker image
-        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ needs.build.outputs.version }} --load
-
-      - name: Test Wiremock Docker image
-        run: |
-          # latest
-          docker container run -d --name test -p 8080:8080 ${{ matrix.versions.IMAGES[0] }}
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/mappings; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/matched; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/unmatched; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/state; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/files; do sleep 1; done'
-          docker container rm -f test
-
-          # version
-          docker container run -d --name test -p 8080:8080 ${{ matrix.versions.IMAGES[1] }}
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/mappings; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/matched; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/unmatched; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/state; do sleep 1; done'
-          timeout 10 bash -c 'while ! curl --fail http://localhost:8080/__admin/webapp/files; do sleep 1; done'
-          docker container rm -f test
-
-      - name: Push wiremock-gui image to Docker HUB
-        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ needs.build.outputs.version }} --platform ${{ matrix.versions.PLATFORMS }} --push
+    uses: ./docker-release.yml
+    with:
+      version: ${{ needs.build.outputs.version }}
+    secrets:
+      dockerUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerToken: ${{ secrets.DOCKERHUB_TOKEN }}
