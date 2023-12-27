@@ -1,4 +1,4 @@
-name: docker-image-scan
+name: docker-release
 on:
   workflow_dispatch:
   workflow_call:
