@@ -14,14 +14,14 @@ jobs:
         uses: actions/checkout@v3
       - name: Extract latest release
         id: last_release
-        uses: InsonusK/get-latest-release@v1.0.1
+        uses: pozetroninc/github-action-get-latest-release@master
         with:
-          myToken: ${{ github.token }}
-          exclude_types: "draft|prerelease"
-          view_top: 1
+          token: ${{ github.token }}
+          owner: holomekc
+          repo: wiremock
       - name: Print version
         run: |
-          echo "id: ${{ steps.last_release.outputs.name }}"
+          echo "name: ${{ steps.last_release.outputs.name }}"
 
       - id: trivy-db
         name: Check trivy db sha
