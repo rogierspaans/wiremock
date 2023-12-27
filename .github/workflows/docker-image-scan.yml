@@ -57,7 +57,8 @@ jobs:
 
   docker:
     needs: [scan]
-    if: ${{ needs.scan.outputs.result != 0 }}
+    # Looks strange, but 0=Vulnerabilities found
+    if: ${{ needs.scan.outputs.result == 0 }}
     uses: ./.github/workflows/docker-release.yml
     with:
       version: 3.3.1.4
