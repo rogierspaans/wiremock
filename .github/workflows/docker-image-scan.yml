@@ -52,7 +52,7 @@ jobs:
           path: .trivy
           key: ${{ runner.os }}-trivy-db-${{ steps.trivy-db.outputs.sha }}
       - name: Run Trivy json result
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.16.0
         with:
           image-ref: 'docker.io/holomekc/wiremock-gui'
           format: 'json'
@@ -64,7 +64,7 @@ jobs:
           hide-progress: true
           cache-dir: .trivy
       - name: Run Trivy sarif result
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.16.0
         with:
           image-ref: 'docker.io/holomekc/wiremock-gui'
           format: 'sarif'
@@ -76,7 +76,7 @@ jobs:
           hide-progress: true
           cache-dir: .trivy
       - name: Run Trivy sbom result
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.16.0
         with:
           image-ref: 'docker.io/holomekc/wiremock-gui'
           format: 'github'
