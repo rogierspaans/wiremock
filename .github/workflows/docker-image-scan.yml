@@ -20,7 +20,7 @@ jobs:
           repository: ${{ github.repository }}
       - name: Print version
         run: |
-          tag=${{ steps.last_release.outputs.release }}"
+          tag=${{ steps.last_release.outputs.release }}
           echo "version=${%-*}" >> $GITHUB_OUTPUT
 
       - id: trivy-db
