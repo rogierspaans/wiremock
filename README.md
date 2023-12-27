@@ -181,3 +181,6 @@ updated soon-ish. Please use the none alpine version on a Mac for the time being
 [Test](./images/test.png)
 
 [Test Response](./images/test-response.png)
+
+#### Security
+- XSS issue in versions < 3.0.4.0. See: https://github.com/holomekc/wiremock/issues/51 for details.
