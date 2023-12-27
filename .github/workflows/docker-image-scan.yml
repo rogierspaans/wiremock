@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.trivy-result.outputs.result }}
-      version: ${{ steps.last_release.outputs.version }}
+      version: ${{ steps.extract-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
