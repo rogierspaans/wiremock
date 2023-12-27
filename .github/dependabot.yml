@@ -15,3 +15,13 @@ updates:
     assignees:
       - Author
     versioning-strategy: increase
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 20
+    assignees:
+      - Author
+    versioning-strategy: increase

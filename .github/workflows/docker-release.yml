@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.dockerToken }}
 
       - name: Build Wiremock Docker image
-        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ inputs.version }} --load
+        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ inputs.version }} --build-arg BUILD_DATE=$(date +'%Y-%m-%d') --build-arg GIT_SHA=$GITHUB_SHA --load
 
       - name: Test Wiremock Docker image
         run: |
@@ -72,4 +72,4 @@ jobs:
           docker container rm -f test
 
       - name: Push wiremock-gui image to Docker HUB
-        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ inputs.version }} --platform ${{ matrix.versions.PLATFORMS }} --push
+        run: docker buildx build ${{ matrix.versions.CONTEXT }} --tag ${{ join(matrix.versions.IMAGES, ' --tag ') }} --build-arg WIREMOCK_VERSION=${{ inputs.version }} --build-arg BUILD_DATE=$(date +'%Y-%m-%d') --build-arg GIT_SHA=$GITHUB_SHA --platform ${{ matrix.versions.PLATFORMS }} --push
