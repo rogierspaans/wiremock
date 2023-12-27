@@ -21,7 +21,7 @@ jobs:
           view_top: 1
       - name: Print version
         run: |
-          echo "id: ${{ steps.last_release.outputs.id }}"
+          echo "id: ${{ steps.last_release.outputs.name }}"
 
       - id: trivy-db
         name: Check trivy db sha
