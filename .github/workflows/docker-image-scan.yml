@@ -43,7 +43,7 @@ jobs:
           cat > .trivyignore << EOL
           # Ignore gosu issue. They say they are not affected. Issue will be removed as soon
           # as wiremock image updates to a newer gosu version, which removed runc.
-          #CVE-2023-27561
+          CVE-2023-27561
           EOL
       - uses: actions/cache@v3
         with:
