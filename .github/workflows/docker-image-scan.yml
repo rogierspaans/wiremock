@@ -22,6 +22,7 @@ jobs:
         run: |
           tag=${{ steps.last_release.outputs.release }}
           version=${tag%-*}
+          echo $version
           echo "version=${version}" >> $GITHUB_OUTPUT
 
       - id: trivy-db
