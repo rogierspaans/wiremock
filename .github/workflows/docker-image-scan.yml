@@ -17,8 +17,7 @@ jobs:
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           token: ${{ github.token }}
-          owner: holomekc
-          repo: wiremock
+          repository: ${{ github.repository }}
       - name: Print version
         run: |
           echo "name: ${{ steps.last_release.outputs.name }}"
