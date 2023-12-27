@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.trivy-result.outputs.result }}
+      version: ${{ steps.last_release.outputs.id }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -72,7 +73,7 @@ jobs:
     if: ${{ needs.scan.outputs.result == 0 }}
     uses: ./.github/workflows/docker-release.yml
     with:
-      version: 3.3.1.4
+      version: ${{ needs.scan.outputs.version == 0 }}
     secrets:
       dockerUsername: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerToken: ${{ secrets.DOCKERHUB_TOKEN }}
