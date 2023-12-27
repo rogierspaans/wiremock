@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.trivy-result.outputs.result }}
-      version: ${{ steps.last_release.outputs.id }}
+      version: ${{ steps.last_release.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -20,7 +20,8 @@ jobs:
           repository: ${{ github.repository }}
       - name: Print version
         run: |
-          echo "name: ${{ steps.last_release.outputs.release }}"
+          tag=${{ steps.last_release.outputs.release }}"
+          echo "version=${%-*}" >> $GITHUB_OUTPUT
 
       - id: trivy-db
         name: Check trivy db sha

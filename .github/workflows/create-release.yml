@@ -32,7 +32,7 @@ jobs:
           echo "version=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/.\{3\}$//')" >> $GITHUB_OUTPUT
       - name: Check output
         run: |
-          echo ${{ steps.vars.outputs.version }}
+          echo ${{ steps.vars.outputs.tag }}
           echo ${{ steps.vars.outputs.version }}
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
