@@ -56,8 +56,15 @@ jobs:
         name: Create PR
         run: |
           #!/bin/bash
-          # We cannot merge the upstream branch into our master branch and create a new branch.
-          # There will always be a conflict and we need to adjust the version manually.
+          # Let us try to resolve conflicts "automatically".
+          # We start with a new branch from our master branch
+          git branch sync/${{ steps.version-check.outputs.wiremockVersion }}
+
+          # Then we merge the new tag
+          git merge ${{ steps.version-check.outputs.wiremockVersion }}
+
+          # Then we checkout
+
           git checkout -B sync/${{ steps.version-check.outputs.wiremockVersion }} ${{ steps.version-check.outputs.wiremockVersion }}
 
           # Merge master of wiremock-gui
