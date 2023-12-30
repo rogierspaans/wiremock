@@ -27,7 +27,7 @@ jobs:
           git tag -l --sort=-version:refname
 
           echo "Searching for latest semver"
-          version=$(git tag -l --sort=-version:refname | grep -P '\d+\d+\.\d+' -m 1)
+          version=$(git tag -l --sort=-version:refname | grep -P '\d+\.\d+\.\d+' -m 1)
           echo "version=${version}" >> $GITHUB_OUTPUT
           echo "Found version=${version}. Checking if this version is newer than our."
 
