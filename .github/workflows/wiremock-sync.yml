@@ -22,7 +22,7 @@ jobs:
           #!/bin/bash
           # Check latest semver tag:
           echo "Searching for latest semver"
-          git tag -l --sort=-version:refname | grep -E "\d+\.\d+\.\d+" -m 1
+          git tag -l --sort=-version:refname | grep -qP "\d+\.\d+\.\d+" -m 1
           # version=$(git tag -l --sort=-version:refname | grep -E '^\d+\.\d+\.\d+$' -m 1)
           echo "version=${version}" >> $GITHUB_OUTPUT
           echo "Found version=$version. Checking if this version is newer than our."
