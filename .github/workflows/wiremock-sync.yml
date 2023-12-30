@@ -35,10 +35,11 @@ jobs:
           echo "wiremockVersion=${wiremockVersion}" >> $GITHUB_OUTPUT
           echo "Found wiremockVersion=${wiremockVersion}"
 
-          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep "Latest"
           guiVersion=$(gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep "Latest" | awk '{print $1}')
           echo "guiVersion=${guiVersion}" >> $GITHUB_OUTPUT
           echo "Found guiVersion=${guiVersion}"
 
-          echo "Checking if WireMock version > WireMock-Gui version."
-          echo "${wiremockVersion} > ${guiVersion}"
+          echo "Checking if WireMock version != WireMock-Gui version."
+          echo "${wiremockVersion} != ${guiVersion}"
+
+          [[ guiVersion = ${wiremockVersion}* ]] && echo "Start with $wiremockVersion" || echo "Not matched"
