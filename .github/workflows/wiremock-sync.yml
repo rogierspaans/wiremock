@@ -18,8 +18,6 @@ jobs:
           fetch-depth: 0
       - id: wiremock-remote
         name: Add WireMock remote
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           #!/bin/bash
           git remote add upstream https://github.com/wiremock/wiremock.git
@@ -35,6 +33,7 @@ jobs:
           echo "Searching for latest semver"
           version=$(git tag -l --sort=-version:refname | grep -P '^\d+\.\d+\.\d+$' -m 1)
           echo "version=${version}" >> $GITHUB_OUTPUT
-          echo "Found version=${version}. Checking if this version is newer than our."
+          echo "Found version=${version}"
+          echo "Checking if WireMock version > WireMock-Gui version."
 
-          gh release list --exclude-drafts --exclude-pre-releases
+          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock
