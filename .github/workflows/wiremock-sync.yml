@@ -35,8 +35,8 @@ jobs:
           echo "wiremockVersion=${wiremockVersion}" >> $GITHUB_OUTPUT
           echo "Found wiremockVersion=${wiremockVersion}"
 
-          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep "latest"
-          guiVersion=$(gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep "latest" | awk '{print $1}')
+          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep "Latest"
+          guiVersion=$(gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep "Latest" | awk '{print $1}')
           echo "guiVersion=${guiVersion}" >> $GITHUB_OUTPUT
           echo "Found guiVersion=${guiVersion}"
 
