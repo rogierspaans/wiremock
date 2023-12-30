@@ -24,8 +24,8 @@ jobs:
           #!/bin/bash
           # Check latest semver tag:
           echo "Searching for latest semver"
-          # version=$(git tag -l --sort=-version:refname | grep -P '^[0-9]+\.[0-9]+\.[0-9]+$' -m 1)
+          # version=$(git tag -l --sort=-version:refname | grep -P '\d+\d+\.\d+' -m 1)
           echo "version=${version}" >> $GITHUB_OUTPUT
-          echo "Found version=$version. Checking if this version is newer than our."
+          echo "Found version=${version}. Checking if this version is newer than our."
 
           gh release list
