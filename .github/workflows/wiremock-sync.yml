@@ -43,8 +43,9 @@ jobs:
           echo "newVersion=${newVersion}" >> $GITHUB_OUTPUT
 
           if [[ $newVersion == 0 ]]
-          echo "No new version found. Nothing to do."
           then
+          echo "No new version found. Nothing to do."
+          else
           echo "A new version ${wiremockVersion} found."
           fi
 
