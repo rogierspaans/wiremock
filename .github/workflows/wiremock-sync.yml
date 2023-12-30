@@ -9,8 +9,6 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     name: WireMock Sync
-    outputs:
-      wireMockVersion: ${{  }}
     steps:
       - uses: actions/checkout@v4
         with:
