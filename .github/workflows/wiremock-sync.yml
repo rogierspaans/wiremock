@@ -23,8 +23,8 @@ jobs:
           git remote add upstream https://github.com/wiremock/wiremock.git
           git fetch upstream
 
-      - id: wiremock-version
-        name: Check WireMock Version
+      - id: version-check
+        name: Check Versions
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -42,4 +42,23 @@ jobs:
           echo "Checking if WireMock version != WireMock-Gui version."
           echo "${wiremockVersion} != ${guiVersion}"
 
-          [[ guiVersion = ${wiremockVersion}* ]] && echo "Start with $wiremockVersion" || echo "Not matched"
+          [[ $guiVersion = ${wiremockVersion}* ]] && newVersion=0 || newVersion=1
+          echo "newVersion=${newVersion}" >> $GITHUB_OUTPUT
+
+          if [[ $newVersion == 0 ]]
+          echo "No new version found. Nothing to do."
+          then
+          echo "A new version ${wiremockVersion} found."
+          fi
+
+      - id: create-pr
+        if: ${{ steps.version-check.outputs.newVersion == 1 }}
+        name: Create PR
+        run: |
+          #!/bin/bash
+          # We cannot merge the upstream branch into our master branch and create a new branch.
+          # There will always be a conflict and we need to adjust the version manually.
+          git checkout -B sync/${{ steps.version-check.outputs.wiremockVersion }} ${{ steps.version-check.outputs.wiremockVersion }}
+
+          # Merge master of wiremock-gui
+          #gh pr create
