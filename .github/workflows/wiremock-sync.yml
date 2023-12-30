@@ -1,0 +1,26 @@
+name: WireMock Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: WireMock Sync
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: wiremock/wiremock
+          token: ${{ secrets.WIREMOCK_SYNC_PAT }}
+          ref: master
+          fetch-tags: true
+      - id: checkout
+        name: Check upstream
+        run: |
+          #!/bin/bash
+          # Check all tags:
+          git tag
+
+
