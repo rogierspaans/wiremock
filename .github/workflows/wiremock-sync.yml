@@ -31,9 +31,13 @@ jobs:
           #!/bin/bash
           # Check latest semver tag:
           echo "Searching for latest semver"
-          version=$(git tag -l --sort=-version:refname | grep -P '^\d+\.\d+\.\d+$' -m 1)
-          echo "version=${version}" >> $GITHUB_OUTPUT
-          echo "Found version=${version}"
-          echo "Checking if WireMock version > WireMock-Gui version."
+          wiremockVersion=$(git tag -l --sort=-version:refname | grep -P '^\d+\.\d+\.\d+$' -m 1)
+          echo "wiremockVersion=${wiremockVersion}" >> $GITHUB_OUTPUT
+          echo "Found wiremockVersion=${wiremockVersion}"
 
-          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock
+          guiVersion=$(gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P '^\d+\.\d+\.\d+\.\d+$' -m 1 | awk '{print $1}')
+          echo "guiVersion=${guiVersion}" >> $GITHUB_OUTPUT
+          echo "Found guiVersion=${guiVersion}"
+
+          echo "Checking if WireMock version > WireMock-Gui version."
+          echo "${wiremockVersion} > ${guiVersion}"
