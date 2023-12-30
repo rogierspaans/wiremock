@@ -38,8 +38,8 @@ jobs:
 
           gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock
           gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P "\d+\.\d+\.\d+\.\d+"
-          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P "^\d+\.\d+\.\d+\.\d+$$"
-          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P "^\d+\.\d+\.\d+\.\d+$$" -m 1
+          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P "^\d+\.\d+\.\d+\.\d+\$"
+          gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P "^\d+\.\d+\.\d+\.\d+\$" -m 1
           guiVersion=$(gh release list --exclude-drafts --exclude-pre-releases --repo holomekc/wiremock | grep -P '^\d+\.\d+\.\d+\.\d+$' -m 1 | awk '{print $1}')
           echo "guiVersion=${guiVersion}" >> $GITHUB_OUTPUT
           echo "Found guiVersion=${guiVersion}"
