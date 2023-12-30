@@ -12,9 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          #repository: wiremock/wiremock
-          #token: ${{ secrets.WIREMOCK_SYNC_PAT }}
-          #ref: master
           fetch-depth: 0
       - id: wiremock-remote
         name: Add WireMock remote
@@ -54,18 +51,28 @@ jobs:
       - id: create-pr
         if: ${{ steps.version-check.outputs.newVersion == 1 }}
         name: Create PR
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           #!/bin/bash
+          wiremockVersion=${{ steps.version-check.outputs.wiremockVersion }}
+
           # Let us try to resolve conflicts "automatically".
           # We start with a new branch from our master branch
-          git branch sync/${{ steps.version-check.outputs.wiremockVersion }}
+          git branch sync/${wiremockVersion}
 
-          # Then we merge the new tag
-          git merge ${{ steps.version-check.outputs.wiremockVersion }}
+          # Then we merge the new tag. This will create at least one expected conflict
+          git merge ${wiremockVersion}
 
-          # Then we checkout
+          # We try to automatically resolve the version conflict
+          sed -i '/<<<<<<< HEAD/,/=======/d' build.gradle
+          sed -i '/>>>>>>> ${wiremockVersion}/d' build.gradle
+          sed -i "s/version = '${wiremockVersion}'/version = '${wiremockVersion}.0'/g" build.gradle
 
-          git checkout -B sync/${{ steps.version-check.outputs.wiremockVersion }} ${{ steps.version-check.outputs.wiremockVersion }}
+          # Then we accept everything else and maybe the build is ok or not and need manual adjustments
+          git add -u
+          git commit -m "Merge tag ${wiremockVersion} into master."
+          git push
 
-          # Merge master of wiremock-gui
-          #gh pr create
+          # Create pull request and hope for the best.
+          gh pr create --repo holomekc/wiremock --base master --body "WireMock version=${wiremockVersion} sync." --head sync/${wiremockVersion}  --label enhancement --reviewer holomekc --title "WireMock version=${wiremockVersion} sync"
