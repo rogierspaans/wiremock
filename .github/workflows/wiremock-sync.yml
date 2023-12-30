@@ -15,7 +15,7 @@ jobs:
           repository: wiremock/wiremock
           token: ${{ secrets.WIREMOCK_SYNC_PAT }}
           ref: master
-          fetch-tags: true
+          fetch-depth: 0
       - id: checkout
         name: Check upstream
         run: |
