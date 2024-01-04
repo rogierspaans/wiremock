@@ -15,6 +15,13 @@ updates:
     assignees:
       - Author
     versioning-strategy: increase
+    groups:
+      angular:
+        patterns:
+        - "@angular*"
+        update-types:
+        - "minor"
+        - "patch"
   - package-ecosystem: docker
     directory: "/"
     schedule:
