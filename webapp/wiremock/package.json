@@ -46,7 +46,7 @@
     "lodash": "4.17.21",
     "mime-db": "1.52.0",
     "moment": "2.30.1",
-    "query-string": "8.1.0",
+    "query-string": "8.2.0",
     "rxjs": "7.8.1",
     "tslib": "2.6.2",
     "uuid": "9.0.1",
