@@ -56,6 +56,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           #!/bin/bash
+          git config --global user.name 'holomekc'
+          git config --global user.email '30546982+holomekc@users.noreply.github.com'
+
           wiremockVersion=${{ steps.version-check.outputs.wiremockVersion }}
 
           # Let us try to resolve conflicts "automatically".
