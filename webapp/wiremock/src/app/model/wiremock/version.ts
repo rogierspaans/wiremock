@@ -1,4 +1,7 @@
 export class Version {
   version!: string;
-  buildTime!: string;
+
+  constructor(version: string) {
+    this.version = version;
+  }
 }

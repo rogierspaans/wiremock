@@ -122,7 +122,11 @@ export class WiremockService {
   }
 
   getVersion(): Observable<Version> {
-    return this.defaultPipe(this.http.get<Version>(WiremockService.getUrl("version")));
+    return this.defaultPipe(this.http.get(WiremockService.getUrl('version'), {
+      responseType: 'text'
+    }).pipe(map(v => {
+      return new Version(v);
+    })));
   }
 
   shutdown(): Observable<ResponseDefinition> {

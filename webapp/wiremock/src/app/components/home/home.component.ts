@@ -83,10 +83,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.wiremockService.getVersion().subscribe({
       next: version => {
         this.version = `Version: ${version.version}`;
-        this.versionTooltip = `WireMock: ${version.version.substring(
-          0,
-          version.version.lastIndexOf(".")
-        )}\nBuildTime: ${version.buildTime}`;
       },
     });
   }
