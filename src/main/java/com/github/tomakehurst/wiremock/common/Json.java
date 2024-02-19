@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Thomas Akehurst
+ * Copyright (C) 2011-2024 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.JsonNodeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.util.Map;
@@ -43,6 +44,7 @@ public final class Json {
         protected ObjectMapper initialValue() {
           ObjectMapper objectMapper = new ObjectMapper();
           objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+          objectMapper.configure(JsonNodeFeature.STRIP_TRAILING_BIGDECIMAL_ZEROES, false);
           objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
           objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
           objectMapper.configure(JsonParser.Feature.IGNORE_UNDEFINED, true);
@@ -50,11 +52,21 @@ public final class Json {
           objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
           objectMapper.registerModule(new JavaTimeModule());
           objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+          objectMapper.enable(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION);
           return objectMapper;
         }
       };
 
   private Json() {}
+
+  public static <T> T read(byte[] stream, Class<T> clazz) throws IOException {
+    try {
+      ObjectMapper mapper = getObjectMapper();
+      return mapper.readValue(stream, clazz);
+    } catch (JsonProcessingException processingException) {
+      throw JsonException.fromJackson(processingException);
+    }
+  }
 
   public static <T> T read(String json, Class<T> clazz) {
     try {

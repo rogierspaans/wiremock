@@ -115,7 +115,7 @@ public class AdminRoutes {
 
     router.add(GET, "/health", new HealthCheckTask());
 
-    router.add(GET, "/version", new VersionTask());
+    router.add(GET, "/version", new GetVersionTask());
 
     router.add(GET, "/proxy", GetProxyConfigTask.class);
     router.add(PUT, "/proxy/{id}", EnableProxyTask.class);
