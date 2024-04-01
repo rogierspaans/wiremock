@@ -1,185 +1,227 @@
+/*
+ * Copyright (C) 2024 Thomas Akehurst
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.tomakehurst.wiremock.core;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.github.tomakehurst.wiremock.admin.model.SingleStubMappingResult;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import org.junit.Assert;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Christopher Holomek
  */
 public class ProxyHandlerTest {
 
-    private ProxyHandler proxyHandler;
-    private static final UUID EXISTING_UUID_IS_PROXY = UUID.randomUUID();
-    private static final UUID EXISTING_UUID_IS_PROXY_BINARY = UUID.randomUUID();
-    private static final UUID EXISTING_UUID_IS_NO_PROXY = UUID.randomUUID();
-    private static final UUID NOT_EXISTING_UUID = UUID.randomUUID();
+  private ProxyHandler proxyHandler;
+  private static final UUID EXISTING_UUID_IS_PROXY = UUID.randomUUID();
+  private static final UUID EXISTING_UUID_IS_PROXY_BINARY = UUID.randomUUID();
+  private static final UUID EXISTING_UUID_IS_NO_PROXY = UUID.randomUUID();
+  private static final UUID NOT_EXISTING_UUID = UUID.randomUUID();
 
+  @BeforeEach
+  public void before() {
+    final Admin admin = mock(Admin.class);
 
-    @BeforeEach
-    public void before() {
-        final Admin admin = mock(Admin.class);
+    this.proxyHandler = new ProxyHandler(admin);
 
-        this.proxyHandler = new ProxyHandler(admin);
+    when(admin.getStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_PROXY))
+        .thenReturn(
+            new SingleStubMappingResult(
+                ProxyHandlerTest.this.createDefaultStubMapping(
+                    ProxyHandlerTest.EXISTING_UUID_IS_PROXY, true)));
 
-        when(admin.getStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_PROXY)).thenReturn(new SingleStubMappingResult(
-                ProxyHandlerTest.this.createDefaultStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_PROXY, true)));
+    when(admin.getStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_PROXY_BINARY))
+        .thenReturn(new SingleStubMappingResult(ProxyHandlerTest.this.createBinaryStubMapping()));
 
-        when(admin.getStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_PROXY_BINARY)).thenReturn(new SingleStubMappingResult(
-                ProxyHandlerTest.this.createBinaryStubMapping()));
+    when(admin.getStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_NO_PROXY))
+        .thenReturn(
+            new SingleStubMappingResult(
+                ProxyHandlerTest.this.createDefaultStubMapping(
+                    ProxyHandlerTest.EXISTING_UUID_IS_NO_PROXY, false)));
 
-        when(admin.getStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_NO_PROXY)).thenReturn(new SingleStubMappingResult(
-                ProxyHandlerTest.this.createDefaultStubMapping(ProxyHandlerTest.EXISTING_UUID_IS_NO_PROXY, false)));
+    when(admin.getStubMapping(ProxyHandlerTest.NOT_EXISTING_UUID))
+        .thenReturn(new SingleStubMappingResult(null));
+  }
 
-        when(admin.getStubMapping(ProxyHandlerTest.NOT_EXISTING_UUID)).thenReturn(new SingleStubMappingResult(null));
-    }
+  @Test
+  public void testClear() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-    @Test
-    public void testClear() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
+    Assertions.assertFalse(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().isEmpty());
+    this.proxyHandler.clear();
 
-        this.proxyHandler.clear();
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+  }
 
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
-    }
+  @Test
+  public void testRemoveProxyConfig() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
 
-    @Test
-    public void testRemoveProxyConfig() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertFalse(this.proxyHandler.getConfig().isEmpty());
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
+    this.proxyHandler.removeProxyConfig(EXISTING_UUID_IS_PROXY);
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertFalse(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
+  }
 
-        this.proxyHandler.removeProxyConfig(EXISTING_UUID_IS_PROXY);
+  @Test
+  public void testDisableProxy() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
-    }
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
 
-    @Test
-    public void testDisableProxy() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertTrue(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
+  }
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
+  @Test
+  public void testDisableNoProxyMapping() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertTrue(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
-    }
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_NO_PROXY);
 
-    @Test
-    public void testDisableNoProxyMapping() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertFalse(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_NO_PROXY.toString()));
+  }
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_NO_PROXY);
+  @Test
+  public void testDisableNoMapping() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_NO_PROXY.toString()));
-    }
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(NOT_EXISTING_UUID);
 
-    @Test
-    public void testDisableNoMapping() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(NOT_EXISTING_UUID.toString()));
+  }
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(NOT_EXISTING_UUID);
+  @Test
+  public void testEnableProxy() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(NOT_EXISTING_UUID.toString()));
-    }
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
 
-    @Test
-    public void testEnableProxy() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertTrue(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY);
+    final String url = this.proxyHandler.getConfig().get(EXISTING_UUID_IS_PROXY.toString());
 
-        Assertions.assertTrue(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
+    Assertions.assertEquals("http://localhost:8080", url);
 
-        final String url = this.proxyHandler.getConfig().get(EXISTING_UUID_IS_PROXY.toString());
+    this.proxyHandler.enableProxyUrl(EXISTING_UUID_IS_PROXY);
 
-        Assertions.assertEquals("http://localhost:8080", url);
+    Assertions.assertFalse(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
+  }
 
-        this.proxyHandler.enableProxyUrl(EXISTING_UUID_IS_PROXY);
+  @Test
+  public void testEnableNoProxyMapping() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY.toString()));
-    }
+    this.proxyHandler.enableProxyUrl(EXISTING_UUID_IS_NO_PROXY);
 
-    @Test
-    public void testEnableNoProxyMapping() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertFalse(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_NO_PROXY.toString()));
+  }
 
-        this.proxyHandler.enableProxyUrl(EXISTING_UUID_IS_NO_PROXY);
+  @Test
+  public void testEnableNoMapping() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_NO_PROXY.toString()));
-    }
+    this.proxyHandler.enableProxyUrl(NOT_EXISTING_UUID);
 
-    @Test
-    public void testEnableNoMapping() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(NOT_EXISTING_UUID.toString()));
+  }
 
-        this.proxyHandler.enableProxyUrl(NOT_EXISTING_UUID);
+  @Test
+  public void testBinary() {
+    Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(NOT_EXISTING_UUID.toString()));
-    }
+    // first we need to disable proxy so that we have something to remove
+    this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY_BINARY);
 
-    @Test
-    public void testBinary() {
-        Assertions.assertTrue(this.proxyHandler.getConfig().isEmpty());
+    Assertions.assertTrue(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY_BINARY.toString()));
 
-        // first we need to disable proxy so that we have something to remove
-        this.proxyHandler.disableProxyUrl(EXISTING_UUID_IS_PROXY_BINARY);
+    final String url = this.proxyHandler.getConfig().get(EXISTING_UUID_IS_PROXY_BINARY.toString());
 
-        Assertions.assertTrue(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY_BINARY.toString()));
+    Assertions.assertEquals("http://localhost:8080", url);
 
-        final String url = this.proxyHandler.getConfig().get(EXISTING_UUID_IS_PROXY_BINARY.toString());
+    this.proxyHandler.enableProxyUrl(EXISTING_UUID_IS_PROXY_BINARY);
 
-        Assertions.assertEquals("http://localhost:8080", url);
+    Assertions.assertFalse(
+        this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY_BINARY.toString()));
+  }
 
-        this.proxyHandler.enableProxyUrl(EXISTING_UUID_IS_PROXY_BINARY);
+  private StubMapping createDefaultStubMapping(final UUID id, final boolean isProxy) {
+    final StubMapping stubMapping = new StubMapping();
+    final String proxyUrl = isProxy ? "http://localhost:8080" : null;
+    final ResponseDefinition responseDefinition =
+        new ResponseDefinition(
+            200, "test", "test", null, null, null, null, null, null, null, null, null, proxyUrl,
+            null, null, null, null, null);
 
-        Assertions.assertFalse(this.proxyHandler.getConfig().containsKey(EXISTING_UUID_IS_PROXY_BINARY.toString()));
-    }
+    stubMapping.setResponse(responseDefinition);
+    stubMapping.setId(id);
 
-    private StubMapping createDefaultStubMapping(final UUID id, final boolean isProxy) {
-        final StubMapping stubMapping = new StubMapping();
-        final String proxyUrl = isProxy ? "http://localhost:8080" : null;
-        final ResponseDefinition responseDefinition = new ResponseDefinition(200, "test", "test", null, null, null, null, null, null, null,
-                null,
-                proxyUrl, null, null, null, null, null);
+    return stubMapping;
+  }
 
-        stubMapping.setResponse(responseDefinition);
-        stubMapping.setId(id);
+  private StubMapping createBinaryStubMapping() {
+    final StubMapping stubMapping = new StubMapping();
+    final ResponseDefinition responseDefinition =
+        new ResponseDefinition(
+            200,
+            "test",
+            new byte[0],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "http://localhost:8080",
+            null,
+            null,
+            null,
+            null,
+            null);
 
-        return stubMapping;
-    }
+    stubMapping.setResponse(responseDefinition);
+    stubMapping.setId(EXISTING_UUID_IS_PROXY_BINARY);
 
-    private StubMapping createBinaryStubMapping() {
-        final StubMapping stubMapping = new StubMapping();
-        final ResponseDefinition responseDefinition = new ResponseDefinition(200, "test", new byte[0], null, null, null, null, null, null,
-                null,
-                null,
-                "http://localhost:8080", null, null, null, null, null);
-
-        stubMapping.setResponse(responseDefinition);
-        stubMapping.setId(EXISTING_UUID_IS_PROXY_BINARY);
-
-        return stubMapping;
-    }
-
+    return stubMapping;
+  }
 }

@@ -24,7 +24,6 @@ import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.http.trafficlistener.WiremockNetworkTrafficListener;
-import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.servlet.*;
 import java.io.IOException;
 import java.net.Socket;

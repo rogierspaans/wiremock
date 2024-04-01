@@ -376,10 +376,10 @@ public class Jetty11HttpServer extends JettyHttpServer {
 
     // wiremock-gui Include websocket into admin context
     JakartaWebSocketServletContainerInitializer.configure(
-      adminContext,
-      (servletContext, serverContainer) -> {
-        serverContainer.addEndpoint(WebSocketEndpoint.class);
-      });
+        adminContext,
+        (servletContext, serverContainer) -> {
+          serverContainer.addEndpoint(WebSocketEndpoint.class);
+        });
 
     decorateAdminServiceContextAfterConfig(adminContext);
 
