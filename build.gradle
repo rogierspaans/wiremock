@@ -220,7 +220,11 @@ allprojects {
     mavenCentral()
   }
 
-  version = '3.4.2.0'
+  if (project.hasProperty('projVersion')) {
+    version = project.projVersion
+  } else {
+    version = '1.0.0-Snapshot'
+  }
 
 
   sourceCompatibility = 11
