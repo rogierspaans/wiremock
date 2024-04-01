@@ -60,7 +60,7 @@ dependencies {
   api "org.eclipse.jetty:jetty-alpn-java-client"
   api "org.eclipse.jetty:jetty-alpn-client"
 
-  api "org.eclipse.jetty.websocket:websocket-jakarta-server"
+  api "org.eclipse.jetty.websocket:websocket-jakarta-server:$versions.jetty"
 
   api "io.jsonwebtoken:jjwt-api:0.11.5"
   api "io.jsonwebtoken:jjwt-impl:0.11.5"
@@ -218,9 +218,6 @@ allprojects {
   } else {
     version = '1.0.0-Snapshot'
   }
-
-  sourceCompatibility = 11
-  targetCompatibility = 11
 
   compileJava {
     options.encoding = 'UTF-8'

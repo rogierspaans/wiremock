@@ -55,6 +55,9 @@ dependencies {
   api "org.eclipse.jetty.http2:jetty-http2-server:$versions.jetty"
   api "org.eclipse.jetty:jetty-alpn-java-server:$versions.jetty"
 
+  api "org.eclipse.jetty:jetty-rewrite:$versions.jetty"
+  api "org.eclipse.jetty.ee10.websocket:jetty-ee10-websocket-jakarta-server:$versions.jetty"
+
   testImplementation "org.eclipse.jetty.http2:jetty-http2-client:$versions.jetty"
   testImplementation "org.eclipse.jetty.http2:jetty-http2-client-transport:$versions.jetty"
   testImplementation "org.eclipse.jetty:jetty-alpn-java-client:$versions.jetty"

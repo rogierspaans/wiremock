@@ -35,6 +35,7 @@ import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.jetty.JettyFaultInjectorFactory;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServer;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpUtils;
+import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.jetty11.Jetty11Utils;
 import com.github.tomakehurst.wiremock.jetty11.SslContexts;
 import com.github.tomakehurst.wiremock.servlet.ContentTypeSettingFilter;
@@ -53,11 +54,14 @@ import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.servlets.CrossOriginFilter;
+import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.io.NetworkTrafficListener;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.Callback;
@@ -211,6 +215,12 @@ public class Jetty12HttpServer extends JettyHttpServer {
             notifier);
 
     final List<Handler> handlers = new ArrayList<>();
+    // wiremock-gui
+    // We prepend the rewrite handle for the wiremock gui web app to make sure that we route the
+    // requests properly
+    final RewriteHandler rewriteHandler = webAppRewriteContext(adminContext);
+    handlers.add(rewriteHandler);
+
     Handler.Abstract asyncTimeoutSettingHandler =
         new Handler.Abstract() {
           @Override
@@ -246,6 +256,29 @@ public class Jetty12HttpServer extends JettyHttpServer {
 
   protected void decorateAdminServiceContextAfterConfig(
       ServletContextHandler adminServiceContext) {}
+
+  // wiremock-gui
+  /**
+   * Rewrite web app. We use Angular. We must rewrite every /__admin/webapp path to the index.html
+   * of our single page application.
+   *
+   * @param adminContextHandler admin context handler is used to provide the static file content
+   * @return the rewrite handler
+   */
+  private RewriteHandler webAppRewriteContext(ServletContextHandler adminContextHandler) {
+    final RewriteHandler rewrite = new RewriteHandler();
+    // rewrite.setRewriteRequestURI(true);
+    // rewrite.setRewritePathInfo(true);
+
+    RewriteRegexRule rewriteRule = new RewriteRegexRule();
+    rewriteRule.setRegex("/__admin/webapp/(mappings|matched|unmatched|state|files).*");
+    rewriteRule.setReplacement("/__admin/webapp/index.html");
+    rewrite.addRule(rewriteRule);
+
+    rewrite.setHandler(adminContextHandler);
+
+    return rewrite;
+  }
 
   private void addCorsFilter(ServletContextHandler context) {
     context.addFilter(buildCorsFilter(), "/*", EnumSet.of(DispatcherType.REQUEST));
@@ -300,6 +333,17 @@ public class Jetty12HttpServer extends JettyHttpServer {
     adminContext.setAttribute(MultipartRequestConfigurer.KEY, buildMultipartRequestConfigurer());
 
     adminContext.addServlet(NotMatchedServlet.class, "/not-matched");
+
+    // wiremock-gui Include into admin context
+    ServletHolder webapp = adminContext.addServlet(DefaultServlet.class, "/webapp/*");
+    webapp.setAsyncSupported(false);
+
+    // wiremock-gui Include websocket into admin context
+    JakartaWebSocketServletContainerInitializer.configure(
+        adminContext,
+        (servletContext, serverContainer) -> {
+          serverContainer.addEndpoint(WebSocketEndpoint.class);
+        });
 
     addCorsFilter(adminContext);
 
