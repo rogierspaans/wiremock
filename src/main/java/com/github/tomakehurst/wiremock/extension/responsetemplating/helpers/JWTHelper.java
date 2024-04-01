@@ -6,7 +6,6 @@ import com.github.jknack.handlebars.Options;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -66,7 +65,7 @@ public class JWTHelper extends HandlebarsHelper<Object> {
 
         if (signatureAlgorithm != SignatureAlgorithm.NONE) {
 
-            if (StringUtils.isBlank(apiKey)) {
+            if (apiKey == null || apiKey.trim().isEmpty()) {
                 throw new IllegalStateException("key must not be empty in case algo is defined");
             }
 
