@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Thomas Akehurst
+ * Copyright (C) 2023-2024 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,18 @@ package com.github.tomakehurst.wiremock.admin.model;
 public class VersionResult {
   private final String version;
 
-  public VersionResult(String version) {
+  private final String guiVersion;
+
+  public VersionResult(String version, String guiVersion) {
     this.version = version;
+    this.guiVersion = guiVersion;
   }
 
   public String getVersion() {
     return version;
+  }
+
+  public String getGuiVersion() {
+    return guiVersion;
   }
 }

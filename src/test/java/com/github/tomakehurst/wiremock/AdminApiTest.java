@@ -1339,7 +1339,8 @@ public class AdminApiTest extends AcceptanceTestBase {
     assertThat(response.firstHeader("Content-Type"), is("application/json"));
     JSONAssert.assertEquals(
         "{                                              \n"
-            + "  \"version\" : \"X.X.X\"                          \n"
+            + "  \"version\" : \"X.X.X\",                          \n"
+            + "  \"guiVersion\" : \"X.X.X\"                          \n"
             + "}",
         response.content(),
         true);

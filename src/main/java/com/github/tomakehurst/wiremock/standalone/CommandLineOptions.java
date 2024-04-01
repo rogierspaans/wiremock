@@ -61,6 +61,7 @@ public class CommandLineOptions implements Options {
 
   private static final String HELP = "help";
   private static final String VERSION = "version";
+  private static final String GUI_VERSION = "gui-version";
   private static final String RECORD_MAPPINGS = "record-mappings";
   private static final String MATCH_HEADERS = "match-headers";
   private static final String PROXY_ALL = "proxy-all";
@@ -784,6 +785,8 @@ public class CommandLineOptions implements Options {
     Map<String, Object> map = new LinkedHashMap<>();
 
     map.put(VERSION, Version.getCurrentVersion());
+
+    map.put(GUI_VERSION, Version.getGuiVersion());
 
     if (actualHttpPort != null) {
       map.put(PORT, actualHttpPort);

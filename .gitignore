@@ -73,3 +73,4 @@ notes.txt
 # MINE #
 Guide.txt
 docker
+src/main/resources/wiremock-gui-version.properties
