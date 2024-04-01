@@ -10,16 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.trivy-result.outputs.result }}
+      result-alpine: ${{ steps.trivy-result-alpine.outputs.result }}
       version: ${{ steps.extract-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Extract latest release
         id: extract-release
-        uses: pozetroninc/github-action-get-latest-release@v0.7.0
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          #!/bin/bash
+          release=$(gh release view --json "tagName" --jq ".tagName")
+          echo "$release"
+          echo "release=$release" >> "$GITHUB_OUTPUT"
       - name: Extract version
         id: extract-version
         run: |
@@ -53,9 +58,9 @@ jobs:
           path: .trivy
           key: ${{ runner.os }}-trivy-db-${{ steps.trivy-db.outputs.sha }}
       - name: Run Trivy json result
-        uses: aquasecurity/trivy-action@0.16.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
-          image-ref: 'docker.io/holomekc/wiremock-gui'
+          image-ref: 'docker.io/holomekc/wiremock-gui:${{ steps.extract-version.outputs.version }}'
           format: 'json'
           exit-code: '0'
           output: trivy-result.json
@@ -65,24 +70,63 @@ jobs:
           hide-progress: true
           cache-dir: .trivy
       - name: Run Trivy sarif result
-        uses: aquasecurity/trivy-action@0.16.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
-          image-ref: 'docker.io/holomekc/wiremock-gui'
+          image-ref: 'docker.io/holomekc/wiremock-gui:${{ steps.extract-version.outputs.version }}'
           format: 'sarif'
           exit-code: '0'
           output: trivy-result.sarif
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          limit-severities-for-sarif: true
           hide-progress: true
           cache-dir: .trivy
       - name: Run Trivy sbom result
-        uses: aquasecurity/trivy-action@0.16.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
-          image-ref: 'docker.io/holomekc/wiremock-gui'
+          image-ref: 'docker.io/holomekc/wiremock-gui:${{ steps.extract-version.outputs.version }}'
           format: 'github'
           exit-code: '0'
           output: dependency-results.sbom.json
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          hide-progress: true
+          cache-dir: .trivy
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Trivy json result alpine
+        uses: aquasecurity/trivy-action@0.19.0
+        with:
+          image-ref: 'docker.io/holomekc/wiremock-gui:${{ steps.extract-version.outputs.version }}-alpine'
+          format: 'json'
+          exit-code: '0'
+          output: trivy-result-alpine.json
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          hide-progress: true
+          cache-dir: .trivy
+      - name: Run Trivy sarif result alpine
+        uses: aquasecurity/trivy-action@0.19.0
+        with:
+          image-ref: 'docker.io/holomekc/wiremock-gui:${{ steps.extract-version.outputs.version }}-alpine'
+          format: 'sarif'
+          exit-code: '0'
+          output: trivy-result-alpine.sarif
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          limit-severities-for-sarif: true
+          hide-progress: true
+          cache-dir: .trivy
+      - name: Run Trivy sbom result alpine
+        uses: aquasecurity/trivy-action@0.19.0
+        with:
+          image-ref: 'docker.io/holomekc/wiremock-gui:${{ steps.extract-version.outputs.version }}-alpine'
+          format: 'github'
+          exit-code: '0'
+          output: dependency-results-alpine.sbom.json
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -94,19 +138,33 @@ jobs:
 
       - name: Check result
         id: trivy-result
+        shell: bash
         run: |
+          #!/bin/bash
+          cat trivy-result.json
           jq -e 'select((.Results[].Vulnerabilities | length) > 0)' trivy-result.json && code=$? || code=$?
           echo "result=${code}" >> $GITHUB_OUTPUT
+          cat trivy-result.sarif
+
+      - name: Check result alpine
+        id: trivy-result-alpine
+        shell: bash
+        run: |
+          #!/bin/bash
+          cat trivy-result-alpine.json
+          jq -e 'select((.Results[].Vulnerabilities | length) > 0)' trivy-result-alpine.json && code=$? || code=$?
+          echo "result=${code}" >> $GITHUB_OUTPUT
+          cat trivy-result-alpine.sarif
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-result.sarif'
+          sarif_file: './'
 
   docker:
     needs: [scan]
     # Looks strange, but 0=Vulnerabilities found
-    if: ${{ needs.scan.outputs.result == 0 }}
+    if: ${{ needs.scan.outputs.result == 0 || needs.scan.outputs.result-alpine == 0 }}
     uses: ./.github/workflows/docker-release.yml
     with:
       version: ${{ needs.scan.outputs.version }}
