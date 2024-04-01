@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Thomas Akehurst
+ * Copyright (C) 2016-2024 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -711,7 +711,7 @@ public class AdminApiTest extends AcceptanceTestBase {
         allOf(
             containsString(
                 "Unexpected character ('(' (code 40)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')"),
-            containsString("line: 1, column: 2")));
+            containsString("line: 1, column: 1")));
   }
 
   @Test
@@ -1339,7 +1339,8 @@ public class AdminApiTest extends AcceptanceTestBase {
     assertThat(response.firstHeader("Content-Type"), is("application/json"));
     JSONAssert.assertEquals(
         "{                                              \n"
-            + "  \"version\" : \"X.X.X\"                          \n"
+            + "  \"version\" : \"X.X.X\",                          \n"
+            + "  \"guiVersion\" : \"X.X.X\"                          \n"
             + "}",
         response.content(),
         true);

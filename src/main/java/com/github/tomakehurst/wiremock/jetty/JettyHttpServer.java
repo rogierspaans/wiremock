@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Thomas Akehurst
+ * Copyright (C) 2014-2024 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,57 +16,37 @@
 package com.github.tomakehurst.wiremock.jetty;
 
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
-import static com.github.tomakehurst.wiremock.common.ResourceUtil.getResource;
-import static com.github.tomakehurst.wiremock.core.WireMockApp.ADMIN_CONTEXT_ROOT;
-import static java.util.concurrent.Executors.newScheduledThreadPool;
 
 import com.github.tomakehurst.wiremock.common.*;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockApp;
 import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.HttpServer;
-import com.github.tomakehurst.wiremock.http.RequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.http.trafficlistener.WiremockNetworkTrafficListener;
-import com.github.tomakehurst.wiremock.jetty.websockets.WebSocketEndpoint;
 import com.github.tomakehurst.wiremock.servlet.*;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.EnumSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.eclipse.jetty.http.MimeTypes;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.io.NetworkTrafficListener;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
-import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
 public abstract class JettyHttpServer implements HttpServer {
-  private static final String FILES_URL_MATCH = String.format("/%s/*", WireMockApp.FILES_ROOT);
-  private static final String[] GZIPPABLE_METHODS = new String[] {"POST", "PUT", "PATCH", "DELETE"};
-  private static final MutableBoolean STRICT_HTTP_HEADERS_APPLIED = new MutableBoolean(false);
+  private static final AtomicBoolean STRICT_HTTP_HEADERS_APPLIED = new AtomicBoolean(false);
   private static final int MAX_RETRIES = 3;
+
+  protected static final String FILES_URL_MATCH = String.format("/%s/*", WireMockApp.FILES_ROOT);
+  protected static final String[] GZIPPABLE_METHODS =
+      new String[] {"POST", "PUT", "PATCH", "DELETE"};
+
+  protected final Options options;
 
   protected final Server jettyServer;
   protected final ServerConnector httpConnector;
@@ -78,9 +58,12 @@ public abstract class JettyHttpServer implements HttpServer {
       Options options,
       AdminRequestHandler adminRequestHandler,
       StubRequestHandler stubRequestHandler) {
-    if (!options.getDisableStrictHttpHeaders() && STRICT_HTTP_HEADERS_APPLIED.isFalse()) {
+    this.options = options;
+
+    if (!options.getDisableStrictHttpHeaders()
+        && Boolean.FALSE.equals(STRICT_HTTP_HEADERS_APPLIED.get())) {
       System.setProperty("org.eclipse.jetty.http.HttpGenerator.STRICT", String.valueOf(true));
-      STRICT_HTTP_HEADERS_APPLIED.setTrue();
+      STRICT_HTTP_HEADERS_APPLIED.set(true);
     }
 
     jettyServer = createServer(options);
@@ -114,8 +97,7 @@ public abstract class JettyHttpServer implements HttpServer {
 
     applyAdditionalServerConfiguration(jettyServer, options);
 
-    final HandlerCollection handlers =
-        createHandler(options, adminRequestHandler, stubRequestHandler);
+    final Handler handlers = createHandler(options, adminRequestHandler, stubRequestHandler);
     jettyServer.setHandler(handlers);
 
     finalizeSetup(options);
@@ -123,64 +105,10 @@ public abstract class JettyHttpServer implements HttpServer {
 
   protected void applyAdditionalServerConfiguration(Server jettyServer, Options options) {}
 
-  protected HandlerCollection createHandler(
+  protected abstract Handler createHandler(
       Options options,
       AdminRequestHandler adminRequestHandler,
-      StubRequestHandler stubRequestHandler) {
-    Notifier notifier = options.notifier();
-    ServletContextHandler adminContext = addAdminContext(adminRequestHandler, notifier);
-    ServletContextHandler mockServiceContext =
-        addMockServiceContext(
-            stubRequestHandler,
-            options.filesRoot(),
-            options.getAsynchronousResponseSettings(),
-            options.getChunkedEncodingPolicy(),
-            options.getStubCorsEnabled(),
-            options.browserProxySettings().enabled(),
-            notifier);
-
-    HandlerCollection handlers = new HandlerCollection();
-    AbstractHandler asyncTimeoutSettingHandler =
-        new AbstractHandler() {
-          @Override
-          public void handle(
-              final String target,
-              final Request baseRequest,
-              final HttpServletRequest request,
-              final HttpServletResponse response) {
-            baseRequest.getHttpChannel().getState().setTimeout(options.timeout());
-          }
-        };
-
-    handlers.setHandlers(
-        ArrayUtils.addAll(extensionHandlers(), adminContext, asyncTimeoutSettingHandler));
-
-    // We prepend the rewrite handle for the wiremock gui web app to make sure that we route the
-    // requests properly
-    final RewriteHandler rewriteHandler = webAppRewriteContext(adminContext);
-    handlers.prependHandler(rewriteHandler);
-
-    if (options.getGzipDisabled()) {
-      handlers.addHandler(mockServiceContext);
-    } else {
-      addGZipHandler(mockServiceContext, handlers);
-    }
-
-    return handlers;
-  }
-
-  private void addGZipHandler(
-      ServletContextHandler mockServiceContext, HandlerCollection handlers) {
-    try {
-      GzipHandler gzipHandler = new GzipHandler();
-      gzipHandler.addIncludedMethods(GZIPPABLE_METHODS);
-      gzipHandler.setHandler(mockServiceContext);
-      gzipHandler.setVary(null);
-      handlers.addHandler(gzipHandler);
-    } catch (Exception e) {
-      throwUnchecked(e);
-    }
-  }
+      StubRequestHandler stubRequestHandler);
 
   protected void finalizeSetup(Options options) {
     if (options.jettySettings().getStopTimeout().isEmpty()) {
@@ -198,7 +126,7 @@ public abstract class JettyHttpServer implements HttpServer {
   }
 
   /** Extend only this method if you want to add additional handlers to Jetty. */
-  protected Handler[] extensionHandlers() {
+  public Handler[] extensionHandlers() {
     return new Handler[] {};
   }
 
@@ -282,189 +210,6 @@ public abstract class JettyHttpServer implements HttpServer {
       HttpsSettings httpsSettings,
       JettySettings jettySettings,
       NetworkTrafficListener listener);
-
-  private ServletContextHandler addMockServiceContext(
-      StubRequestHandler stubRequestHandler,
-      FileSource fileSource,
-      AsynchronousResponseSettings asynchronousResponseSettings,
-      Options.ChunkedEncodingPolicy chunkedEncodingPolicy,
-      boolean stubCorsEnabled,
-      boolean browserProxyingEnabled,
-      Notifier notifier) {
-    ServletContextHandler mockServiceContext = new ServletContextHandler(jettyServer, "/");
-
-    decorateMockServiceContextBeforeConfig(mockServiceContext);
-
-    mockServiceContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
-    mockServiceContext.setInitParameter(
-        "org.eclipse.jetty.servlet.Default.resourceBase", fileSource.getPath());
-    mockServiceContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
-
-    mockServiceContext.addServlet(DefaultServlet.class, FILES_URL_MATCH);
-
-    mockServiceContext.setAttribute(
-        JettyFaultInjectorFactory.class.getName(), new JettyFaultInjectorFactory());
-    mockServiceContext.setAttribute(StubRequestHandler.class.getName(), stubRequestHandler);
-    mockServiceContext.setAttribute(Notifier.KEY, notifier);
-    mockServiceContext.setAttribute(
-        Options.ChunkedEncodingPolicy.class.getName(), chunkedEncodingPolicy);
-    mockServiceContext.setAttribute("browserProxyingEnabled", browserProxyingEnabled);
-    ServletHolder servletHolder =
-        mockServiceContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
-    servletHolder.setInitOrder(1);
-    servletHolder.setInitParameter(
-        RequestHandler.HANDLER_CLASS_KEY, StubRequestHandler.class.getName());
-    servletHolder.setInitParameter(
-        FaultInjectorFactory.INJECTOR_CLASS_KEY, JettyFaultInjectorFactory.class.getName());
-    servletHolder.setInitParameter(
-        WireMockHandlerDispatchingServlet.SHOULD_FORWARD_TO_FILES_CONTEXT, "true");
-
-    if (asynchronousResponseSettings.isEnabled()) {
-      scheduledExecutorService = newScheduledThreadPool(asynchronousResponseSettings.getThreads());
-      mockServiceContext.setAttribute(
-          WireMockHandlerDispatchingServlet.ASYNCHRONOUS_RESPONSE_EXECUTOR,
-          scheduledExecutorService);
-    }
-
-    mockServiceContext.setAttribute(
-        MultipartRequestConfigurer.KEY, buildMultipartRequestConfigurer());
-
-    MimeTypes mimeTypes = new MimeTypes();
-    mimeTypes.addMimeMapping("json", "application/json");
-    mimeTypes.addMimeMapping("html", "text/html");
-    mimeTypes.addMimeMapping("xml", "application/xml");
-    mimeTypes.addMimeMapping("txt", "text/plain");
-    mockServiceContext.setMimeTypes(mimeTypes);
-    mockServiceContext.setWelcomeFiles(
-        new String[] {"index.json", "index.html", "index.xml", "index.txt"});
-
-    NotFoundHandler errorHandler = new NotFoundHandler(mockServiceContext);
-    mockServiceContext.setErrorHandler(errorHandler);
-
-    mockServiceContext.addFilter(
-        ContentTypeSettingFilter.class, FILES_URL_MATCH, EnumSet.of(DispatcherType.FORWARD));
-    mockServiceContext.addFilter(
-        TrailingSlashFilter.class, FILES_URL_MATCH, EnumSet.allOf(DispatcherType.class));
-
-    if (stubCorsEnabled) {
-      addCorsFilter(mockServiceContext);
-    }
-
-    decorateMockServiceContextAfterConfig(mockServiceContext);
-
-    return mockServiceContext;
-  }
-
-  protected void decorateMockServiceContextBeforeConfig(ServletContextHandler mockServiceContext) {}
-
-  protected void decorateMockServiceContextAfterConfig(ServletContextHandler mockServiceContext) {}
-
-  private ServletContextHandler addAdminContext(
-      AdminRequestHandler adminRequestHandler, Notifier notifier) {
-    ServletContextHandler adminContext = new ServletContextHandler(jettyServer, ADMIN_CONTEXT_ROOT);
-
-    decorateAdminServiceContextBeforeConfig(adminContext);
-
-    adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.maxCacheSize", "0");
-
-    String javaVendor = System.getProperty("java.vendor");
-    if (javaVendor != null && javaVendor.toLowerCase().contains("android")) {
-      // Special case for Android, fixes IllegalArgumentException("resource assets not found."):
-      //  The Android ClassLoader apparently does not resolve directories.
-      //  Furthermore, lib assets will be merged into a single asset directory when a jar file is
-      // assimilated into an apk.
-      //  As resources can be addressed like "assets/swagger-ui/index.html", a static path element
-      // will suffice.
-      adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.resourceBase", "assets");
-    } else {
-      adminContext.setInitParameter(
-          "org.eclipse.jetty.servlet.Default.resourceBase",
-          getResource(JettyHttpServer.class, "assets").toString());
-    }
-
-    getResource(JettyHttpServer.class, "assets/swagger-ui/index.html");
-
-    adminContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
-    ServletHolder swaggerUiServletHolder =
-        adminContext.addServlet(DefaultServlet.class, "/swagger-ui/*");
-    swaggerUiServletHolder.setAsyncSupported(false);
-    adminContext.addServlet(DefaultServlet.class, "/recorder/*");
-
-    ServletHolder servletHolder =
-        adminContext.addServlet(WireMockHandlerDispatchingServlet.class, "/");
-    servletHolder.setInitParameter(
-        RequestHandler.HANDLER_CLASS_KEY, AdminRequestHandler.class.getName());
-    adminContext.setAttribute(AdminRequestHandler.class.getName(), adminRequestHandler);
-    adminContext.setAttribute(Notifier.KEY, notifier);
-
-    adminContext.setAttribute(MultipartRequestConfigurer.KEY, buildMultipartRequestConfigurer());
-
-    adminContext.addServlet(NotMatchedServlet.class, "/not-matched");
-
-    addCorsFilter(adminContext);
-
-    // Include wiremock-gui into admin context
-    ServletHolder webapp = adminContext.addServlet(DefaultServlet.class, "/webapp/*");
-    webapp.setAsyncSupported(false);
-
-    // Include wiremock-gui websocket into admin context
-    JakartaWebSocketServletContainerInitializer.configure(
-        adminContext,
-        (servletContext, serverContainer) -> {
-          serverContainer.addEndpoint(WebSocketEndpoint.class);
-        });
-
-    decorateAdminServiceContextAfterConfig(adminContext);
-
-    return adminContext;
-  }
-
-  protected void decorateAdminServiceContextBeforeConfig(
-      ServletContextHandler adminServiceContext) {}
-
-  protected void decorateAdminServiceContextAfterConfig(
-      ServletContextHandler adminServiceContext) {}
-
-  /**
-   * Rewrite web app. We use Angular. We must rewrite every /__admin/webapp path to the index.html
-   * of our single page application.
-   *
-   * @param adminContextHandler admin context handler is used to provide the static file content
-   * @return the rewrite handler
-   */
-  private RewriteHandler webAppRewriteContext(ServletContextHandler adminContextHandler) {
-    final RewriteHandler rewrite = new RewriteHandler();
-    rewrite.setRewriteRequestURI(true);
-    rewrite.setRewritePathInfo(true);
-
-    RewriteRegexRule rewriteRule = new RewriteRegexRule();
-    rewriteRule.setRegex("/__admin/webapp/(mappings|matched|unmatched|state|files).*");
-    rewriteRule.setReplacement("/__admin/webapp/index.html");
-    rewrite.addRule(rewriteRule);
-
-    rewrite.setHandler(adminContextHandler);
-
-    return rewrite;
-  }
-
-  private void addCorsFilter(ServletContextHandler context) {
-    context.addFilter(buildCorsFilter(), "/*", EnumSet.of(DispatcherType.REQUEST));
-  }
-
-  private FilterHolder buildCorsFilter() {
-    FilterHolder filterHolder = new FilterHolder(CrossOriginFilter.class);
-    filterHolder.setInitParameters(
-        Map.of(
-            "chainPreflight",
-            "false",
-            "allowedOrigins",
-            "*",
-            "allowedHeaders",
-            "*",
-            "allowedMethods",
-            "OPTIONS,GET,POST,PUT,PATCH,DELETE"));
-    return filterHolder;
-  }
 
   // Override this for platform-specific impls
   protected MultipartRequestConfigurer buildMultipartRequestConfigurer() {

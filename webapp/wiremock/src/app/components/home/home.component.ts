@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   currentRecordingStatus?: RecordingStatus;
   version?: string;
-  versionTooltip?: string;
+  guiVersion?: string;
 
   RecordingStatus = RecordingStatus;
 
@@ -83,6 +83,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.wiremockService.getVersion().subscribe({
       next: version => {
         this.version = `Version: ${version.version}`;
+        this.guiVersion = `GUI Version: ${version.guiVersion}`;
       },
     });
   }

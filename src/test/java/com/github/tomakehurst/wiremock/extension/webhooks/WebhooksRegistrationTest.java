@@ -33,9 +33,10 @@ class WebhooksRegistrationTest {
   private static final String MESSAGE =
       "Passing webhooks in extensions is no longer required and"
           + " may lead to compatibility issues in future";
-  private final PrintStream stdOut = System.out;
   private WireMockServerRunner runner;
   private WireMockServer server;
+
+  private final PrintStream stdOut = System.out;
   private ByteArrayOutputStream out;
 
   @BeforeEach
@@ -72,14 +73,16 @@ class WebhooksRegistrationTest {
 
   @Test
   void shouldLogMessageWhenWebhooksAreAddedViaClassName() {
-    server = new WireMockServer(wireMockConfig().extensions("org.wiremock.webhooks.Webhooks"));
+    server =
+        new WireMockServer(
+            wireMockConfig().extensions("org.wiremock.webhooks.Webhooks").dynamicPort());
     server.start();
     assertThat(getSystemOutText(), containsString(MESSAGE));
   }
 
   @Test
   void shouldLogMessageWhenWebhooksAreAddedViaClass() {
-    server = new WireMockServer(wireMockConfig().extensions(Webhooks.class));
+    server = new WireMockServer(wireMockConfig().extensions(Webhooks.class).dynamicPort());
     server.start();
     assertThat(getSystemOutText(), containsString(MESSAGE));
   }
@@ -87,14 +90,14 @@ class WebhooksRegistrationTest {
   @Test
   void shouldLogAMessageWhenWebhooksAreAddedViaCLI() {
     runner = new WireMockServerRunner();
-    runner.run("--extensions", "org.wiremock.webhooks.Webhooks");
+    runner.run("--extensions", "org.wiremock.webhooks.Webhooks", "--port", "0");
     assertThat(getSystemOutText(), containsString(MESSAGE));
     stopRunner();
   }
 
   @Test
   void shouldNotLogAMessageWhenWebhooksAreNotAddedExplicitly() {
-    server = new WireMockServer(wireMockConfig());
+    server = new WireMockServer(wireMockConfig().dynamicPort());
     server.start();
     assertThat(getSystemOutText(), not(containsString(MESSAGE)));
   }

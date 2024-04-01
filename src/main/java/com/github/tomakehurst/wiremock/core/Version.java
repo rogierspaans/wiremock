@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Thomas Akehurst
+ * Copyright (C) 2023-2024 Thomas Akehurst
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,34 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class Version {
-  private static final Lazy<String> version = lazy(Version::load);
+  private static final Lazy<EnhancedVersion> version = lazy(Version::load);
 
   public static String getCurrentVersion() {
-    return version.get();
+    return version.get().version;
   }
 
-  private static String load() {
+  public static String getGuiVersion() {
+    return version.get().guiVersion;
+  }
+
+  private static EnhancedVersion load() {
     try {
       Properties properties = new Properties();
-      properties.load(Version.class.getResourceAsStream("/version.properties"));
-      return properties.getProperty("version");
+      properties.load(Version.class.getResourceAsStream("/wiremock-gui-version.properties"));
+      return new EnhancedVersion(
+          properties.getProperty("version"), properties.getProperty("gui-version"));
     } catch (NullPointerException | IOException e) {
-      return "unknown";
+      return new EnhancedVersion("unknown", "unknown");
+    }
+  }
+
+  private static class EnhancedVersion {
+    String version;
+    String guiVersion;
+
+    public EnhancedVersion(final String version, final String guiVersion) {
+      this.version = version;
+      this.guiVersion = guiVersion;
     }
   }
 }
