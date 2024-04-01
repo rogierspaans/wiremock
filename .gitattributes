@@ -1,1 +1,11 @@
 * text eol=lf
+# This file is broken and makes not sense as it is specified.
+# It breaks the usage of git on linux based systems. Ignore crlf files
+# which cannot be converted to lf. E.g. gradle wrapper conversion brakes
+# the validation.
+gradlew.bat -text
+*.png -text
+gradle-wrapper.jar -text
+sample-war/src/main/webapp/WEB-INF/wiremock/__files/mytest.json -text
+sample-war/src/main/webapp/WEB-INF/wiremock/mappings/mytest-mapping.json -text
+src/test/resources/not-found-diff-sample_large_xml_jre11_windows.txt -text

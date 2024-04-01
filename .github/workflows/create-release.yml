@@ -4,9 +4,14 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - "*-ui"
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+env:
+  SEMANTIC_RELEASE_VERSION: 23.0.6
+  SEMANTIC_RELEASE_EXEC_VERSION: 6.0.3
+  CONVENTIONAL_COMMITS_VERSION: 7.0.2
 
 jobs:
   build:
@@ -25,56 +30,95 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set output
-        id: vars
-        run: |
-          echo "tag=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
-          echo "version=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/.\{3\}$//')" >> $GITHUB_OUTPUT
-      - name: Check output
-        run: |
-          echo ${{ steps.vars.outputs.tag }}
-          echo ${{ steps.vars.outputs.version }}
+
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-release-${{ env.SEMANTIC_RELEASE_VERSION }}-${{ env.SEMANTIC_RELEASE_EXEC_VERSION }}-${{ env.CONVENTIONAL_COMMITS_VERSION }}
+
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          #!/bin/bash
+          npm install -g semantic-release@${{ env.SEMANTIC_RELEASE_VERSION }} \
+            @semantic-release/exec@${{ env.SEMANTIC_RELEASE_EXEC_VERSION }} \
+            conventional-changelog-conventionalcommits@${{ env.CONVENTIONAL_COMMITS_VERSION }}
+
+      - name: Determine Semver & Update PRs and Issues
+        id: semver
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE_COLOR: 1
+          DEBUG_COLORS: 1
+        run: |
+          #!/bin/bash
+          semantic-release --debug
+
       - name: Set up JDK
         uses: actions/setup-java@v4
+        if: steps.semver.outputs.version != ''
         with:
           java-version: ${{ matrix.jdk }}
           distribution: 'temurin'
+
       - name: Grant execute permission for gradlew
+        if: steps.semver.outputs.version != ''
         run: chmod +x gradlew
+
       - name: Cache Gradle packages
         uses: actions/cache@v4
+        if: steps.semver.outputs.version != ''
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+
       - name: Build
-        run: ./gradlew jar shadowJar
+        if: steps.semver.outputs.version != ''
+        run: ./gradlew jar shadowJar -PprojVersion=${{ steps.semver.outputs.version }}
+
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+        id: create-release
+        shell: bash
+        if: steps.semver.outputs.version != ''
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.vars.outputs.tag }}
-          release_name: ${{ steps.vars.outputs.version }}
-          body_path: RELEASE-NOTES.md
-          draft: false
-          prerelease: false
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          #!/bin/bash
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/${{ github.repository }}/releases \
+          -f tag_name='${{ steps.semver.outputs.version }}' \
+          -f target_commitish='${{ github.sha }}' \
+          -f name='${{ steps.semver.outputs.version }}' \
+          -F draft=false \
+          -F prerelease=false \
+          -F generate_release_notes=true
+
       - name: Upload Release Asset
         id: upload-release-asset
-        uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/wiremock-standalone-${{ steps.vars.outputs.version }}.jar
-          asset_name: wiremock-standalone-${{ steps.vars.outputs.version }}.jar
-          asset_content_type: application/java-archive
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        if: steps.semver.outputs.version != ''
+        run: |
+          gh release upload ${{ steps.semver.outputs.version }} ./build/libs/wiremock-standalone-${{ steps.semver.outputs.version }}.jar#wiremock-standalone-${{ steps.semver.outputs.version }}.jar
+
   docker:
     needs: [build]
     uses: ./.github/workflows/docker-release.yml
+    if: needs.build.outputs.version != ''
     with:
       version: ${{ needs.build.outputs.version }}
     secrets:
