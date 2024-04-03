@@ -14,9 +14,10 @@ analyzeCommits:
   - path: "@semantic-release/commit-analyzer"
     preset: "conventionalcommits"
     # Default rules: https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js
-    # releaseRules:
-    #   - type: "feat"
-    #     release: "patch"
+    releaseRules:
+      - type: "chore"
+        scooe: "deps"
+        release: "patch"
 
 verifyRelease:
   - path: "@semantic-release/exec"
