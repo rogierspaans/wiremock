@@ -16,7 +16,7 @@ analyzeCommits:
     # Default rules: https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js
     releaseRules:
       - type: "chore"
-        scooe: "deps"
+        scope: "deps"
         release: "patch"
 
 verifyRelease:
