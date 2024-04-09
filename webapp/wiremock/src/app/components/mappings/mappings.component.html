@@ -102,6 +102,22 @@
         </div>
 
         <div ngbDropdown class="btn-group" role="group">
+          <button
+            id="wmWebhooksDrop"
+            type="button"
+            class="btn btn-secondary dropdown-toggle"
+            ngbDropdownToggle>
+            Webhooks
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu">
+            <button type="button" class="dropdown-item" (click)="helpersAddWebhook()">
+              <fa-icon icon="link"></fa-icon>
+              Add Webhook
+            </button>
+          </div>
+        </div>
+
+        <div ngbDropdown class="btn-group" role="group">
           <button id="wmFileEditDrop" type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle>
             File
           </button>

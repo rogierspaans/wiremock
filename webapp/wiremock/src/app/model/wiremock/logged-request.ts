@@ -16,10 +16,12 @@ export class LoggedRequest extends Proxy implements Item {
   queryParams: any;
   body!: string;
   bodyAsBase64!: string;
-  isBrowserProxyRequest!: boolean;
+  browserProxyRequest!: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loggedDate: any;
   date!: string;
+  protocol!: string;
+  multiparts!: any[];
 
   constructor() {
     super();
@@ -67,9 +69,11 @@ export class LoggedRequest extends Proxy implements Item {
     this.queryParams = unchecked.queryParams;
     this.body = unchecked.body;
     this.bodyAsBase64 = unchecked.bodyAsBase64;
-    this.isBrowserProxyRequest = unchecked.isBrowserProxyRequest;
+    this.browserProxyRequest = unchecked.browserProxyRequest;
     this.loggedDate = unchecked.loggedDate;
     this.date = moment(this.loggedDate).format();
+    this.protocol = unchecked.protocol;
+    this.multiparts = unchecked.multiparts;
 
     return this;
   }

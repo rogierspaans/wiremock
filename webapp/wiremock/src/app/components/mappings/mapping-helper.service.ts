@@ -145,4 +145,26 @@ export class MappingHelperService {
     }
     return undefined;
   }
+
+  static helperAddWebhook(mapping?: StubMapping): StubMapping | undefined {
+    if (mapping) {
+      if (UtilService.isUndefined(mapping.serveEventListeners)) {
+        mapping.serveEventListeners = [];
+      }
+      mapping.serveEventListeners.push({
+        name: "webhook",
+        parameters: {
+          "method": "POST",
+          "url": "https://localhost",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": "{}"
+        }
+      });
+      return mapping;
+    }
+
+    return undefined;
+  }
 }

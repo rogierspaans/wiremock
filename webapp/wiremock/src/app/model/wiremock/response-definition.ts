@@ -10,6 +10,8 @@ export class ResponseDefinition {
   headers!: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   additionalProxyRequestHeaders?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  removeProxyRequestHeaders?: any[];
   fixedDelayMilliseconds?: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   delayDistribution: any;
