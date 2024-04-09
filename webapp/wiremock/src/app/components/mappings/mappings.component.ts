@@ -302,6 +302,10 @@ export class MappingsComponent implements OnInit, OnDestroy, WebSocketListener {
     this.setMappingForHelper(MappingHelperService.helperAddResponseTemplatingTransformer(this.getMappingForHelper()));
   }
 
+  helpersAddWebhook() {
+    this.setMappingForHelper(MappingHelperService.helperAddWebhook(this.getMappingForHelper()));
+  }
+
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
