@@ -41,3 +41,14 @@ updates:
       - Author
     commit-message:
       prefix: "chore(deps)"
+  - package-ecosystem: docker
+    directory: "/alpine"
+    schedule:
+      interval: daily
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 20
+    assignees:
+      - Author
+    commit-message:
+      prefix: "chore(deps)"
