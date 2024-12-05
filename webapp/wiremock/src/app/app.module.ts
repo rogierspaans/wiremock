@@ -58,7 +58,7 @@ import { ListViewComponent } from "./components/list-view/list-view.component";
 import { MatchedComponent } from "./components/matched/matched.component";
 import { UnmatchedComponent } from "./components/unmatched/unmatched.component";
 import { LayoutComponent } from "./components/layout/layout.component";
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { WiremockService } from "./services/wiremock.service";
 import { CodeEntryComponent } from "./components/code-entry/code-entry.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -88,6 +88,8 @@ import { TreeViewComponent } from "./components/tree-view/tree-view.component";
 import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
 import { FilesComponent } from "./components/files/files.component";
 import { FileNameComponent } from "./dialogs/file-name/file-name.component";
+import { AuthenticationInterceptor } from "./services/authentication.interceptor";
+import { CredentialsComponent } from "./components/credentials/credentials.component";
 
 @NgModule({
   declarations: [
@@ -121,6 +123,7 @@ import { FileNameComponent } from "./dialogs/file-name/file-name.component";
     TreeViewComponent,
     FileNameComponent,
     FilesComponent,
+    CredentialsComponent
   ],
   imports: [
     BrowserModule,
@@ -161,6 +164,7 @@ import { FileNameComponent } from "./dialogs/file-name/file-name.component";
         themePath: "assets/highlightjs/styles/github.css",
       },
     },
+    {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
   ],
   bootstrap: [AppComponent],
 })
